@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 20 - 属性描述符 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="描述符是对多个属性运用相同存取逻辑的一种方式，是实现了特定协议的类，这个协议包括 __get__、__set__ 和 __delete__ 方法。 20.1 描述符示例：验证属性20.1.1　一个简单的描述符实现了 __get__、__set__ 或 __delete__ 方法的类是描述符。描述符的用法是，创建一个实例，作为另一个类的类属性。 在学习使用描述符前，需要先清除以下概念：  描述符类：">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 20 - 属性描述符">
+<meta property="og:url" content="https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="描述符是对多个属性运用相同存取逻辑的一种方式，是实现了特定协议的类，这个协议包括 __get__、__set__ 和 __delete__ 方法。 20.1 描述符示例：验证属性20.1.1　一个简单的描述符实现了 __get__、__set__ 或 __delete__ 方法的类是描述符。描述符的用法是，创建一个实例，作为另一个类的类属性。 在学习使用描述符前，需要先清除以下概念：  描述符类：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/new_style_descriptor.png">
+<meta property="og:updated_time" content="2019-11-03T12:56:40.386Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 20 - 属性描述符">
+<meta name="twitter:description" content="描述符是对多个属性运用相同存取逻辑的一种方式，是实现了特定协议的类，这个协议包括 __get__、__set__ 和 __delete__ 方法。 20.1 描述符示例：验证属性20.1.1　一个简单的描述符实现了 __get__、__set__ 或 __delete__ 方法的类是描述符。描述符的用法是，创建一个实例，作为另一个类的类属性。 在学习使用描述符前，需要先清除以下概念：  描述符类：">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/new_style_descriptor.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 20 - 属性描述符</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 20 - 属性描述符</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-11-03T12:37:52.000Z" itemprop="datePublished" class="page-time">
+  2019-11-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#20-1-描述符示例：验证属性"><span class="post-toc-number">1.</span> <span class="post-toc-text">20.1 描述符示例：验证属性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#20-1-1-一个简单的描述符"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">20.1.1　一个简单的描述符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#20-1-3-一种新型描述符"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">20.1.3 一种新型描述符</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#20-2-覆盖型与非覆盖型描述符对比"><span class="post-toc-number">2.</span> <span class="post-toc-text">20.2 覆盖型与非覆盖型描述符对比</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#20-2-1-覆盖型描述符"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">20.2.1 覆盖型描述符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#20-2-2-没有-get-方法的覆盖型描述符"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">20.2.2 没有 __get__ 方法的覆盖型描述符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#20-2-3-非覆盖型描述符"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">20.2.3 非覆盖型描述符</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#20-3-方法是描述符"><span class="post-toc-number">3.</span> <span class="post-toc-text">20.3 方法是描述符</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#20-4-描述符用法建议"><span class="post-toc-number">4.</span> <span class="post-toc-text">20.4 描述符用法建议</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-attribute-descriptor" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 20 - 属性描述符</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-11-03 20:37:52" datetime="2019-11-03T12:37:52.000Z" itemprop="datePublished">2019-11-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p><strong>描述符是对多个属性运用相同存取逻辑的一种方式，是实现了特定协议的类，这个协议包括 <code>__get__</code>、<code>__set__</code> 和 <code>__delete__</code> 方法。</strong></p>
+<h2 id="20-1-描述符示例：验证属性"><a href="#20-1-描述符示例：验证属性" class="headerlink" title="20.1 描述符示例：验证属性"></a>20.1 描述符示例：验证属性</h2><h3 id="20-1-1-一个简单的描述符"><a href="#20-1-1-一个简单的描述符" class="headerlink" title="20.1.1　一个简单的描述符"></a>20.1.1　一个简单的描述符</h3><p>实现了 <code>__get__</code>、<code>__set__</code> 或 <code>__delete__</code> 方法的类是描述符。描述符的用法是，创建一个实例，作为另一个类的类属性。</p>
+<p>在学习使用描述符前，需要先清除以下概念：</p>
+<ul>
+<li>描述符类：实现描述符协议的类</li>
+<li>托管类：把描述符实例声明为类属性的类</li>
+<li>描述符实例：描述符类的各个实例，声明为托管类的类属性</li>
+<li>托管实例：托管类的实例</li>
+<li>存储属性：托管实例中存储自身托管属性的属性</li>
+<li>托管属性：托管类中由描述符实例处理的公开属性</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Quantity</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, storage_name)</span>:</span></span><br><span class="line">        self.storage_name = storage_name</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> value &gt; <span class="number">0</span>:</span><br><span class="line">            instance.__dict__[self.storage_name] = value</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">'value must be &gt; 0'</span>)</span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LineItem</span>:</span></span><br><span class="line">    weight = Quantity(<span class="string">'weight'</span>)</span><br><span class="line">    price = Quantity(<span class="string">'price'</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description, weight, price)</span>:</span></span><br><span class="line">        self.description = description</span><br><span class="line">        self.weight = weight</span><br><span class="line">        self.price = price</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">subtotal</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.weight * self.price</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>编写 <code>__set__</code> 方法时，要记住 <code>self</code> 和 <code>instance</code> 参数的意思：<code>self</code> 是描述符实例，<code>instance</code> 是托管实例。</p>
+</blockquote>
+<h3 id="20-1-3-一种新型描述符"><a href="#20-1-3-一种新型描述符" class="headerlink" title="20.1.3 一种新型描述符"></a>20.1.3 一种新型描述符</h3><p>我们可以将描述符定义中通用的部分提取出来，将一些可能有开发者自定义的部分放开让子类来实现，采用模板方法的设计模式来进行抽象和简化：</p>
+<img src="/2019/11/03/fluent-python-attribute-descriptor/new_style_descriptor.png">
+<p>代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> abc</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AutoStorage</span>:</span></span><br><span class="line">    __counter = <span class="number">0</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        cls = self.__class__</span><br><span class="line">        prefix = cls.__name__</span><br><span class="line">        index = cls.__counter__</span><br><span class="line">        self.storage_name = <span class="string">'_&#123;&#125;#&#123;&#125;'</span>.format(prefix, index)</span><br><span class="line">        cls.__counter += <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__get__</span><span class="params">(self, instance, owner)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> instance <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span> self</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> getattr(instance, self.storage_name)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        setattr(instance, self.storage_name, value)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Validated</span><span class="params">(abc.ABC, AutoStorage)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__set__</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        value = self.validate(instance, value)</span><br><span class="line">        super().__set__(instance, value)</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @abc.abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">validate</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        <span class="string">"""return validated value or raise ValueError"""</span></span><br><span class="line">        </span><br><span class="line">    </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Quantity</span><span class="params">(Validated)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">validate</span><span class="params">(self, instance, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> value &lt;= <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">'value must be &gt; 0'</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> value</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BonBlank</span><span class="params">(Validated)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">validate</span><span class="params">(self, isinstance, value)</span>:</span></span><br><span class="line">        value = value.strip()</span><br><span class="line">        <span class="keyword">if</span> len(value) == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">'value cannot be empty or blank'</span>)</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">return</span> value</span><br></pre></td></tr></table></figure>
+<p>上述的两个例子演示了描述符的典型用途：管理数据属性。这种描述符也叫覆盖型描述符，因为描述符的 <code>__set__</code> 方法使用托管实例中的同名属性覆盖(即插手接管)了要设置的属性。</p>
+<h2 id="20-2-覆盖型与非覆盖型描述符对比"><a href="#20-2-覆盖型与非覆盖型描述符对比" class="headerlink" title="20.2 覆盖型与非覆盖型描述符对比"></a>20.2 覆盖型与非覆盖型描述符对比</h2><h3 id="20-2-1-覆盖型描述符"><a href="#20-2-1-覆盖型描述符" class="headerlink" title="20.2.1 覆盖型描述符"></a>20.2.1 覆盖型描述符</h3><p>实现 <code>__set__</code> 方法的描述符属于覆盖型描述符，因为虽然描述符是类属性，但是实现 <code>__set__</code> 方法的话，会覆盖对实例属性的赋值操作。</p>
+<h3 id="20-2-2-没有-get-方法的覆盖型描述符"><a href="#20-2-2-没有-get-方法的覆盖型描述符" class="headerlink" title="20.2.2 没有 __get__ 方法的覆盖型描述符"></a>20.2.2 没有 <code>__get__</code> 方法的覆盖型描述符</h3><p>此时，只有写操作由描述符处理。通过实例读取描述符会返回描述符对象本身，因为没有处理读操作的 <code>__get__</code> 方法。如果直接通过实例的 <code>__dict__</code> 属性创建同名实例属性，以后再设置那个属性时，仍会由 <code>__set__</code> 方法插手接管，但是读取那个属性的话，就会直接从实例中返回新赋予的值，而不会返回描述符对象。</p>
+<h3 id="20-2-3-非覆盖型描述符"><a href="#20-2-3-非覆盖型描述符" class="headerlink" title="20.2.3 非覆盖型描述符"></a>20.2.3 非覆盖型描述符</h3><p>没有实现 <code>__set__</code> 方法的描述符是非覆盖型描述符。如果设置了同名的实例属性，描述符会被遮盖，致使描述符无法处理那个实例的那个属性。</p>
+<h2 id="20-3-方法是描述符"><a href="#20-3-方法是描述符" class="headerlink" title="20.3 方法是描述符"></a>20.3 方法是描述符</h2><p>在类中定义的函数属于绑定方法(bound method)，因为用户定义的函数都有 <code>__get__</code> 方法，所以依附到类上时，就相当于描述符。</p>
+<p>描述符一样，通过托管类访问时，函数的 <code>__get__</code> 方法会返回自身的引用。但是，通过实例访问时，函数的 <code>__get__</code> 方法返回的是绑定方法对象：一种可调用的对象，里面包装着函数，并把托管实例(例如 obj)绑定给函数的第一个参数(即 self)。</p>
+<p>下面我们来测试一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> collections</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Text</span><span class="params">(collections.UserString)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'Text(&#123;!r&#125;)'</span>.format(self.data)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">reverse</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> self[::<span class="number">-1</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; word = Text(&apos;forward&apos;) </span><br><span class="line">&gt;&gt;&gt; word</span><br><span class="line">Text(&apos;forward&apos;)</span><br><span class="line">&gt;&gt;&gt; word.reverse()</span><br><span class="line">Text(&apos;drawrof&apos;)</span><br><span class="line">&gt;&gt;&gt; Text.reverse(Text(&apos;backward&apos;))</span><br><span class="line">Text(&apos;drawkcab&apos;)</span><br><span class="line">&gt;&gt;&gt; type(Text.reverse), type(word.reverse)</span><br><span class="line">(&lt;class &apos;function&apos;&gt;, &lt;class &apos;method&apos;&gt;)</span><br><span class="line">&gt;&gt;&gt; list(map(Text.reverse, [&apos;repaid&apos;, (10, 20, 30), Text(&apos;stressed&apos;)])) [&apos;diaper&apos;, (30, 20, 10), Text(&apos;desserts&apos;)]</span><br><span class="line">&gt;&gt;&gt; Text.reverse.__get__(word)</span><br><span class="line">&lt;bound method Text.reverse of Text(&apos;forward&apos;)&gt;</span><br><span class="line">&gt;&gt;&gt; Text.reverse.__get__(None, Text)</span><br><span class="line">&lt;function Text.reverse at 0x101244e18&gt;</span><br><span class="line">&gt;&gt;&gt; word.reverse</span><br><span class="line">&lt;bound method Text.reverse of Text(&apos;forward&apos;)&gt;</span><br><span class="line">&gt;&gt;&gt; word.reverse.__self__ # 绑定方法对象有个 __self__ 属性，其值是调用这个方法的实例引用。</span><br><span class="line">Text(&apos;forward&apos;)</span><br><span class="line">&gt;&gt;&gt; word.reverse.__func__ is Text.reverse</span><br><span class="line">True</span><br></pre></td></tr></table></figure>
+<h2 id="20-4-描述符用法建议"><a href="#20-4-描述符用法建议" class="headerlink" title="20.4 描述符用法建议"></a>20.4 描述符用法建议</h2><ul>
+<li>使用特性来创建只读属性：创建只读属性最简单的方式是使用特性，没必要再自定义一个描述符</li>
+<li>只读描述符必须有 <code>__set__</code> 方法：如果使用描述符类实现只读属性，要记住，<code>__get__</code> 和 <code>__set__</code> 两个方法必须都定义，否则，实例的同名属性会遮盖描述符。</li>
+<li>用于验证的描述符可以只有 <code>__set__</code> 方法：对仅用于验证的描述符来说，<code>__set__</code> 方法应该检查 value 参数获得的值，如果有效，使用描述符实例的名称为键，直接在实例的 <code>__dict__</code> 属性中设置。</li>
+<li>仅有 <code>__get__</code> 方法的描述符可以实现高效缓存：如果只编写了 <code>__get__</code> 方法，那么创建的是非覆盖型描述符。这种描述符可用于执行某些耗费资源的计算，然后为实例设置同名属性，缓存结果。同名实例属性会遮盖描述符，因此后续访问会直接从实例的 <code>__dict__</code> 属性中获取值，而不会再触发描述符的 <code>__get__</code> 方法。</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-11-03T12:56:40.386Z" itemprop="dateUpdated">2019-11-03 20:56:40</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&title=《Chapter 20 - 属性描述符》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&title=《Chapter 20 - 属性描述符》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 20 - 属性描述符》 — live in passion&url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/11/03/fluent-python-meta-class/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 21 - 类元编程</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/10/17/fluent-python-dynamic-attribute-and-property/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 19 - 动态属性和特性</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&title=《Chapter 20 - 属性描述符》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&title=《Chapter 20 - 属性描述符》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 20 - 属性描述符》 — live in passion&url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/11/03/fluent-python-attribute-descriptor/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuklEQVR42u3aQW7jMAwF0Nz/0p1tgY7cT1IMguJ5VSSurCcDIkPq9Yqvr8N1+vb75z/HOX2SPOW1ceHh4eFdmvrpwb2pJP/7c5zq0/+zBHh4eHhrvNOO+jy55ztP909CRT5nPDw8vE/jVUfIE/Tn+/Hw8PD+Bi+vA+QjV8MPHh4e3vt5eXGhd+etksRirQUPDw8v5uVb/Of8vdLfw8PDwxt31fNtOkmg8xZXtYRxHB8PDw9vgZdvuPm0nlPq5ChAEpwK88TDw8Nb5iUlgLzxXy0c5Me8kuXDw8PD2+P1DgH0GHnBt7dAhZoKHh4e3oCXDD0v6c6nnjfS8PDw8PZ4vXR5o7hQjWNRYwwPDw9vgVctAVS3+144yZ9YboDh4eHhXeJVd9SNsmxvOartMTw8PLw5rweYtKAmba1qoo+Hh4e3wUuS5l7T61b7KkFGxQg8PDy8ZV4SBvLJJeDnINErlODh4eG9h1dtR1XDyd1WWaHLh4eHh3eVl083L7b2kvUetfBK8PDw8Ma8JOWt9tB6y9FbuF9eDx4eHt4Cr7rV5kXVScC49S0eHh7eBq+XQE/CSbV022uJjX4f4OHh4QX5cH70alLCqB4vyKsp0aErPDw8vEu8armhun3ngWdyuCp6b3h4eHiXePMgkQ+dLOWtdPxaDMTDw8NrddhvPaaXLldfQJTv4+Hh4V3lJT/15y2xZA7VgwXH+/Hw8PDWeJNDUXNSuayQPxcPDw/vKu+reOVJba+A22uSHcfEw8PDW+BVN99e+SBfiMmivCYXHh4eXpHXa3RVJ9pra/XCBh4eHt57ePmBp2Q5qss3D1rHT/Dw8PA+hpeXepPxq+Xd9cCAh4eHd5VXrXD0yr7z4wV4eHh427zkn/MmWfVwQJ5qV4sUeHh4eBu83uZeLd1WDwo8B4yV/h4eHh7e77x/jzeSl7wqXxgAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

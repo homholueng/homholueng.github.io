@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 17 - 使用期物处理并发 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="17.1.2 concurrent.futures 模块concurrent.futures 模块的主要特色是 ThreadPoolExecutor 和 ProcessPoolExecutor 类，这两个类实现的接口能分别在不同的线程或进程中执行可调用的对象。这两个类在内部维护着一个工作线程或进程池，以及要执行的任务队列。 1234from concurrent import futureswit">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 17 - 使用期物处理并发">
+<meta property="og:url" content="https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="17.1.2 concurrent.futures 模块concurrent.futures 模块的主要特色是 ThreadPoolExecutor 和 ProcessPoolExecutor 类，这两个类实现的接口能分别在不同的线程或进程中执行可调用的对象。这两个类在内部维护着一个工作线程或进程池，以及要执行的任务队列。 1234from concurrent import futureswit">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-10-08T13:22:59.941Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 17 - 使用期物处理并发">
+<meta name="twitter:description" content="17.1.2 concurrent.futures 模块concurrent.futures 模块的主要特色是 ThreadPoolExecutor 和 ProcessPoolExecutor 类，这两个类实现的接口能分别在不同的线程或进程中执行可调用的对象。这两个类在内部维护着一个工作线程或进程池，以及要执行的任务队列。 1234from concurrent import futureswit">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 17 - 使用期物处理并发</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 17 - 使用期物处理并发</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-10-06T09:15:18.000Z" itemprop="datePublished" class="page-time">
+  2019-10-06
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#17-1-2-concurrent-futures-模块"><span class="post-toc-number">1.</span> <span class="post-toc-text">17.1.2 concurrent.futures 模块</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#17-1-3-期物"><span class="post-toc-number">2.</span> <span class="post-toc-text">17.1.3 期物</span></a></li></ol><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#17-2-阻塞型I-O和GIL"><span class="post-toc-number"></span> <span class="post-toc-text">17.2　阻塞型I/O和GIL</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#17-3-使用-concurrent-futures-模块启动进程"><span class="post-toc-number"></span> <span class="post-toc-text">17.3 使用 concurrent.futures 模块启动进程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#17-4-实验-Executor-map-方法"><span class="post-toc-number"></span> <span class="post-toc-text">17.4 实验 Executor.map 方法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#17-5-显示下载进度并处理错误"><span class="post-toc-number"></span> <span class="post-toc-text">17.5　显示下载进度并处理错误</span></a>
+        </li></nav>
+    </aside>
+
+
+<article id="post-fluent-python-future-in-parallel" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 17 - 使用期物处理并发</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-10-06 17:15:18" datetime="2019-10-06T09:15:18.000Z" itemprop="datePublished">2019-10-06</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h3 id="17-1-2-concurrent-futures-模块"><a href="#17-1-2-concurrent-futures-模块" class="headerlink" title="17.1.2 concurrent.futures 模块"></a>17.1.2 concurrent.futures 模块</h3><p><code>concurrent.futures</code> 模块的主要特色是 ThreadPoolExecutor 和 ProcessPoolExecutor 类，这两个类实现的接口能分别在不同的线程或进程中执行可调用的对象。这两个类在内部维护着一个工作线程或进程池，以及要执行的任务队列。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> concurrent <span class="keyword">import</span> futures</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> futures.ThredPoolExecutor(worker_count) <span class="keyword">as</span> executor:</span><br><span class="line">    res = executor.map(download, address_list)</span><br></pre></td></tr></table></figure>
+<p>在上面代码展示的例子中，<code>executor.__exist__</code> 方法糊调用 <code>executor.shutdown(wait=True)</code> 方法，它会在所有线程都执行完毕前阻塞主线程。</p>
+<h3 id="17-1-3-期物"><a href="#17-1-3-期物" class="headerlink" title="17.1.3 期物"></a>17.1.3 期物</h3><p>从 Python 3.4 起，标准库中有两个名为 Future 的类：<code>concurrent.futures.Future</code> 和 <code>asyncio.Future</code>。这两个类的作用相同：两个 Future 类的实例都表示可能已经完成或者尚未完成的 延迟计算。这与 Twisted 引擎中的 Deferred 类、Tornado 框架中的 Future 类，以及多个 JavaScript 库中的 Promise 对象类似。</p>
+<p>期物封装待完成的操作，可以放入队列，完成的状态可以查询，得到结果（或抛出异常）后可以获取结果（或异常）。</p>
+<p>我们要记住一件事：<strong>通常情况下自己不应该创建期物，而只能由并发框架（concurrent.futures 或 asyncio）实例化。原因很简单：期物表示终将发生的事情，而确定某件事会发生的唯一方式是执行的时间已经排定。</strong></p>
+<p>上述两种期物所拥有的下列方法比较在日常使用中会经常用到：</p>
+<ul>
+<li><code>.done()</code>：这个方法不阻塞，返回值是布尔值，指明期物链接的可调用对象是否已经执行。</li>
+<li><code>.add_done_callback()</code>：这个方法只有一个参数，类型是可调用的对象，期物运行结束后会调用指定的可调用对象。</li>
+<li><code>.result()</code>：在期物运行结束后调用的话，这个方法 在两个 Future 类中的作用相同：返回可调用对象的结果，或者重新抛出执行可调用的对象时抛出的异常。可是，如果期物没有运行结束，result 方法在两个 Future 类中的行为相差很大：<ul>
+<li><code>concurrency.futures.Future</code>：result 的调用会阻塞调用方所在的线程，直到有结果可返回。此时，result 方法可以接收可选的 timeout 参数，如果在指定的时间内期物没有运行完毕，会抛出 TimeoutError 异常。</li>
+<li><code>asyncio.Future</code>：result 方法不支持设定超时时间，在这个库中获取期物的结果最好使用 <code>yield from</code> 结构。</li>
+</ul>
+</li>
+</ul>
+<h2 id="17-2-阻塞型I-O和GIL"><a href="#17-2-阻塞型I-O和GIL" class="headerlink" title="17.2　阻塞型I/O和GIL"></a>17.2　阻塞型I/O和GIL</h2><p>CPython 解释器本身就不是线程安全的，因此有全局解释器锁（GIL）， 一次只允许使用一个线程执行 Python 字节码。因此，一个 Python 进程通常不能同时使用多个 CPU 核心。</p>
+<p>然而，标准库中所有执行阻塞型 I/O 操作的函数，在等待操作系统返回结果时都会释放 GIL。这意味着在 Python 语言这个层次上可以使用多线程，而 I/O 密集型 Python 程序能从中受益：一个 Python 线程等待网络响应时，阻塞型 I/O 函数会释放 GIL，再运行一个线程。</p>
+<h2 id="17-3-使用-concurrent-futures-模块启动进程"><a href="#17-3-使用-concurrent-futures-模块启动进程" class="headerlink" title="17.3 使用 concurrent.futures 模块启动进程"></a>17.3 使用 concurrent.futures 模块启动进程</h2><p>ProcessPoolExecutor 和 ThreadPoolExecutor 类都实现了通用的 Executor 接口，如果需要做 CPU 密集型处理，使用这个模块能绕开 GIL，利用所有可用的 CPU 核心。</p>
+<blockquote>
+<p>如果使用 Python 处理 CPU 密集型工作，应该试试 PyPy（<a href="http://pypy.org）。" target="_blank" rel="noopener">http://pypy.org）。</a></p>
+</blockquote>
+<h2 id="17-4-实验-Executor-map-方法"><a href="#17-4-实验-Executor-map-方法" class="headerlink" title="17.4 实验 Executor.map 方法"></a>17.4 实验 Executor.map 方法</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> sleep, strftime</span><br><span class="line"><span class="keyword">from</span> concurrent <span class="keyword">import</span> futures</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">display</span><span class="params">(*args)</span>:</span></span><br><span class="line">    print(strftime(<span class="string">'[%H:%M:%S]'</span>), end=<span class="string">' '</span>)</span><br><span class="line">    print(*args)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">loiter</span><span class="params">(n)</span>:</span></span><br><span class="line">    msg = <span class="string">'&#123;&#125;loiter(&#123;&#125;): doing nothing for &#123;&#125;s...'</span></span><br><span class="line">    display(msg.format(<span class="string">'\t'</span> * n, n, n))</span><br><span class="line">    sleep(n)</span><br><span class="line">    msg = <span class="string">'&#123;&#125;loiter(&#123;&#125;): done.'</span></span><br><span class="line">    display(msg.format(<span class="string">'\t'</span> * n, n))</span><br><span class="line">    <span class="keyword">return</span> n * <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    display(<span class="string">'Script starting.'</span>)</span><br><span class="line">    executor = futures.ThreadPoolExecutor(max_workers=<span class="number">3</span>)</span><br><span class="line">    results = executor.map(loiter, range(<span class="number">5</span>))</span><br><span class="line">    display(<span class="string">'results:'</span>, results)</span><br><span class="line">    display(<span class="string">'Waiting for individual results:'</span>)</span><br><span class="line">    <span class="keyword">for</span> i, result <span class="keyword">in</span> enumerate(results):</span><br><span class="line">        display(<span class="string">'result &#123;&#125;: &#123;&#125;'</span>.format(i, result))</span><br><span class="line"></span><br><span class="line">main()</span><br></pre></td></tr></table></figure>
+<p>上述程序输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[16:57:09] Script starting.</span><br><span class="line">[16:57:09] loiter(0): doing nothing for 0s...</span><br><span class="line">[16:57:09] loiter(0): done.</span><br><span class="line">[16:57:09]      loiter(1): doing nothing for 1s...</span><br><span class="line">[16:57:09]              loiter(2): doing nothing for 2s...</span><br><span class="line">[16:57:09] results: &lt;generator object Executor.map.&lt;locals&gt;.result_iterator at 0x10d21f258&gt;</span><br><span class="line">[16:57:09]                      loiter(3): doing nothing for 3s...</span><br><span class="line">[16:57:09] Waiting for individual results:</span><br><span class="line">[16:57:09] result 0: 0</span><br><span class="line">[16:57:10]      loiter(1): done.</span><br><span class="line">[16:57:10]                              loiter(4): doing nothing for 4s...</span><br><span class="line">[16:57:10] result 1: 10</span><br><span class="line">[16:57:11]              loiter(2): done.</span><br><span class="line">[16:57:11] result 2: 20</span><br><span class="line">[16:57:12]                      loiter(3): done.</span><br><span class="line">[16:57:12] result 3: 30</span><br><span class="line">[16:57:14]                              loiter(4): done.</span><br><span class="line">[16:57:14] result 4: 40</span><br></pre></td></tr></table></figure>
+<p>Executor.map 函数易于使用，不过有个特性需要注意：<strong>这个函数返回结果的顺序与调用开始的顺序一致。如果第一个调用生成结果用时 10 秒，而其他调用只用 1 秒，在获取 map 方法返回的生成器产出的第一个结果时代码会阻塞 10 秒。在此之后，获取后续结果时不会阻塞，因为后续的调用已经结束。</strong></p>
+<blockquote>
+<p><code>executor.submit</code> 和 <code>futures.as_completed</code> 这个组合比 <code>executor.map</code> 更灵活，因为 submit 方法能处理不同的可调用对 象和参数，而 <code>executor.map</code> 只能处理参数不同的同一个可调用对象。此外，传给 <code>futures.as_completed</code> 函数的期物集合可以来 自多个 Executor 实例</p>
+</blockquote>
+<h2 id="17-5-显示下载进度并处理错误"><a href="#17-5-显示下载进度并处理错误" class="headerlink" title="17.5　显示下载进度并处理错误"></a>17.5　显示下载进度并处理错误</h2><p>使用 TQDM 包 （<a href="https://github.com/noamraph/tqdm）可以实现的文本动画进度条。" target="_blank" rel="noopener">https://github.com/noamraph/tqdm）可以实现的文本动画进度条。</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> tqdm <span class="keyword">import</span> tqdm</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> tqdm(range(<span class="number">1000</span>)):</span><br><span class="line">    time.sleep(<span class="number">.01</span>)</span><br></pre></td></tr></table></figure>
+<p>随后，进度条会显示在下方：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">49%|███████████████████████████████████████████████████████████████▊                                                                  | 491/1000 [00:05&lt;00:05, 87.69it/s]</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-10-08T13:22:59.941Z" itemprop="dateUpdated">2019-10-08 21:22:59</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&title=《Chapter 17 - 使用期物处理并发》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&title=《Chapter 17 - 使用期物处理并发》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 17 - 使用期物处理并发》 — live in passion&url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/10/08/fluent-python-asyncio/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 18 - 使用 asyncio 包处理并发</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/09/30/dark-web/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">通识 - 暗网</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&title=《Chapter 17 - 使用期物处理并发》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&title=《Chapter 17 - 使用期物处理并发》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 17 - 使用期物处理并发》 — live in passion&url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/10/06/fluent-python-future-in-parallel/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3bQW7DMAwEwPz/0+m1QGt5SUqGD+NTkMSCxgVEhat+PvH1/XVdffr39fqbV/dejbYeeXTh4eHhDab+96ryqow1qTrCP/fi4eHhHePly/3NcMFyX300eZHAw8PDezMvmeJ65OQxJVttPDw8vPfzek2E5GHlW208PDy8N/CqQ/daGOsS0nug23oteHh4eDEvT5He8/pIvoeHh4c3TtXzdu0k7pp/5/JePDw8vAO8fMHtbY53hWSTeeLh4eGd4FWX+F4TYdLyyN+Jmrl4eHh4A15+Q7797YVYvaMGN6UCDw8P7wBv0jiovq6GZPMShYeHh3eCF+21WyvtZIqTQO6me4GHh4c35q0/TrbLuyKxeQkpB2B4eHh4Y141Xlq3a3vthqRcJSNkmRgeHh7ed/jPUZOAv9eQzQ8lJD8D8PDw8J7h9dqm1VCqF19NCgkeHh7eM7x58J+XgWpzodocuey14OHh4Y15heW1OLk8ZutFX9FGHA8PD+8AL99Y9watNoirzYjCY8LDw8PbxMuX4+rSP5lo9dPLGeLh4eEd5vWiqfldJ1oVeHh4eM/w8sJQjfB7hw/yowNRrwUPDw/vGC9/pxqP5Qt6tZsSnSnDw8PD28TrtRhyQDXs7xWMDWfK8PDw8Ma8ZKK9SUzKQO8dPDw8vHO8eQCWl4TquYZ8s/4p1w08PDy8nbx8o5xvuJMH1ytFeHh4eM/z1oPmAVWP1AvkIioeHh7eVt63eOUFoxqPVY8mRH8APDw8vAO86uKbR1nVxsGuB9S88PDw8Iq8E0PnrYpqqUgeEB4eHt4zvHnsNFn050Xr8h08PDy81/AmBwKqS/wN4ERhwMPDwzu85+zF/JNQrTACHh4e3jFeHnpVt7Y5Y3LgYEOvBQ8PDy/mbfjBvylUy79zJN/Dw8PDu+f9ADXgnHEuGaRnAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

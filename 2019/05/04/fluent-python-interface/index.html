@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 11 - 函数装饰器和闭包 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="11.1 Python 文化中的接口和协议接口在动态类型语言中是怎么运作的呢？首先，基本的事实是，Python 语言没有 interface 关键字，而且除了抽象基类，每个类都有接口： 类实现或继承的公开属性（方法或数据属性），包括特殊方法，如 __getitem__ 或 __add__。 另一方面，不要觉得把公开数据属性放入对象的接口中不妥，因为如果需要，总能实现读值方法和设值方法，把数据属性变">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 11 - 函数装饰器和闭包">
+<meta property="og:url" content="https://homholueng.github.io/2019/05/04/fluent-python-interface/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="11.1 Python 文化中的接口和协议接口在动态类型语言中是怎么运作的呢？首先，基本的事实是，Python 语言没有 interface 关键字，而且除了抽象基类，每个类都有接口： 类实现或继承的公开属性（方法或数据属性），包括特殊方法，如 __getitem__ 或 __add__。 另一方面，不要觉得把公开数据属性放入对象的接口中不妥，因为如果需要，总能实现读值方法和设值方法，把数据属性变">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/05/04/fluent-python-interface/sequence.png">
+<meta property="og:image" content="https://homholueng.github.io/2019/05/04/fluent-python-interface/collection-abc-uml.png">
+<meta property="og:updated_time" content="2019-07-18T11:43:48.704Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 11 - 函数装饰器和闭包">
+<meta name="twitter:description" content="11.1 Python 文化中的接口和协议接口在动态类型语言中是怎么运作的呢？首先，基本的事实是，Python 语言没有 interface 关键字，而且除了抽象基类，每个类都有接口： 类实现或继承的公开属性（方法或数据属性），包括特殊方法，如 __getitem__ 或 __add__。 另一方面，不要觉得把公开数据属性放入对象的接口中不妥，因为如果需要，总能实现读值方法和设值方法，把数据属性变">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/05/04/fluent-python-interface/sequence.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 11 - 函数装饰器和闭包</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 11 - 函数装饰器和闭包</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-05-04T12:23:55.000Z" itemprop="datePublished" class="page-time">
+  2019-05-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-1-Python-文化中的接口和协议"><span class="post-toc-number">1.</span> <span class="post-toc-text">11.1 Python 文化中的接口和协议</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-2-Python-喜欢序列"><span class="post-toc-number">2.</span> <span class="post-toc-text">11.2 Python 喜欢序列</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-3-使用-Monkey-Patch-在运行时实现协议"><span class="post-toc-number">3.</span> <span class="post-toc-text">11.3 使用 Monkey Patch 在运行时实现协议</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-4-白鹅类型（goose-typing）"><span class="post-toc-number">4.</span> <span class="post-toc-text">11.4 白鹅类型（goose typing）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-5-定义抽象基类的子类"><span class="post-toc-number">5.</span> <span class="post-toc-text">11.5 定义抽象基类的子类</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-6-标准库中的抽象基类"><span class="post-toc-number">6.</span> <span class="post-toc-text">11.6 标准库中的抽象基类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#collections-abc-模块中的抽象基类"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">collections.abc 模块中的抽象基类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#numbers-模块中的抽象基类"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">numbers 模块中的抽象基类</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#11-7-定义并使用一个抽象基类"><span class="post-toc-number">7.</span> <span class="post-toc-text">11.7 定义并使用一个抽象基类</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#抽象基类的父类"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">抽象基类的父类</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#抛出异常"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">抛出异常</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#抽象方法"><span class="post-toc-number">7.3.</span> <span class="post-toc-text">抽象方法</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#虚拟子类"><span class="post-toc-number">7.4.</span> <span class="post-toc-text">虚拟子类</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#鹅的行为有可能像鸭子"><span class="post-toc-number">8.</span> <span class="post-toc-text">鹅的行为有可能像鸭子</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-interface" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 11 - 函数装饰器和闭包</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-05-04 20:23:55" datetime="2019-05-04T12:23:55.000Z" itemprop="datePublished">2019-05-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="11-1-Python-文化中的接口和协议"><a href="#11-1-Python-文化中的接口和协议" class="headerlink" title="11.1 Python 文化中的接口和协议"></a>11.1 Python 文化中的接口和协议</h2><p>接口在动态类型语言中是怎么运作的呢？首先，基本的事实是，Python 语言没有 <code>interface</code> 关键字，而且除了抽象基类，每个类都有接口： 类实现或继承的公开属性（方法或数据属性），包括特殊方法，如 <code>__getitem__</code> 或 <code>__add__</code>。</p>
+<p>另一方面，不要觉得把公开数据属性放入对象的接口中不妥，因为如果需要，总能实现读值方法和设值方法，把数据属性变成特性，使用 <code>obj.attr</code> 句法的客户代码不会受到影响。</p>
+<p>关于接口，这里有个实用的补充定义：对象公开方法的子集，让对象在系统中扮演特定的角色。Python 文档中的“文件类对象”或“可迭代对象”就是这个意思，这种说法指的不是特定的类。接口是实现特定角色的方法集合，这样理解正是 Smalltalk 程序员所说的协议，其他动态语言社区都借鉴了这个术语。协议与继承没有关系。一个类可能会实现多个接口，从而让实例扮演多个角色。</p>
+<p>协议是接口，但不是正式的（只由文档和约定定义），因此协议不能像正式接口那样施加限制。一个类可能只实现部分接口，这是允许的。</p>
+<h2 id="11-2-Python-喜欢序列"><a href="#11-2-Python-喜欢序列" class="headerlink" title="11.2 Python 喜欢序列"></a>11.2 Python 喜欢序列</h2><p>下图展示了定义为抽象基类的 <code>Sequence</code> 正式接口：</p>
+<img src="/2019/05/04/fluent-python-interface/sequence.png">
+<p>现在让我们看看下面的代码中定义的 Foo 类，它没有继承 <code>abc.Sequence</code>，而且只实现了序列协议的一个方法：<code>__getitem__</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span> </span><br><span class="line">   ...:     <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, pos)</span>:</span> </span><br><span class="line">   ...:         <span class="keyword">return</span> range(<span class="number">0</span>, <span class="number">30</span>, <span class="number">10</span>)[pos] </span><br><span class="line">   ...:                                                                                 </span><br><span class="line">In [<span class="number">2</span>]: f = Foo()                                                                       </span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: f[<span class="number">1</span>]                                                                            </span><br><span class="line">Out[<span class="number">3</span>]: <span class="number">10</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: <span class="keyword">for</span> i <span class="keyword">in</span> f: print(i)                                                            </span><br><span class="line"><span class="number">0</span></span><br><span class="line"><span class="number">10</span></span><br><span class="line"><span class="number">20</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: <span class="number">20</span> <span class="keyword">in</span> f                                                                         </span><br><span class="line">Out[<span class="number">5</span>]: <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<p>虽然没有实现 <code>__iter__</code> 方法，但是 Foo 实例时可迭代的对象，因为发现其实现了  <code>__getitem__</code> 方法时，Python 会调用它。</p>
+<p>所以，鉴于序列协议的重要性，如果没有 <code>__iter__</code> 和 <code>__contains__</code> 方法，Python 会调用 <code>__getitem__</code> 方法，设法让迭代和 <code>in</code> 运算符可用。</p>
+<h2 id="11-3-使用-Monkey-Patch-在运行时实现协议"><a href="#11-3-使用-Monkey-Patch-在运行时实现协议" class="headerlink" title="11.3 使用 Monkey Patch 在运行时实现协议"></a>11.3 使用 Monkey Patch 在运行时实现协议</h2><p><strong>猴子补丁：在运行时修改类或模块，而不改动源码。</strong></p>
+<p>猴子补丁很强大，但是打补丁的代码与要打补丁的程序耦合十分紧密，而且往往要处理隐藏和没有文档的部分。</p>
+<h2 id="11-4-白鹅类型（goose-typing）"><a href="#11-4-白鹅类型（goose-typing）" class="headerlink" title="11.4 白鹅类型（goose typing）"></a>11.4 白鹅类型（goose typing）</h2><p>白鹅类型指，只要 <code>cls</code> 是抽象基类，即 <code>cls</code> 的元类是 <code>abc.ABCMeta</code>，就可以使用 <code>isinstance(obj, cls)</code>。</p>
+<p><code>collections.abc</code> 中有很多有用的抽象类（Python 标准库的 <code>numbers</code> 模块中还有一些）。</p>
+<h2 id="11-5-定义抽象基类的子类"><a href="#11-5-定义抽象基类的子类" class="headerlink" title="11.5 定义抽象基类的子类"></a>11.5 定义抽象基类的子类</h2><p>在模块导入阶段（类对象初始化）时，Python 不会检查类中的抽象方法是否被实现，只有在实例化类时才会抛出异常。</p>
+<h2 id="11-6-标准库中的抽象基类"><a href="#11-6-标准库中的抽象基类" class="headerlink" title="11.6 标准库中的抽象基类"></a>11.6 标准库中的抽象基类</h2><h3 id="collections-abc-模块中的抽象基类"><a href="#collections-abc-模块中的抽象基类" class="headerlink" title="collections.abc 模块中的抽象基类"></a>collections.abc 模块中的抽象基类</h3><p>该模块中定义了 16 个抽象基类，如下图所示：</p>
+<img src="/2019/05/04/fluent-python-interface/collection-abc-uml.png">
+<ul>
+<li><code>Iterable</code>、<code>Container</code> 和 <code>Sized</code>：各个集合应该继承这三个抽象基类，或者至少实现兼容的协议。</li>
+<li><code>Sequence</code>、<code>Mapping</code> 和 <code>Set</code>：这三个是主要的不可变集合类型，而且各自都有可变的子类。</li>
+<li><code>MappingView</code>：在 Python 3 中，映射方法 <code>.items()</code>、<code>.keys()</code> 和 <code>.values()</code> 返回的对象分别是 <code>ItemsView</code>、<code>KeysView</code> 和 <code>ValuesView</code> 的实例。</li>
+<li><code>Callable</code> 和 <code>Hashable</code>：这两个抽象基类与集合没有太大的关系，只不过因为 <code>collections.abc</code> 是标准库中定义抽象基类的第一个模块，而它们又太重要了，因此才把它们放到 collections.abc 模块中。</li>
+<li><code>Iterator</code>：迭代器，注意它是 Iterable 的子类。</li>
+</ul>
+<p>每个类的具体说明可参考<a href="https://docs.python.org/3/library/collections.abc.html#collections-abstract-base-classes" target="_blank" rel="noopener">官方文档</a>。</p>
+<h3 id="numbers-模块中的抽象基类"><a href="#numbers-模块中的抽象基类" class="headerlink" title="numbers 模块中的抽象基类"></a>numbers 模块中的抽象基类</h3><p><code>numbers</code> 包定义的是“数字塔”（即各个抽象基类的层次结构是线性的），其中 <code>Number</code> 是位于最顶端的超类，随后是 <code>Complex</code> 子类，依次往下，最底端是 <code>Integral</code> 类：</p>
+<ul>
+<li><code>Number</code></li>
+<li><code>Complex</code></li>
+<li><code>Real</code></li>
+<li><code>Rational</code></li>
+<li><code>Integral</code></li>
+</ul>
+<blockquote>
+<p>与之类似，如果一个值可能是浮点数类型，可以使用 <code>isinstance(x, numbers.Real)</code> 检查。</p>
+</blockquote>
+<h2 id="11-7-定义并使用一个抽象基类"><a href="#11-7-定义并使用一个抽象基类" class="headerlink" title="11.7 定义并使用一个抽象基类"></a>11.7 定义并使用一个抽象基类</h2><h3 id="抽象基类的父类"><a href="#抽象基类的父类" class="headerlink" title="抽象基类的父类"></a>抽象基类的父类</h3><p>自定义的抽象基类要继承 <code>abc.ABC</code>，在 Python3.4 之前，由于没有 <code>abc.ABC</code> 类，需要在 <code>class</code> 语句中使用 <code>metaclas=</code> 关键字,并将值设置为 <code>abc.ABCMeta</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractClass</span><span class="params">(metaclass=abc.ABCMeta)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>而在 Python 2 中，由于没有 <code>metaclass=</code> 关键字，必须使用 <code>__metaclass__</code> 类属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractClass</span><span class="params">(object)</span>:</span></span><br><span class="line">    __metaclass__ = abc.ABCMeta</span><br></pre></td></tr></table></figure>
+<h3 id="抛出异常"><a href="#抛出异常" class="headerlink" title="抛出异常"></a>抛出异常</h3><p>在自定义类中抛出异常是，可以考虑复用 Python 中预先定义好的异常，具体可参考<a href="https://docs.python.org/dev/library/exceptions.html#exception-hierarchy" target="_blank" rel="noopener">异常层次结构</a>。</p>
+<h3 id="抽象方法"><a href="#抽象方法" class="headerlink" title="抽象方法"></a>抽象方法</h3><p>与其他方法描述符一起使用时，<code>@abstractmethod</code> 应该放在最里层。另外，<code>@abstractclassmethod</code>、<code>@abstractstaticmethod</code> 和 <code>@abstractproperty</code> 三个装饰器从 Python3.3 起就废弃掉了，所以，推荐使用以下方式声明抽象类方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AbstractClass</span><span class="params">(abc.ABC)</span>:</span></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line"><span class="meta">    @abc.abstractmethod </span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">an_abstract_classmethod</span><span class="params">(cls)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h3 id="虚拟子类"><a href="#虚拟子类" class="headerlink" title="虚拟子类"></a>虚拟子类</h3><p>注册虚拟子类的方式是在抽象基类上调用 <code>register</code> 方法。这么做之后，注册的类会变成抽象基类的虚拟子类，而且 <code>issubclass</code> 和 <code>isinstance</code> 等函数都能识别，<strong>但是注册的类不会从抽象基类中继承任何方法或属性</strong>。</p>
+<p>像这样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SuperClass.register</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VirtualSubclass</span><span class="params">(list)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<p>如果是 Python 3.3 或之前的版本，不能把 <code>.register</code> 当作类装饰器使用，必须使用标准的调用句法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VirtualSubclass</span><span class="params">(list)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">SuperClass.register(TomboList)</span><br></pre></td></tr></table></figure>
+<p>虽然我们注册了虚拟子类，但是其 <code>__mro__</code> 中并不会列出该子类的虚拟超类。并且，一个类的 <code>__subclasses__</code> 方法只会返回该类的直接子类列表，而 <code>_abc_registry</code> 会返回一个包含该抽象类的所有虚拟子类的 <code>WeakSet</code> 对象。</p>
+<h2 id="鹅的行为有可能像鸭子"><a href="#鹅的行为有可能像鸭子" class="headerlink" title="鹅的行为有可能像鸭子"></a>鹅的行为有可能像鸭子</h2><p>在 Python 中，即便不注册虚拟子类，抽象基类也能把一个类识别为虚拟子类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Struggle</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">23</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: <span class="keyword">from</span> collections <span class="keyword">import</span> abc</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: isinstance(Struggle(), abc.Sized)</span><br><span class="line">Out[<span class="number">7</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: issubclass(Struggle, abc.Sized)</span><br><span class="line">Out[<span class="number">8</span>]: <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<p>出现这种现象的原因是 <code>abc.Sized</code> 实现了一个特殊的类方法：<code>__subclasshook__</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sized</span><span class="params">(metaclass=ABCMeta)</span>:</span></span><br><span class="line"></span><br><span class="line">    __slots__ = ()</span><br><span class="line"></span><br><span class="line"><span class="meta">    @abstractmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__len__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__subclasshook__</span><span class="params">(cls, C)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> cls <span class="keyword">is</span> Sized:</span><br><span class="line">            <span class="keyword">if</span> any(<span class="string">"__len__"</span> <span class="keyword">in</span> B.__dict__ <span class="keyword">for</span> B <span class="keyword">in</span> C.__mro__):</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">NotImplemented</span></span><br></pre></td></tr></table></figure>
+<p>也就是说，其会检测传入类对象本身及其所继承的类中是否能够处理 <code>__len__</code> 方法的调用，如果可以，即认为该类是自身的子类。</p>
+<p><code>__subclasshook__</code> 在白鹅类型中添加了一些鸭子类型的踪迹。我们可以使用抽象基类定义正式接口，可以始终使用 <code>isinstance</code> 检查，也可以完全使用不相关的类，只要实现特定的方法即可（或者做些事情让 <code>__subclasshook__</code> 信服）。</p>
+<p>但是，不建议在我们自定义的抽象类中实现该方法，这可能会使得你的类可靠性变得很低。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-18T11:43:48.704Z" itemprop="dateUpdated">2019-07-18 19:43:48</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&title=《Chapter 11 - 函数装饰器和闭包》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&title=《Chapter 11 - 函数装饰器和闭包》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/05/04/fluent-python-interface/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 11 - 函数装饰器和闭包》 — live in passion&url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/13/fluent-python-ad-and-disad-of-inherit/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 12 - 继承的优缺点</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/27/fluent-python-sequence/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 10 - 序列的修改、散列和切片</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&title=《Chapter 11 - 函数装饰器和闭包》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&title=《Chapter 11 - 函数装饰器和闭包》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/05/04/fluent-python-interface/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 11 - 函数装饰器和闭包》 — live in passion&url=https://homholueng.github.io/2019/05/04/fluent-python-interface/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/05/04/fluent-python-interface/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrUlEQVR42u3aQW7jMAwF0Nz/0h1gVh2gVj9JMe0Az6vASGo9LUz2i69XfH38vZ4+f77zdP/8nfz7r40LDw8Pr7X05GFPDzj/Ntmg8988b+v5uXh4eHh7vKQYJFf+lk7weZl5vI+Hh4f3o7xq73qr8FTLCR4eHt5v5lUXlNzBw8PD+194G6FqL0pIYouVrAUPDw+vnxiUF/r+z28938PDw8OLS8LkZT0vOb0Q+Z/f4uHh4S3wkvi1FzHM491bR2t4eHh4d3m94ade3HAOMqoriQJfPDw8vGVe9bWbHPz38JP1fPEfAx4eHt5V3rm1zcehqiWkN7ZVbeLx8PDw3sPLQ4dqSJHfL7fOvV3Hw8PDa/GSMjAfe8qDiQRTeAoeHh7eAi+PCXpLn7yl5005Hh4e3h5vYxGTIlENRAqtPx4eHt5VXnXc6nwnZ5Rf7tWsBQ8PD+8qrzredKt1njflUaiBh4eHt8CrLrF5eF98V28csOHh4eFt8PKBp/zByePzrRxtIh4eHt5VXq/9rQaseYhQZXyzHjw8PLyrvN5wVTW0zdviaszxzRrw8PDw1ni9xU3GDjbi48fCgIeHh3eVN399n0vI+Uoa6FvxLh4eHt4tXv7gecibtMK3CkzU7+Ph4eH1u9Dy0EACq8a71W1qjiDg4eHhjXl5kNrbuWpJmAS4eHh4eO/n9cahesu9uymPZQYPDw9vgXf3oKs6anB3myIYHh4e3pg3P7LKw9YzuHoYFhUwPDw8vAXevJ7k7WyycZNAeVRU8PDw8Iq8vBjk9+fDBJOGGw8PD+89vPOXJo1vb7DgciSBh4eH90O83ou7OoA12YgvvomHh4f3C3jzg/9k6UnkEd3Hw8PDW+NNwoikIZ6MTOWR7krWgoeHh7d2tt570U9GAXpRBR4eHt6A9we5DJxx7m62cAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

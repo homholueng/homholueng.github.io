@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 4 - 文本和字节序列 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="了解编码问题如何找出字节序列的编码如果我们不知道一个文件使用的是什么编码格式，可以使用统一字符编码侦测包 Chardet 来帮助我们判断文件的编码： 12$ chardetect 04-text-byte.asciidoc04-text-byte.asciidoc: utf-8 with confidence 0.99 处理文本文件处理文本你文件的最佳实践是 “Unicode Sandwich”。">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 4 - 文本和字节序列">
+<meta property="og:url" content="https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="了解编码问题如何找出字节序列的编码如果我们不知道一个文件使用的是什么编码格式，可以使用统一字符编码侦测包 Chardet 来帮助我们判断文件的编码： 12$ chardetect 04-text-byte.asciidoc04-text-byte.asciidoc: utf-8 with confidence 0.99 处理文本文件处理文本你文件的最佳实践是 “Unicode Sandwich”。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/unicode_sandwich.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.775Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 4 - 文本和字节序列">
+<meta name="twitter:description" content="了解编码问题如何找出字节序列的编码如果我们不知道一个文件使用的是什么编码格式，可以使用统一字符编码侦测包 Chardet 来帮助我们判断文件的编码： 12$ chardetect 04-text-byte.asciidoc04-text-byte.asciidoc: utf-8 with confidence 0.99 处理文本文件处理文本你文件的最佳实践是 “Unicode Sandwich”。">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/unicode_sandwich.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 4 - 文本和字节序列</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 4 - 文本和字节序列</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-17T14:36:12.000Z" itemprop="datePublished" class="page-time">
+  2019-03-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#了解编码问题"><span class="post-toc-number">1.</span> <span class="post-toc-text">了解编码问题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#如何找出字节序列的编码"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">如何找出字节序列的编码</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#处理文本文件"><span class="post-toc-number">2.</span> <span class="post-toc-text">处理文本文件</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#为了正确比较二规范化-Unicode-字符串"><span class="post-toc-number">3.</span> <span class="post-toc-text">为了正确比较二规范化 Unicode 字符串</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#兼容字符"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">兼容字符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#大小写折叠"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">大小写折叠</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#规范化文本匹配实用函数"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">规范化文本匹配实用函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#去除变音符号"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">去除变音符号</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Unicode-文本排序"><span class="post-toc-number">4.</span> <span class="post-toc-text">Unicode 文本排序</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-text-and-byte" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 4 - 文本和字节序列</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-17 22:36:12" datetime="2019-03-17T14:36:12.000Z" itemprop="datePublished">2019-03-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="了解编码问题"><a href="#了解编码问题" class="headerlink" title="了解编码问题"></a>了解编码问题</h2><h3 id="如何找出字节序列的编码"><a href="#如何找出字节序列的编码" class="headerlink" title="如何找出字节序列的编码"></a>如何找出字节序列的编码</h3><p>如果我们不知道一个文件使用的是什么编码格式，可以使用统一字符编码侦测包 Chardet 来帮助我们判断文件的编码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> chardetect 04-text-byte.asciidoc</span><br><span class="line">04-text-byte.asciidoc: utf-8 with confidence 0.99</span><br></pre></td></tr></table></figure>
+<h2 id="处理文本文件"><a href="#处理文本文件" class="headerlink" title="处理文本文件"></a>处理文本文件</h2><p>处理文本你文件的最佳实践是 “Unicode Sandwich”。即：要尽早的把输入（例如读取文本文件时）的字节序列解码成字符串，而三明治中的 “肉片” 是程序的业务逻辑，在这里只能处理字符串对象。最后，要尽可能晚的把字符串编码成字节序列。</p>
+<img src="/2019/03/17/fluent-python-text-and-byte/unicode_sandwich.png" title="[Unicode 三明治]">
+<p>同时，在进行文本文件的读取和写入时，最好显式地指定编解码方式，不要依赖当前环境的默认值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>open(<span class="string">'cafe.txt'</span>, <span class="string">'w'</span>, encoding=<span class="string">'utf-8'</span>).write(<span class="string">'café'</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>open(<span class="string">'cafe.txt'</span>, encoding=<span class="string">'utf-8'</span>).read()</span><br><span class="line">café</span><br></pre></td></tr></table></figure>
+<h2 id="为了正确比较二规范化-Unicode-字符串"><a href="#为了正确比较二规范化-Unicode-字符串" class="headerlink" title="为了正确比较二规范化 Unicode 字符串"></a>为了正确比较二规范化 Unicode 字符串</h2><p>因为 Unicode 有组合字符（变音符号和附加到前一个字符上的记号，打印时作为一个整体），所以字符串比较起来很复杂。</p>
+<p>例如，<code>“café”</code> 这个词可以使用两种方式构成，分别有 4 个和 5 个码位，但是结果完全一样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">26</span>]: s1 = <span class="string">'café'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">27</span>]: s2 = <span class="string">'cafe\u0301'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">28</span>]: s1, s2</span><br><span class="line">Out[<span class="number">28</span>]: (<span class="string">'café'</span>, <span class="string">'café'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">29</span>]: len(s1), len(s2)</span><br><span class="line">Out[<span class="number">29</span>]: (<span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">30</span>]: s1 == s2</span><br><span class="line">Out[<span class="number">30</span>]: <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<p>在 Unicode 标准中，<code>&#39;é&#39;</code> 和 <code>&#39;e\u0301&#39;</code> 这样的序列叫“标准等价物”（canonical equivalent），应用程序应该把它们视作相同的字符。但是，Python 看到的是不同的码位序列，因此判定二者不相等。</p>
+<p>这个问题的解决方案是使用 <code>unicodedata.normalize</code> 函数提供的 Unicode 规范化。这个函数的第一个参数是这 4 个字符串中的一个：</p>
+<ul>
+<li><code>&#39;NFC&#39;</code>：使用最少的码位构成等价的字符串。</li>
+<li><code>&#39;NFD&#39;</code>：把组合字符分解成基字符和单独的组合字符。</li>
+<li><code>&#39;NFKC&#39;</code>：使用最少的码位构成等价的字符串，对兼容字符有影响。</li>
+<li><code>&#39;NFKD&#39;</code>：把组合字符分解成基字符和单独的组合字符，对兼容字符有影响。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">18</span>]: <span class="keyword">from</span> unicodedata <span class="keyword">import</span> normalize</span><br><span class="line"></span><br><span class="line">In [<span class="number">19</span>]: s1 = <span class="string">'café'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">20</span>]: s2 = <span class="string">'cafe\u0301'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">21</span>]: len(s1), len(s2)</span><br><span class="line">Out[<span class="number">21</span>]: (<span class="number">4</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">22</span>]: len(normalize(<span class="string">'NFC'</span>, s1)), len(normalize(<span class="string">'NFC'</span>, s2))</span><br><span class="line">Out[<span class="number">22</span>]: (<span class="number">4</span>, <span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">23</span>]: len(normalize(<span class="string">'NFD'</span>, s1)), len(normalize(<span class="string">'NFD'</span>, s2))</span><br><span class="line">Out[<span class="number">23</span>]: (<span class="number">5</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">24</span>]: normalize(<span class="string">'NFC'</span>, s1) == normalize(<span class="string">'NFC'</span>, s2)</span><br><span class="line">Out[<span class="number">24</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: normalize(<span class="string">'NFD'</span>, s1) == normalize(<span class="string">'NFD'</span>, s2)</span><br><span class="line">Out[<span class="number">25</span>]: <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<p>西方键盘通常能输出组合字符，因此用户输入的文本默认是 NFC 形式。不过，安全起见，保存文本之前，最好使用 <code>normalize(&#39;NFC&#39;, user_text)</code> 清洗字符串。</p>
+<h3 id="兼容字符"><a href="#兼容字符" class="headerlink" title="兼容字符"></a>兼容字符</h3><p>虽然 Unicode 的目标是为各个字符提供“规范的”码位，但是为了兼容现有的标准，有些字符会出现多次。例如，虽然希腊字母表中有 <code>“μ”</code> 这个字母（码位是 U+03BC，GREEK SMALL LETTER MU），但是 Unicode 还是加入了微符号 <code>&#39;µ&#39;</code>（U+00B5），以便与 latin1 相互 转换。因此，微符号是一个“兼容字符”。</p>
+<p>在 NFKC 和 NFKD 形式中，各个兼容字符会被替换成一个或多个“兼容分解”字符。二分之一 <code>&#39;½&#39;（U+00BD）</code>经过兼容分解后得到的是三个字符序列 <code>&#39;1/2&#39;</code>；微符号 <code>&#39;µ&#39;（U+00B5）</code>经过兼容分解后得到的是小写字母 <code>&#39;μ&#39;（U+03BC）</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">31</span>]: <span class="keyword">from</span> unicodedata <span class="keyword">import</span> normalize, name</span><br><span class="line"></span><br><span class="line">In [<span class="number">32</span>]: half = <span class="string">'½'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">33</span>]: normalize(<span class="string">'NFKC'</span>, half)</span><br><span class="line">Out[<span class="number">33</span>]: <span class="string">'1⁄2'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">34</span>]: four_squared = <span class="string">'4²'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">36</span>]: normalize(<span class="string">'NFKC'</span>, four_squared)</span><br><span class="line">Out[<span class="number">36</span>]: <span class="string">'42'</span></span><br></pre></td></tr></table></figure>
+<p>从上面的例子中能够看出，NFKC 或 NFKD 可能会损失或曲解信息，在使用这两种规范化形式时要格外注意。</p>
+<h3 id="大小写折叠"><a href="#大小写折叠" class="headerlink" title="大小写折叠"></a>大小写折叠</h3><p>大小写折叠其实就是把所有文本变成小写，再做些其他转换。这个功能由 <code>str.casefold()</code> 方法（Python 3.3 新增）支持。</p>
+<p>自 Python 3.4 起，<code>str.casefold()</code> 和 <code>str.lower()</code> 得到不同结果的有 116 个码位。Unicode 6.3 命名了 110 122 个字符，这只占 0.11%。</p>
+<h3 id="规范化文本匹配实用函数"><a href="#规范化文本匹配实用函数" class="headerlink" title="规范化文本匹配实用函数"></a>规范化文本匹配实用函数</h3><p>下面两个工具函数能够帮助我们对 Unicode 字符进行比较：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> unicodedata <span class="keyword">import</span> normalize</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">nfc_equal</span><span class="params">(str1, str2)</span>:</span> </span><br><span class="line">    <span class="keyword">return</span> normalize(<span class="string">'NFC'</span>, str1) == normalize(<span class="string">'NFC'</span>, str2)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fold_equal</span><span class="params">(str1, str2)</span>:</span> </span><br><span class="line">    <span class="keyword">return</span> (normalize(<span class="string">'NFC'</span>, str1).casefold() == normalize(<span class="string">'NFC'</span>, str2).casefold())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">In [<span class="number">38</span>]: s1 = <span class="string">'café'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">39</span>]: s2 = <span class="string">'cafe\u0301'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">40</span>]: s1 == s2</span><br><span class="line">Out[<span class="number">40</span>]: <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">41</span>]: nfc_equal(s1, s2)</span><br><span class="line">Out[<span class="number">41</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">42</span>]: nfc_equal(<span class="string">'A'</span>, <span class="string">'a'</span>)</span><br><span class="line">Out[<span class="number">42</span>]: <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">43</span>]: s3 = <span class="string">'Straße'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">44</span>]: s4 = <span class="string">'strasse'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">46</span>]: s3 == s4</span><br><span class="line">Out[<span class="number">46</span>]: <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">47</span>]: nfc_equal(s3, s4)</span><br><span class="line">Out[<span class="number">47</span>]: <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">48</span>]: fold_equal(s3, s4)</span><br><span class="line">Out[<span class="number">48</span>]: <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<h3 id="去除变音符号"><a href="#去除变音符号" class="headerlink" title="去除变音符号"></a>去除变音符号</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> unicodedata</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">shave_marks</span><span class="params">(txt)</span>:</span></span><br><span class="line">    norm_txt = unicodedata.normalize(<span class="string">'NFD'</span>, txt)</span><br><span class="line">    shaved = <span class="string">''</span>.join(c <span class="keyword">for</span> c <span class="keyword">in</span> norm_txt <span class="keyword">if</span> <span class="keyword">not</span> unicodedata.combining(c))</span><br><span class="line">    <span class="keyword">return</span> unicodedata.normalize(<span class="string">'NFC'</span>, shaved)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">In [<span class="number">56</span>]: order = <span class="string">'“Herr Voß: • ½ cup of OEtker™ caffè latte • bowl of açaí.”'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">57</span>]: shave_marks(order)</span><br><span class="line">Out[<span class="number">57</span>]: <span class="string">'“Herr Voß: • ½ cup of OEtker™ caffe latte • bowl of acai.”'</span></span><br></pre></td></tr></table></figure>
+<h2 id="Unicode-文本排序"><a href="#Unicode-文本排序" class="headerlink" title="Unicode 文本排序"></a>Unicode 文本排序</h2><p>在 Python 中，非 ASCII 文本的标准排序方式是使用 <code>locale.strxfrm</code> 函数，根据 locale 模块的文档 （<a href="https://docs.python.org/3/library/locale.html?highlight=strxfrm#locale.strxfrm)，这个函数会“把字符串转换成适合所在区域进行比较的形式”。" target="_blank" rel="noopener">https://docs.python.org/3/library/locale.html?highlight=strxfrm#locale.strxfrm)，这个函数会“把字符串转换成适合所在区域进行比较的形式”。</a></p>
+<p>但是上述的排序方式需要更改当前环境下的全局区域设置，而且，还需要操作系统支持这一功能，所以，推荐使用 <code>PyUCA</code> 库来进行 Unicode 字符的排序：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> pyuca</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: coll = pyuca.Collator()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: fruits = [<span class="string">'caju'</span>, <span class="string">'atemoia'</span>, <span class="string">'cajá'</span>, <span class="string">'açaí'</span>, <span class="string">'acerola'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: sorted_fruits = sorted(fruits, key=coll.sort_key)</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: sorted_fruits</span><br><span class="line">Out[<span class="number">5</span>]: [<span class="string">'açaí'</span>, <span class="string">'acerola'</span>, <span class="string">'atemoia'</span>, <span class="string">'cajá'</span>, <span class="string">'caju'</span>]</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.775Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&title=《Chapter 4 - 文本和字节序列》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&title=《Chapter 4 - 文本和字节序列》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 4 - 文本和字节序列》 — live in passion&url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/18/fluent-python-first-class-function/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 5 - 一等函数</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/16/fluent-python-dict-and-set/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 3 - 字典和集合</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&title=《Chapter 4 - 文本和字节序列》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&title=《Chapter 4 - 文本和字节序列》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 4 - 文本和字节序列》 — live in passion&url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/17/fluent-python-text-and-byte/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACs0lEQVR42u3ay3IbMQwEQP//TzvXVMUrzRCEo0PrpNJjl60DAQ349RU/vh8ef7/79Mnk9eRe/37y2gMPDw/v0tKfFpd/9/UVcsbku3h4eHh7vKcd9fXzs9snn8zX88aCh4eH9wG8171rcs22XU4acTw8PLxP5iWtdnK1PNT4b3UPDw8P7yUvD2rzpbTLbVvqy1kLHh4e3sIU6XOer8z38PDw8MZT9ckhgHyU1RaGYrV4eHh4C7w2os2peQh7FmfkgS8eHh7eBi/ZspOl5EcKJu/m5QcPDw9vj5dHonU7e8S+deAADw8P73d4bayQN9yTpY+GZ3h4eHhXecmizzbu/Ft175+vDQ8PD2+ZNwkjzrb15PX2Oj/M9/Dw8PAWeJP4NQ8v2sNVbYmqk2k8PDy8AS/f4ifHW/PwN2/Eo+MCeHh4eFd5k2NPeUwwX/phGIGHh4e3zGtJ7RGodtA1DzXw8PDwtnltM/16yz47gJUXp6Lk4OHh4V3lTYZMZwOwfMw2L1R4eHh4e7x2g27b6LuMvCzh4eHh7fHaP/8to93cz0rUm0NXeHh4eFd5ZwekWlj+I+ZDuOLQFR4eHt4yr11KnhmfDcnO2nc8PDy8DV57+za6PWyFy/FYXlTw8PDw7vLy4LUtA2fhbDuci2ogHh4e3iVeO5Rqj0m1wcfZcYHHK+Dh4eGt8domeN4ut91vW67w8PDwtnl5yzsPc+dlpggj8PDw8K7yvstHGyK0BWMS6f6wQjw8PLwFXrv55hv9WRCctO8XMHh4eHhjXlsMJmHBJMJoG3o8PDy8bd7Z2CkpCWc1avLJx6MDeHh4eB/ASxbRxhxt/LFYGPDw8PAu8Sajsnmbnv8EeHh4eNu8fMtOAtw8ejgrCYdnyvDw8PAu8do//O2mn8e7k6HahfkeHh4e3vt7/QGoW1/0nBKjRwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Celery 使用指南 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,Celery">
+    <meta name="description" content="概述Celery 是 Python 生态中一个比较有名的分布式任务队列，其具有轻量，灵活及可靠等特性。事实证明，在生产环境下，Celery 也同样值得信赖，有效的使用 Celery 能够帮助我们事半功倍的完成各种工作；另外，深入了解 Celery 的一些特性能够帮助开发者更好的使用它以及避免重复造轮子。本文会从 Celery 的若干个核心功能点出发，讲解 Celery 在日常使用中的一些基本特性及">
+<meta name="keywords" content="Python,Celery">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Celery 使用指南">
+<meta property="og:url" content="https://homholueng.github.io/2019/02/09/celery-introduction/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="概述Celery 是 Python 生态中一个比较有名的分布式任务队列，其具有轻量，灵活及可靠等特性。事实证明，在生产环境下，Celery 也同样值得信赖，有效的使用 Celery 能够帮助我们事半功倍的完成各种工作；另外，深入了解 Celery 的一些特性能够帮助开发者更好的使用它以及避免重复造轮子。本文会从 Celery 的若干个核心功能点出发，讲解 Celery 在日常使用中的一些基本特性及">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/02/09/celery-introduction/WechatIMG72.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.773Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Celery 使用指南">
+<meta name="twitter:description" content="概述Celery 是 Python 生态中一个比较有名的分布式任务队列，其具有轻量，灵活及可靠等特性。事实证明，在生产环境下，Celery 也同样值得信赖，有效的使用 Celery 能够帮助我们事半功倍的完成各种工作；另外，深入了解 Celery 的一些特性能够帮助开发者更好的使用它以及避免重复造轮子。本文会从 Celery 的若干个核心功能点出发，讲解 Celery 在日常使用中的一些基本特性及">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/02/09/celery-introduction/WechatIMG72.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Celery 使用指南</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Celery 使用指南</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-02-09T08:03:44.000Z" itemprop="datePublished" class="page-time">
+  2019-02-09
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基础对象-——-Application"><span class="post-toc-number">2.</span> <span class="post-toc-text">基础对象 —— Application</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#让心脏开始跳动-——-创建一个-APP"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">让心脏开始跳动 —— 创建一个 APP</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用-app-配置-Celery"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">使用 app 配置 Celery</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-直接修改-app-conf-中的值"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">1. 直接修改 app.conf 中的值</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-通过-config-对象进行配置"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">2. 通过 config 对象进行配置</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-通过环境变量进行配置"><span class="post-toc-number">2.2.3.</span> <span class="post-toc-text">3. 通过环境变量进行配置</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#任务队列中的任务-——-Task"><span class="post-toc-number">3.</span> <span class="post-toc-text">任务队列中的任务 —— Task</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#任务的命名"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">任务的命名</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#请在使用自动命名时确保一致的导入方式"><span class="post-toc-number">3.1.1.</span> <span class="post-toc-text">请在使用自动命名时确保一致的导入方式</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#任务注册表"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">任务注册表</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Make-some-noise-——-Calling-Tasks"><span class="post-toc-number">4.</span> <span class="post-toc-text">Make some noise —— Calling Tasks</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#执行选项"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">执行选项</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#周期任务-——-Periodic-Tasks"><span class="post-toc-number">5.</span> <span class="post-toc-text">周期任务 —— Periodic Tasks</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#注册周期任务"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">注册周期任务</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#调度策略"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">调度策略</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#启动调度器"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">启动调度器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Django-用户看这里"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">Django 用户看这里</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#职责划分-——-Routing-Tasks"><span class="post-toc-number">6.</span> <span class="post-toc-text">职责划分 —— Routing Tasks</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#简单的工作流-——-Work-flow"><span class="post-toc-number">7.</span> <span class="post-toc-text">简单的工作流 —— Work-flow</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#任务签名"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">任务签名</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#执行原语"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">执行原语</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#group"><span class="post-toc-number">7.2.1.</span> <span class="post-toc-text">group</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#chain"><span class="post-toc-number">7.2.2.</span> <span class="post-toc-text">chain</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#chord"><span class="post-toc-number">7.2.3.</span> <span class="post-toc-text">chord</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#map-amp-starmap"><span class="post-toc-number">7.2.4.</span> <span class="post-toc-text">map &amp; starmap</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#chunk"><span class="post-toc-number">7.2.5.</span> <span class="post-toc-text">chunk</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#小建议"><span class="post-toc-number">7.3.</span> <span class="post-toc-text">小建议</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#关于-worker"><span class="post-toc-number">8.</span> <span class="post-toc-text">关于 worker</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#探测器"><span class="post-toc-number">8.1.</span> <span class="post-toc-text">探测器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#远程控制"><span class="post-toc-number">8.2.</span> <span class="post-toc-text">远程控制</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#广播函数"><span class="post-toc-number">8.2.1.</span> <span class="post-toc-text">广播函数</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#撤销任务"><span class="post-toc-number">8.2.2.</span> <span class="post-toc-text">撤销任务</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#注意事项"><span class="post-toc-number">8.3.</span> <span class="post-toc-text">注意事项</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">9.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-celery-introduction" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Celery 使用指南</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-02-09 16:03:44" datetime="2019-02-09T08:03:44.000Z" itemprop="datePublished">2019-02-09</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Celery 是 Python 生态中一个比较有名的分布式任务队列，其具有轻量，灵活及可靠等特性。事实证明，在生产环境下，Celery 也同样值得信赖，有效的使用 Celery 能够帮助我们事半功倍的完成各种工作；另外，深入了解 Celery 的一些特性能够帮助开发者更好的使用它以及避免重复造轮子。本文会从 Celery 的若干个核心功能点出发，讲解 Celery 在日常使用中的一些基本特性及某些不常使用的深度功能，帮助开发者对 Celery 有更加全面和深入的了解。</p>
+<p>由于 Celery 在系统中的定位是任务队列，所以其只提供了任务、Worker 的定义及一些周边的功能。Celery 本身需要依赖消息队列来进行消息的分发，即 Broker。本文中的例子所使用的语言及相关组件的版本如下：</p>
+<ul>
+<li>Python：3.6.1</li>
+<li>Celery：4.2.0</li>
+<li>Rabbitmq：3.7.8</li>
+</ul>
+<h2 id="基础对象-——-Application"><a href="#基础对象-——-Application" class="headerlink" title="基础对象 —— Application"></a>基础对象 —— Application</h2><blockquote>
+<p>The Celery library must be instantiated before use, this instance is called an application (or <em>app</em> for short).</p>
+</blockquote>
+<p>虽说 Celery 是一个开箱即用的框架，但是在使用它之前，我们还是需要做一些基础的配置及初始化的工作。首先，我们要先认识一下整个 Celery 库中的基础对象：<strong>Celery Application</strong>（后文简称 app）。当我们完成 app 的初始化后，Celery 就算是进入一个完全可用的状态了。可以将 app 比作整个 Celery 框架的心脏，整个框架都会围绕 app 对象来运行。</p>
+<h3 id="让心脏开始跳动-——-创建一个-APP"><a href="#让心脏开始跳动-——-创建一个-APP" class="headerlink" title="让心脏开始跳动 —— 创建一个 APP"></a>让心脏开始跳动 —— 创建一个 APP</h3><p>其实创建一个 app 十分简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line">app  <span class="comment"># &lt;Celery __main__ at 0x103e93c50&gt;</span></span><br></pre></td></tr></table></figure>
+<p>只需要短短两句代码，就能够完成了一个主模块名为 <code>__main__</code> 的 app 的创建。在开始下面的内容之前，需要了解一个十分重要的概念：<strong>主模块名</strong>。当 Celery 无法决定某一个任务定义函数属于哪一个模块时，其会使用 app 的主模块名作为该函数所属的模块名，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a_task</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">a_task  <span class="comment"># &lt;@task: __main__.a_task of __main__ at 0x11038be48&gt; 任务名为 __main__.a_task</span></span><br></pre></td></tr></table></figure>
+<p>当然，我们能够在初始化 app 的时候手动配置主模块名：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">'main_module_name'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a_task</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">a_task  <span class="comment"># &lt;@task: main_module_name.a_task of main_module_name at 0x110939550&gt; 此时任务的名称变成了 main_module_name.a_task</span></span><br></pre></td></tr></table></figure>
+<p>通过上面的两个例子可以看到，Celery 为了降低使用成本，在初始化 app 时会将许多配置设置为默认值。如果 Celery 设置的默认值不符合你的需求，那么你可以通过 app 对象来修改这些配置。</p>
+<h3 id="使用-app-配置-Celery"><a href="#使用-app-配置-Celery" class="headerlink" title="使用 app 配置 Celery"></a>使用 app 配置 Celery</h3><p>通过改变 app 的配置，能够改变 Celery 运行的行为模式。Celery 提供了多种手段来让开发者进行 app 的配置，包括：</p>
+<ul>
+<li>直接修改 <code>app.conf</code> 中的值</li>
+<li>通过 config 对象进行配置</li>
+<li>通过环境变量进行配置</li>
+</ul>
+<p>举个例子，假设我们要让 Celery 在 <code>Asia/Shanghai</code> 时区下工作，并且使用 <code>broker-host.com</code> 提供的 Broker，那么我们可以使用以下几种方法来进行配置：</p>
+<h4 id="1-直接修改-app-conf-中的值"><a href="#1-直接修改-app-conf-中的值" class="headerlink" title="1. 直接修改 app.conf 中的值"></a>1. 直接修改 <code>app.conf</code> 中的值</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line">app.conf.timezone = <span class="string">'Asia/Shanghai'</span></span><br><span class="line">app.conf.enable_utc = <span class="literal">True</span></span><br><span class="line">app.conf.broker_url = <span class="string">'amqp://guest@broker-host.com//'</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-通过-config-对象进行配置"><a href="#2-通过-config-对象进行配置" class="headerlink" title="2. 通过 config 对象进行配置"></a>2. 通过 config 对象进行配置</h4><p>此处的 config 对象可以是一个定义了配置属性的模块，也可以是一个拥有配置属性的对象。如果你喜欢将配置集中放在某个模块下，可以这样进行配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ./conf.py</span></span><br><span class="line"></span><br><span class="line">timezone = <span class="string">'Asia/Shanghai'</span></span><br><span class="line">enable_utc = <span class="literal">True</span></span><br><span class="line">broker_url = <span class="string">'amqp://guest@broker-host.com//'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ./app.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> conf</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line">app.config_from_object(conf)</span><br></pre></td></tr></table></figure>
+<p>或者你也可以选择使用类来管理这些配置：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Config</span>:</span></span><br><span class="line">    timezone = <span class="string">'Asia/Shanghai'</span></span><br><span class="line">    enable_utc = <span class="literal">True</span></span><br><span class="line">    broker_url = <span class="string">'amqp://guest@broker-host.com//'</span></span><br><span class="line"></span><br><span class="line">app.config_from_object(Config)</span><br></pre></td></tr></table></figure>
+<h4 id="3-通过环境变量进行配置"><a href="#3-通过环境变量进行配置" class="headerlink" title="3. 通过环境变量进行配置"></a>3. 通过环境变量进行配置</h4><p>如果我们能够预置好若干个配置模块，然后在 Celery 启动的时候再根据当前的环境选择特定的配置模块，就会让我们的代码更加的灵活。好在 Celery 允许开发者通过环境变量来传递配置模块名，使得我们得以实现这一功能：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置默认的配置模块名</span></span><br><span class="line">os.environ.setdefault(<span class="string">'CELERY_CONFIG_MODULE'</span>, <span class="string">'celeryconfig'</span>)</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line">app.config_from_envvar(<span class="string">'CELERY_CONFIG_MODULE'</span>)</span><br></pre></td></tr></table></figure>
+<p>上述的若干个例子中仅仅展示了 Celery 配置选项中的冰山一角，如果想要了解完整的配置选项，请移步<a href="https://celery.readthedocs.io/en/latest/userguide/configuration.html#configuration" target="_blank" rel="noopener">配置手册</a>。</p>
+<h2 id="任务队列中的任务-——-Task"><a href="#任务队列中的任务-——-Task" class="headerlink" title="任务队列中的任务 —— Task"></a>任务队列中的任务 —— Task</h2><p>如果说 app 是 Celery 的心脏，那么任务就是 Celery 的灵魂。在 Celery 中，任务能过通过任意可调用对象创建出来，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task()</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p>这里要引入一个绑定任务（bound task）的概念，如果我们将某个可调用对象设定为绑定任务，那么在任务执行时，我们就能够拿到当前任务对象（Task）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@task(bind=True)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p>当某个可调用对象被设置成绑定任务后，该对象被调用后第一个参数一定是当前被执行的任务对象实例（Task），与 Python 中的绑定方法（bound method）相似。在该任务实例中，我们能够拿到一些比较有用的信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@task(bind=True)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(self, x, y)</span>:</span></span><br><span class="line">    logger.info(self.request.id)  <span class="comment"># 获取该次任务的唯一 ID</span></span><br><span class="line">    logger.info(self.request.args)  <span class="comment"># 获取该次任务请求的位置参数</span></span><br><span class="line">    logger.info(self.request.kwargs)  <span class="comment"># 获取该次任务请求的关键字参数</span></span><br><span class="line">    logger.info(self.acks_late)  <span class="comment"># 该任务是否是延迟确认任务</span></span><br><span class="line">    logger.info(self.backend)  <span class="comment"># 该任务的结果存储后端</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<h3 id="任务的命名"><a href="#任务的命名" class="headerlink" title="任务的命名"></a>任务的命名</h3><blockquote>
+<p>Every task must have a unique name.</p>
+</blockquote>
+<p>为什么每个任务都需要拥有一个唯一的名字呢？因为 Celery 内部会通过 <code>name -&gt; task</code> 的映射关系来维护用户注册的任务。当我们向 Celery 发起一个执行任务的请求时，Celery 并不会将整段任务定义的代码放到队列中，而是将任务的名字放入执行请求中，当 worker 收到该请求后，则会根据任务名字来找到任务的定义。所以任务的名字必须是唯一的。</p>
+<p>但是在上述的一些例子中，我们在定义任务时并没有显示的为任务设置名称，那么 Celery 是如何找到这些任务的呢？</p>
+<p>在我们没有显式的设置任务名称时，Celery 会为我们定义的任务设置默认名，这个默认名会根据<strong>任务函数所在的模块</strong>及<strong>任务函数的命名</strong>来确定。也就是说，如果我们在 <code>tasks.py</code> 文件下定义了一个名为 <code>add</code> 的任务，那么 Celery 默认会将其名字设置为 <code>tasks.add</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tasks.py</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line">print(add.name)  <span class="comment"># 'tasks.add'</span></span><br></pre></td></tr></table></figure>
+<p>当然，你也可以在定义任务时显式的为这些任务命名：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># tasks.py</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.add')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line">print(add.name)  <span class="comment"># 'task.tasks.add'</span></span><br></pre></td></tr></table></figure>
+<h4 id="请在使用自动命名时确保一致的导入方式"><a href="#请在使用自动命名时确保一致的导入方式" class="headerlink" title="请在使用自动命名时确保一致的导入方式"></a>请在使用自动命名时确保一致的导入方式</h4><p>Celery 为任务设置默认名的行为的确方便了开发者，但是也带来了一些潜在的问题，假如我们有下面这样的一个目录结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">task</span><br><span class="line">├── __init__.py</span><br><span class="line">└── tasks.py</span><br></pre></td></tr></table></figure>
+<p>然后在 <code>task/tasks.py</code> 文件中定义了这样的一个任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br></pre></td></tr></table></figure>
+<p>如果我们尝试在不同的目录下导入该任务，就会出现任务名不一致的情况：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.name</span><br><span class="line"><span class="string">'tasks.add'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> task.tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.name</span><br><span class="line"><span class="string">'task.tasks.add'</span></span><br></pre></td></tr></table></figure>
+<p>也就是说，如果 worker 与主程序导入任务的方式不同，那么在主程序发送执行任务的请求时 worker 就会抛出 <code>NotRegistered</code> 错误，因为主程序看到的任务名与 worker 看到的任务名是不同的。除了保持一致的任务导入方式外，我们还可以通过显式的为任务命名来规避这个问题，当我们显式的为某个任务设置名称后，该任务的名字就不会因导入的方式变化而变化了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task(name='task.tasks.add')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.name</span><br><span class="line"><span class="string">'task.tasks.add'</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> task.tasks <span class="keyword">import</span> add</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.name</span><br><span class="line"><span class="string">'task.tasks.add'</span></span><br></pre></td></tr></table></figure>
+<h3 id="任务注册表"><a href="#任务注册表" class="headerlink" title="任务注册表"></a>任务注册表</h3><p>在上面一个小节中，我们不止一次提到任务注册表这个概念，其实在 Celery 中，要获取任务注册表非常简单，app 对象中的 <code>tasks</code> 属性就是 Celery 的任务注册表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> proj.celery <span class="keyword">import</span> app</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.tasks</span><br><span class="line">&#123;<span class="string">'celery.chord_unlock'</span>:</span><br><span class="line">    &lt;@task: celery.chord_unlock&gt;,</span><br><span class="line"> <span class="string">'celery.backend_cleanup'</span>:</span><br><span class="line">    &lt;@task: celery.backend_cleanup&gt;,</span><br><span class="line"> <span class="string">'celery.chord'</span>:</span><br><span class="line">    &lt;@task: celery.chord&gt;&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，只有当定义任务的模块在代码中被导入了，这些任务才会出现在注册表中。所以，Celery worker 和主程序中都维护了这样的一个字典，并通过唯一的任务名来映射到具体的任务。</p>
+<h2 id="Make-some-noise-——-Calling-Tasks"><a href="#Make-some-noise-——-Calling-Tasks" class="headerlink" title="Make some noise —— Calling Tasks"></a>Make some noise —— Calling Tasks</h2><p>任务队列最迷人的地方不是它对任务的定义，而是其执行任务的能力。在我们定义好各种各样的任务之后，我们还需要去调用他们，发挥其真正的价值。但是在 Celery 中，调用任务的姿势（方法）也是一门小学问。比如对于一个简单的 <code>add</code> 任务，就能够通过以下几种方式去执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">add.delay(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line">add.apply_async(args=(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">add.apply_async((<span class="number">1</span>, <span class="number">2</span>), countdown=<span class="number">10</span>)</span><br><span class="line">add(<span class="number">1</span>, <span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+<p>看似复杂，但其实 Celery 调用任务的方式能够总结为以下三种：</p>
+<ol>
+<li><code>apply_async(args[, kwargs[, …]])</code>：调用任务的标准 API，调用者能够按需传入各种执行选项，上述例子中的 <code>add.apply_async((1, 2), countdown=10)</code> 调用即传入了 <code>countdown</code> 选项，这使得该任务会在 10 秒后被执行。</li>
+<li><code>delay(*args, **kwargs)</code>：<code>apply_async</code> 的捷径方法，不支持传入执行选项。</li>
+<li>直接调用（<code>__call__</code>）：直接调用该任务，如上述代码中的 <code>add(1, 2)</code>。若使用这种调用方式，则任务不会被发送到 Worker 中，而是在当前线程中执行。</li>
+</ol>
+<p>当我们不需要使用执行选项时，笔者推荐各位尽量使用 <code>delay</code> 来执行任务，使用 <code>delay</code> 会让发起任务的代码看起来更加自然：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">task.delay(arg1, arg2, kwarg1=<span class="string">'x'</span>, kwarg2=<span class="string">'y'</span>)  <span class="comment"># 使用 delay</span></span><br><span class="line">task.apply_async(args=[arg1, arg2], kwargs=&#123;<span class="string">'kwarg1'</span>: <span class="string">'x'</span>, <span class="string">'kwarg2'</span>: <span class="string">'y'</span>&#125;)  <span class="comment"># 使用 apply_async</span></span><br></pre></td></tr></table></figure>
+<h3 id="执行选项"><a href="#执行选项" class="headerlink" title="执行选项"></a>执行选项</h3><p>当我们对任务的某次执行有一些特殊的要求时，就需要用到 <code>apply_async</code> 接口提供的各种执行选项了，例如你希望某个任务在 30 秒后再开始执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下两个调用是等价的</span></span><br><span class="line">add.apply_async((<span class="number">2</span>, <span class="number">2</span>), countdown=<span class="number">30</span>)</span><br><span class="line">add.apply_async((<span class="number">2</span>, <span class="number">2</span>), eta=datetime.utcnow() + timedelta(seconds=<span class="number">30</span>))</span><br></pre></td></tr></table></figure>
+<p>或者是你希望为某个任务设置一个过期时间（当 worker 收到一个过期的任务时，会放弃执行该任务）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime, timedelta</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下两个调用是等价的</span></span><br><span class="line">add.apply_async((<span class="number">10</span>, <span class="number">10</span>), expires=<span class="number">5</span>)</span><br><span class="line">add.apply_async((<span class="number">10</span>, <span class="number">10</span>), expires=datetime.utcnow() + timedelta(seconds=<span class="number">5</span>))</span><br></pre></td></tr></table></figure>
+<p>该方法支持的执行选项还有很多，就不在此一一赘述，感兴趣的读者可以到 <a href="https://celery.readthedocs.io/en/latest/reference/celery.app.task.html#celery.app.task.Task.apply_async" target="_blank" rel="noopener">API 手册</a>中了解。笔者推荐各位了解一下各个执行选项的作用，这样能够使你在遇到一些新的需求时能够更加快速的找到解决方案，避免重复造轮子。</p>
+<h2 id="周期任务-——-Periodic-Tasks"><a href="#周期任务-——-Periodic-Tasks" class="headerlink" title="周期任务 —— Periodic Tasks"></a>周期任务 —— Periodic Tasks</h2><p>Celery 自带了一个名为 <strong>celery beat</strong> 的调度器，这个调度器能够让我们周期性的执行一些我们预先定义好的任务。</p>
+<h3 id="注册周期任务"><a href="#注册周期任务" class="headerlink" title="注册周期任务"></a>注册周期任务</h3><p>只要将任务加入到调度列表中，调度器就能够周期性的执行这些任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.on_after_configure.connect</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">setup_periodic_tasks</span><span class="params">(sender, **kwargs)</span>:</span></span><br><span class="line">    <span class="comment"># 每 10s 调用一次 test('hello')</span></span><br><span class="line">    sender.add_periodic_task(<span class="number">10.0</span>, test.s(<span class="string">'hello'</span>), name=<span class="string">'add every 10'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 每 30s 调用一次 test('hello')</span></span><br><span class="line">    sender.add_periodic_task(<span class="number">30.0</span>, test.s(<span class="string">'world'</span>), expires=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 在每周一的早上 7:30 调用一次 test('Happy Mondays')</span></span><br><span class="line">    sender.add_periodic_task(</span><br><span class="line">        crontab(hour=<span class="number">7</span>, minute=<span class="number">30</span>, day_of_week=<span class="number">1</span>),</span><br><span class="line">        test.s(<span class="string">'Happy Mondays!'</span>),</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(arg)</span>:</span></span><br><span class="line">    print(arg)</span><br></pre></td></tr></table></figure>
+<p>上述代码中，我们使用 <code>on_after_configure</code> 信号在 app 完成配置后执行周期任务设置的函数，并通过 <code>add_periodic_task</code> 方法将定义好的任务添加到调度器的调度列表中。我们添加到调度列表的周期任务，其实也维护在 app 内部的一个字典中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.conf.beat_schedule</span><br><span class="line">&#123;<span class="string">'add every 10'</span>: &#123;<span class="string">'schedule'</span>: <span class="number">10.0</span>,</span><br><span class="line">  <span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line">  <span class="string">'args'</span>: (<span class="string">'hello'</span>,),</span><br><span class="line">  <span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line">  <span class="string">'options'</span>: &#123;&#125;&#125;,</span><br><span class="line"> <span class="string">"periodic_tasks.test('world')"</span>: &#123;<span class="string">'schedule'</span>: <span class="number">30.0</span>,</span><br><span class="line">  <span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line">  <span class="string">'args'</span>: (<span class="string">'world'</span>,),</span><br><span class="line">  <span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line">  <span class="string">'options'</span>: &#123;<span class="string">'expires'</span>: <span class="number">10</span>&#125;&#125;,</span><br><span class="line"> <span class="string">"periodic_tasks.test('Happy Mondays!')"</span>: &#123;<span class="string">'schedule'</span>: &lt;crontab: <span class="number">30</span> <span class="number">7</span> <span class="number">1</span> * * (m/h/d/dM/MY)&gt;,</span><br><span class="line">  <span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line">  <span class="string">'args'</span>: (<span class="string">'Happy Mondays!'</span>,),</span><br><span class="line">  <span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line">  <span class="string">'options'</span>: &#123;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>不难发现，周期任务的注册表也是维护在 <code>app.conf</code> 下的，这就意味着，如果你不喜欢通过在代码中调用 API 来注册周期任务，可以选择通过配置的方式来设定周期任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># conf.py</span></span><br><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">beat_schedule = &#123;<span class="string">'add every 10'</span>: &#123;<span class="string">'schedule'</span>: <span class="number">10.0</span>, </span><br><span class="line"><span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line"><span class="string">'args'</span>: (<span class="string">'hello'</span>,),</span><br><span class="line"><span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line"><span class="string">'options'</span>: &#123;&#125;&#125;,</span><br><span class="line"><span class="string">"periodic_tasks.test('world')"</span>: &#123;<span class="string">'schedule'</span>: <span class="number">30.0</span>,</span><br><span class="line"><span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line"><span class="string">'args'</span>: (<span class="string">'world'</span>,),</span><br><span class="line"><span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line"><span class="string">'options'</span>: &#123;<span class="string">'expires'</span>: <span class="number">10</span>&#125;&#125;,</span><br><span class="line"><span class="string">"periodic_tasks.test('Happy Mondays!')"</span>: &#123;<span class="string">'schedule'</span>: crontab(hour=<span class="number">7</span>, minute=<span class="number">30</span>, day_of_week=<span class="number">1</span>),</span><br><span class="line"><span class="string">'task'</span>: <span class="string">'periodic_tasks.test'</span>,</span><br><span class="line"><span class="string">'args'</span>: (<span class="string">'Happy Mondays!'</span>,),</span><br><span class="line"><span class="string">'kwargs'</span>: &#123;&#125;,</span><br><span class="line"><span class="string">'options'</span>: &#123;&#125;&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># tasks.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> conf</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line">app.config_from_object(conf)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">(arg)</span>:</span></span><br><span class="line">    print(arg)</span><br></pre></td></tr></table></figure>
+<h3 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h3><p>如果我们仅仅希望某个任务在固定的时间间隔后被执行，那么只需要在注册周期任务时传递固定的调度间隔即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 每 10s 调用一次 test('hello')</span></span><br><span class="line">sender.add_periodic_task(<span class="number">10.0</span>, test.s(<span class="string">'hello'</span>), name=<span class="string">'add every 10'</span>)</span><br></pre></td></tr></table></figure>
+<p>但在某些场景下， 可能需要更加复杂的调度规则，如在某些天的某个时间点进行调度，这个时候就可以考虑使用 Celery 内置的一些调度策略。其中一个比较常用的调度策略为 <code>crontab</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery.schedules <span class="keyword">import</span> crontab</span><br><span class="line"></span><br><span class="line">app.conf.beat_schedule = &#123;</span><br><span class="line">    <span class="comment"># 在每周一的早上 7:30 调用一次 test('Happy Mondays')</span></span><br><span class="line">    <span class="string">'add-every-monday-morning'</span>: &#123;</span><br><span class="line">        <span class="string">'task'</span>: <span class="string">'tasks.add'</span>,</span><br><span class="line">        <span class="string">'schedule'</span>: crontab(hour=<span class="number">7</span>, minute=<span class="number">30</span>, day_of_week=<span class="number">1</span>),</span><br><span class="line">        <span class="string">'args'</span>: (<span class="number">16</span>, <span class="number">16</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>crontab</code> 本身还支持十分灵活的表达式，关于其更详细的用法，在此不做赘述，有兴趣的读者请移步 <a href="http://docs.celeryproject.org/en/v4.2.0/reference/celery.schedules.html#celery.schedules.crontab" target="_blank" rel="noopener">crontab API 手册</a>。另外一个比较有意思的调度策略是 Celery 提供的 <a href="http://docs.celeryproject.org/en/v4.2.0/userguide/periodic-tasks.html#solar-schedules" target="_blank" rel="noopener">solar schedule</a>，其会根据地球上某个地点的日出日落或是黄昏黎明时间来触发任务执行。</p>
+<h3 id="启动调度器"><a href="#启动调度器" class="headerlink" title="启动调度器"></a>启动调度器</h3><p>完成了周期任务的注册和策略的选择后，只需要把调度器启动起来，就大功告成了:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> celery -A tasks beat</span><br></pre></td></tr></table></figure>
+<h3 id="Django-用户看这里"><a href="#Django-用户看这里" class="headerlink" title="Django 用户看这里"></a>Django 用户看这里</h3><p>如果你是 Django 用户，在使用 celery beat 之前不妨先了解一下 <a href="https://pypi.python.org/pypi/django-celery-beat/" target="_blank" rel="noopener">django-celery-beat</a> 这个扩展，其通过扩展 celery beat 的 <code>Scheduler</code> 类，提供了以下功能：</p>
+<ul>
+<li>将周期任务配置持久到数据库中</li>
+<li>通过 Django admin 来管理周期任务</li>
+<li>为每个 crontab 策略分配不同的时区</li>
+</ul>
+<h2 id="职责划分-——-Routing-Tasks"><a href="#职责划分-——-Routing-Tasks" class="headerlink" title="职责划分 —— Routing Tasks"></a>职责划分 —— Routing Tasks</h2><p>在我们没有手动设置任务路由的情况下，Celery 会为我们在 Rabbitmq 创建一个默认队列，所有的任务执行请求都会被发送到该队列中，我们启动的 worker 也只会默认从该队列中获取消息。这种行为在一些较为简单的场景下并不会出现问题，但假设我们的任务平均耗时相差很大，那么一些平均耗时较长的任务很可能会阻塞后面到来的平均耗时较短的任务，导致系统中的任务平均等待时间较长。</p>
+<p>这时候可以考虑设置多个队列，将不同类型的任务路由到不同的队列中，每个队列都分配一定数量的 worker 来处理。其实在实际场景下，并不一定是根据任务的耗时来进行分配，也可以选择根据任务的<strong>重要程度，性质（计算密集或 IO 密集），甚至是内部实现细节</strong>来进行任务路由的配置。而换句话说，设置任务的路由实际上就是对 worker 进行职责划分，如果两个 worker 处理的队列不同，那么我们可以认为其在系统中所属的角色不同，即职责不同，通过更细化的配置来更好地利用计算机资源。</p>
+<p>下面的例子就展示了如何将两个任务分配到不同的队列中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line">app.conf.task_routes = &#123;</span><br><span class="line">    <span class="string">'task.tasks.task_1'</span>: &#123;<span class="string">'queue'</span>: <span class="string">'queue_1'</span>&#125;,</span><br><span class="line">    <span class="string">'task.tasks.task_2'</span>: &#123;<span class="string">'queue'</span>: <span class="string">'queue_2'</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_1')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_2')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>当然，也可以使用通配符来配置任务的路由：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line">app.conf.task_routes = &#123;</span><br><span class="line">    <span class="string">'task.tasks.task_*'</span>: &#123;<span class="string">'queue'</span>: <span class="string">'queue_1'</span>&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_1')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_1</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_2')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_2</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>在完成了任务路由的配置后，我们需要在启动 worker 时指定其监听的队列：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> celery worker -A tasks -Q queue_1  # 监听 queue_1</span><br><span class="line"><span class="meta">$</span> celery worker -A tasks -Q queue_1,celery  # 同时监听 queue_1 及 celery</span><br></pre></td></tr></table></figure>
+<h2 id="简单的工作流-——-Work-flow"><a href="#简单的工作流-——-Work-flow" class="headerlink" title="简单的工作流 —— Work-flow"></a>简单的工作流 —— Work-flow</h2><p>除了提供单个任务的定义和执行能力之外，Celery 还允许我们将多个任务组合串联起来，形成一整个工作流，在学习如何使用这些能力之前，必须要先了解任务签名这一概念。</p>
+<h3 id="任务签名"><a href="#任务签名" class="headerlink" title="任务签名"></a>任务签名</h3><p>在 Celery 中，<strong>任务签名代表了单个任务的一次调用及相关的参数和执行选项</strong>，换句话说，任务签名表示一次任务调用的行为。任务签名的存在能够使得开发者将任务调用这一行为进行序列化，或在参数中进行传递。创建一个任务签名十分简单：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> signature</span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下两种创建方式是等价的</span></span><br><span class="line">s1 = add.signature((<span class="number">2</span>, <span class="number">2</span>), countdown=<span class="number">10</span>)</span><br><span class="line">s2 = signature(<span class="string">'tasks.add'</span>, args=(<span class="number">2</span>, <span class="number">2</span>), countdown=<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 捷径方法，无法设置执行选项</span></span><br><span class="line">s3 = add.s(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line">s4 = add.s(<span class="number">2</span>, <span class="number">2</span>).set(countdown=<span class="number">10</span>).set(retry=<span class="literal">False</span>)  <span class="comment"># 通过 set 方法来设置执行选项</span></span><br></pre></td></tr></table></figure>
+<p>既然任务签名代表了一次调用的命令，我们自然能够使用这个命令来完成任务的调用，但是需要注意的是，任务签名中的执行选项会被调用执行函数时传入的执行选项覆盖：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">s = add.s(<span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">s()  <span class="comment"># 在当前进程调用</span></span><br><span class="line">s.apply_async()  <span class="comment"># 发送到 worker 执行</span></span><br><span class="line">s.delay()  <span class="comment"># 发送到 worker 执行的捷径方式</span></span><br><span class="line"></span><br><span class="line">s_with_option = add.s(<span class="number">2</span>, <span class="number">2</span>).set(countdown=<span class="number">1</span>)</span><br><span class="line">s_with_option.apply_async(countdown=<span class="number">10</span>)  <span class="comment"># 任务会在 10s 后开始执行，而不是 1s</span></span><br></pre></td></tr></table></figure>
+<p>相信大家都知道 Python 中 <code>functools</code> 模块下的 <code>partial</code> 函数能预置已有函数的某些参数以创建出一个新的函数。而在 Celery 中，任务签名也支持这一特性，在创建任务签名时我们不必将所有的参数都预先设置好，可以预留一些参数在真正执行时再传入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">partial_s = add.s(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下两个调用是等价的</span></span><br><span class="line">partial_s.delay(<span class="number">4</span>)</span><br><span class="line">partial_s.apply_async((<span class="number">2</span>,))</span><br></pre></td></tr></table></figure>
+<p>有了这个特性后，我们就能够在任务的连接和编排中将父任务的结果作为参数传递到子任务中。</p>
+<p>了解了任务签名这个概念后，让我们来看一个使用任务签名来实现任务回调的简单例子，在这个例子中，我们要通过 <code>add</code> 任务来实现 <code>(4 + 4) + 8</code> 这一工作，由于 <code>add</code> 任务单次只能完成两个操作数的相加，所以我们需要组合两个 <code>add</code> 任务来完成这项工作，第一个 <code>add</code> 计算 <code>4 + 4</code>，并把结果传递给第二个 <code>add</code>，第二个 <code>add</code> 则负责完成 <code>8 + 8</code> 的计算，代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line">s = add.s(<span class="number">8</span>)</span><br><span class="line">add.apply_async((<span class="number">4</span>, <span class="number">4</span>), link=s)  <span class="comment"># 使用 link 选项来指定 add 的回调任务</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，通过使用任务签名和回调，我们能够将多个任务串联起来执行，并在任务间传递执行结果。这里需要注意的是：<strong>回调只会在当前任务执行成功的情况下才会发生，并且，父任务的返回值会作为参数传递给回调任务（子任务）</strong>。</p>
+<h3 id="执行原语"><a href="#执行原语" class="headerlink" title="执行原语"></a>执行原语</h3><p>在了解了任务签名及回调的概念后，就可以正式开始学习工作流的编排了。Celery 通过各种执行原语的组合来实现工作流的编排，而这些原语本身也是任务签名，所以开发者能够通过将原语进行再组合来形成更加复杂的任务流。</p>
+<h4 id="group"><a href="#group" class="headerlink" title="group"></a>group</h4><p><code>group</code> 原语能够让一组任务并行执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> group</span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">g = group(add.s(<span class="number">2</span>, <span class="number">2</span>), add.s(<span class="number">4</span>, <span class="number">4</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下三个调用是等价的</span></span><br><span class="line">g()</span><br><span class="line">g.delay()</span><br><span class="line">g.apply_async()</span><br></pre></td></tr></table></figure>
+<p>执行 <code>group</code> 后会返回一个 <code>GroupResult</code> 对象，这个对象中记录了这一组任务的执行结果和一些执行信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> celery <span class="keyword">import</span> group</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>job = group([</span><br><span class="line"><span class="meta">... </span>            add.s(<span class="number">2</span>, <span class="number">2</span>),</span><br><span class="line"><span class="meta">... </span>            add.s(<span class="number">4</span>, <span class="number">4</span>),</span><br><span class="line"><span class="meta">... </span>            add.s(<span class="number">8</span>, <span class="number">8</span>),</span><br><span class="line"><span class="meta">... </span>            add.s(<span class="number">16</span>, <span class="number">16</span>),</span><br><span class="line"><span class="meta">... </span>            add.s(<span class="number">32</span>, <span class="number">32</span>),</span><br><span class="line"><span class="meta">... </span>])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result = job.apply_async()</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.ready()  <span class="comment"># 是否所有任务都完成了</span></span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.successful() <span class="comment"># 是否所有任务都成功了</span></span><br><span class="line"><span class="literal">True</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.get()</span><br><span class="line">[<span class="number">4</span>, <span class="number">8</span>, <span class="number">16</span>, <span class="number">32</span>, <span class="number">64</span>]</span><br></pre></td></tr></table></figure>
+<h4 id="chain"><a href="#chain" class="headerlink" title="chain"></a>chain</h4><p><code>chain</code> 原语允许我们将任务像链表一样串起来，一个接着一个的执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> chain</span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line"><span class="comment"># 以下两个执行是等价的</span></span><br><span class="line">c = chain(add.s(<span class="number">2</span>, <span class="number">2</span>), add.s(<span class="number">4</span>), add.s(<span class="number">8</span>))</span><br><span class="line">c = add.s(<span class="number">2</span>, <span class="number">2</span>) | add.s(<span class="number">4</span>) | add.s(<span class="number">8</span>)</span><br></pre></td></tr></table></figure>
+<p>在这里，我们要先了解一下 Celery 中对于父任务和子任务的定义，我们在上述代码中创建的任务链如下图所示：</p>
+<img src="/2019/02/09/celery-introduction/WechatIMG72.png" title="[任务图示]">
+<p><strong>在 Celery 中，某个任务的前置任务被称为其父任务</strong>，也就是说，上图中的 task1 是 task2 的父任务，而 task2 是 task3 的父任务。</p>
+<p>了解了这个概念之后，我们再来看看 Celery 为我们提供的一些 API。我们在调用 <code>chain</code> 之后，会拿到一个 <code>AsyncResult</code> 对象，通过调用其 <code>get()</code> 方法我们能够获取任务链的调用结果，但是这个结果是任务链最后的一个任务返回的结果，如果你需要获取链条中其他任务的执行结果，可以通过 <code>parent</code> 属性向前获取其父任务的执行结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> chain</span><br><span class="line"><span class="keyword">from</span> tasks <span class="keyword">import</span> add</span><br><span class="line"></span><br><span class="line">c = add.s(<span class="number">2</span>, <span class="number">2</span>) | add.s(<span class="number">4</span>) | add.s(<span class="number">8</span>)</span><br><span class="line">r = c.apply_async()</span><br><span class="line">r.get()  <span class="comment"># return 16</span></span><br><span class="line">r.parent.get()  <span class="comment"># return 8 </span></span><br><span class="line">r.parent.parent.get()  <span class="comment"># return 4</span></span><br><span class="line">r.parent.parent.parent  <span class="comment"># None</span></span><br></pre></td></tr></table></figure>
+<p>不仅如此，我们还能为任务链添加错误处理函数，当链条中的某一个任务出错时，就会调用这个处理函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">logger = logging.getLogger(<span class="string">'celery'</span>)</span><br><span class="line"></span><br><span class="line">app = Celery(<span class="string">'tasks'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_1')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_1</span><span class="params">(fail=False)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> fail:</span><br><span class="line">        <span class="keyword">raise</span> Exception()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.task_2')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_2</span><span class="params">(fail=False)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> fail:</span><br><span class="line">        <span class="keyword">raise</span> Exception()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task(name='task.tasks.log_error')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log_error</span><span class="params">(request, exc, traceback)</span>:</span></span><br><span class="line">    logger.error(<span class="string">'bad thing happened!'</span>)</span><br><span class="line">    logger.error(<span class="string">'--\n\n&#123;0&#125; &#123;1&#125; &#123;2&#125;'</span>.format(request.id, exc, traceback))</span><br></pre></td></tr></table></figure>
+<p>让我们来试一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = task_1.s(<span class="literal">True</span>) | task_2.s()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.apply_async(link_error=log_error.s())</span><br><span class="line">&lt;AsyncResult: <span class="number">2339608</span>b-b735<span class="number">-4510</span><span class="number">-85</span>f8-cad6abf7cbc4&gt;</span><br><span class="line"><span class="comment"># 观察 worker 的输出，正确打印出了出错任务 id，异常和堆栈信息</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.on_error(log_error.s()).delay()</span><br><span class="line">&lt;AsyncResult: <span class="number">871e2</span>a58-d9b1<span class="number">-49</span>be<span class="number">-84</span>d4-be7514eeb6f6&gt;</span><br><span class="line"><span class="comment"># 观察 worker 的输出，正确打印出了出错任务 id，异常和堆栈信息</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = task_1.s() | task_2.s(<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.on_error(log_error.s()).delay()</span><br><span class="line">...</span><br><span class="line">TypeError: task_2() takes <span class="keyword">from</span> <span class="number">0</span> to <span class="number">1</span> positional arguments but <span class="number">2</span> were given</span><br></pre></td></tr></table></figure>
+<p>可以看到链条中的任何一个任务出错后，处理函数都会被调用，但是，当我们尝试让第二个任务出错时，貌似抛出的异常和预期设置的不一样。</p>
+<p>这是因为 Celery 会把父任务的返回值向子任务传递，但是在 <code>c = task_1.s() | task_2.s(True)</code> 语句中我们却给 <code>task_2</code> 手动设置了 <code>fail</code> 的值，这样 <code>task_2</code> 在调用时就会收到两个参数，自然会抛出位置参数过多的异常。要解决这个问题，只需要使用<strong>不可变签名</strong>即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 以下两个调用是等价的</span></span><br><span class="line">si = task_2.signature(args=(<span class="literal">True</span>,), immutable=<span class="literal">True</span>)</span><br><span class="line">si = task_2.si(<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<p><strong>不可变签名在创建后就不会再接收其他的参数</strong>，所以父任务传过来的参数也自然会被忽略：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>c = task_1.s() | task_2.si(<span class="literal">True</span>)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>c.on_error(log_error.s()).delay()</span><br><span class="line"><span class="comment"># 这次即可看到正确的异常被抛出</span></span><br></pre></td></tr></table></figure>
+<p>如果你在任务链条中，不希望某个任务接收父任务的返回值，请务必使用不可变签名。</p>
+<h4 id="chord"><a href="#chord" class="headerlink" title="chord"></a>chord</h4><p>使用 <code>chord</code> 原语能够让某个任务在一组任务完成执行后再开始执行。</p>
+<p>例如我们要计算 <code>1 + 1 + 2 + 2 + ... + n + n</code> 的结果，我们可以将这个任务分为两个步骤（这是一个十分刻意的例子，只是为了说明 <code>chord</code> 的使用方法，最佳解决方案是直接计算 <code>sum(i + i for i in range(n))</code>）：</p>
+<ol>
+<li>完成 <code>n</code> 个 <code>i + i</code> 的计算</li>
+<li>将第 1 步的所有结果进行求和</li>
+</ol>
+<p>那么首先我们需要将任务定义好：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> Celery</span><br><span class="line"></span><br><span class="line">app = Celery()</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(x, y)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> x + y</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tsum</span><span class="params">(numbers)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> sum(numbers)</span><br></pre></td></tr></table></figure>
+<p>然后，动手：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> celery <span class="keyword">import</span> chord</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> tasks <span class="keyword">import</span> add, tsum</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chord(add.s(i, i) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100</span>))(tsum.s()).get()</span><br><span class="line"><span class="number">9900</span></span><br></pre></td></tr></table></figure>
+<p>首先 <code>chord(add.s(i, i) for i in range(100))</code> 返回了一个可调用对象 <code>chord</code>，然后我们调用了这个对象并将 <code>tsum</code> 的签名传了进去，最后调用 <code>get()</code> 取得我们想要的结果。上述的例子也能被拆解为以下的方式来调用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>callback = tsum.s()</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>header = [add.s(i, i) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100</span>)]</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result = chord(header)(callback)</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>result.get()</span><br><span class="line"><span class="number">9900</span></span><br></pre></td></tr></table></figure>
+<p>也就是说，<code>chord</code> 操作分为两个主要的部分：<code>header</code> 和 <code>callback</code>，<code>callback</code> 会在 <code>header</code> 中所有任务都返回后才开始执行，且 <code>header</code> 中的任务的返回值会作为参数传递到  <code>callback</code> 中。但是要注意的是，如果 <code>header</code> 中的任意一个任务执行失败了，那么整个 <code>chord</code> 就会进入失败状态，不能再继续往下执行，对 <code>chord</code> 的失败处理与 <code>chain</code> 类似，可以参考 <a href="https://celery.readthedocs.io/en/latest/userguide/canvas.html#error-handling" target="_blank" rel="noopener">chord error-handling</a>。</p>
+<h4 id="map-amp-starmap"><a href="#map-amp-starmap" class="headerlink" title="map &amp; starmap"></a>map &amp; starmap</h4><p><code>map</code> 和 <code>startmap</code> 都是在某个序列上重复的执行一个任务，但是其与 <code>group</code> 不同之处在：</p>
+<ul>
+<li>只会执行一次任务</li>
+<li>执行是串行的</li>
+</ul>
+<p><code>map</code> 的使用如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>tsum.map([range(<span class="number">10</span>), range(<span class="number">100</span>), range(<span class="number">1000</span>)])()</span><br><span class="line">[<span class="number">45</span>, <span class="number">4950</span>, <span class="number">499500</span>]</span><br></pre></td></tr></table></figure>
+<p>等价于执行了以下任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">temp</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> [tsum(range(<span class="number">10</span>)), tsum(range(<span class="number">100</span>)), tsum(range(<span class="number">1000</span>))]</span><br></pre></td></tr></table></figure>
+<p>而 <code>startmap</code> 的使用如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.starmap(zip(range(<span class="number">10</span>), range(<span class="number">10</span>)))()</span><br><span class="line">[<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">16</span>, <span class="number">18</span>]</span><br></pre></td></tr></table></figure>
+<p>等价于执行了以下任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">temp</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> [add(i, i) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>)]</span><br></pre></td></tr></table></figure>
+<p>那么 <code>map</code> 和 <code>startmap</code> 到底有什么区别呢？如果你要调用的任务只接受一个参数，那请使用 <code>map</code>，如果该任务接收多个参数，请使用 <code>starmap</code>。</p>
+<h4 id="chunk"><a href="#chunk" class="headerlink" title="chunk"></a>chunk</h4><p>最后让我们来看看 <code>chunk</code> ，<code>chunk</code> 能够让我们对任务进行分块，假如你有一个任务需要处理 100 个对象，那么你可以使用 <code>chunk</code> 将其分成 10 个任务，每个任务处理 10 个对象。如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>add.chunks(zip(range(<span class="number">100</span>), range(<span class="number">100</span>)), <span class="number">10</span>)().get()</span><br><span class="line">[[<span class="number">0</span>, <span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">12</span>, <span class="number">14</span>, <span class="number">16</span>, <span class="number">18</span>],</span><br><span class="line"> [<span class="number">20</span>, <span class="number">22</span>, <span class="number">24</span>, <span class="number">26</span>, <span class="number">28</span>, <span class="number">30</span>, <span class="number">32</span>, <span class="number">34</span>, <span class="number">36</span>, <span class="number">38</span>],</span><br><span class="line"> [<span class="number">40</span>, <span class="number">42</span>, <span class="number">44</span>, <span class="number">46</span>, <span class="number">48</span>, <span class="number">50</span>, <span class="number">52</span>, <span class="number">54</span>, <span class="number">56</span>, <span class="number">58</span>],</span><br><span class="line"> [<span class="number">60</span>, <span class="number">62</span>, <span class="number">64</span>, <span class="number">66</span>, <span class="number">68</span>, <span class="number">70</span>, <span class="number">72</span>, <span class="number">74</span>, <span class="number">76</span>, <span class="number">78</span>],</span><br><span class="line"> [<span class="number">80</span>, <span class="number">82</span>, <span class="number">84</span>, <span class="number">86</span>, <span class="number">88</span>, <span class="number">90</span>, <span class="number">92</span>, <span class="number">94</span>, <span class="number">96</span>, <span class="number">98</span>],</span><br><span class="line"> [<span class="number">100</span>, <span class="number">102</span>, <span class="number">104</span>, <span class="number">106</span>, <span class="number">108</span>, <span class="number">110</span>, <span class="number">112</span>, <span class="number">114</span>, <span class="number">116</span>, <span class="number">118</span>],</span><br><span class="line"> [<span class="number">120</span>, <span class="number">122</span>, <span class="number">124</span>, <span class="number">126</span>, <span class="number">128</span>, <span class="number">130</span>, <span class="number">132</span>, <span class="number">134</span>, <span class="number">136</span>, <span class="number">138</span>],</span><br><span class="line"> [<span class="number">140</span>, <span class="number">142</span>, <span class="number">144</span>, <span class="number">146</span>, <span class="number">148</span>, <span class="number">150</span>, <span class="number">152</span>, <span class="number">154</span>, <span class="number">156</span>, <span class="number">158</span>],</span><br><span class="line"> [<span class="number">160</span>, <span class="number">162</span>, <span class="number">164</span>, <span class="number">166</span>, <span class="number">168</span>, <span class="number">170</span>, <span class="number">172</span>, <span class="number">174</span>, <span class="number">176</span>, <span class="number">178</span>],</span><br><span class="line"> [<span class="number">180</span>, <span class="number">182</span>, <span class="number">184</span>, <span class="number">186</span>, <span class="number">188</span>, <span class="number">190</span>, <span class="number">192</span>, <span class="number">194</span>, <span class="number">196</span>, <span class="number">198</span>]]</span><br></pre></td></tr></table></figure>
+<p>观察 worker 的输出，不难发现，<code>chunk</code> 背后使用了 <code>startmap</code> 来实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[2019-02-09 17:42:42,901: INFO/MainProcess] Received task: celery.starmap[c1a74285-4029-4389-829d-ba4a224343bc]</span><br><span class="line">[2019-02-09 17:42:42,904: INFO/ForkPoolWorker-2] Task celery.starmap[c1a74285-4029-4389-829d-ba4a224343bc] succeeded in 0.0017125179874710739s: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]</span><br><span class="line">[2019-02-09 17:42:42,904: INFO/MainProcess] Received task: celery.starmap[d42ce391-f6c2-4c2d-ac53-ffe0b12f6bdf]</span><br><span class="line">[2019-02-09 17:42:42,906: INFO/MainProcess] Received task: celery.starmap[6f1688fa-6339-41dc-8060-5111aa961427]</span><br><span class="line">[2019-02-09 17:42:42,908: INFO/MainProcess] Received task: celery.starmap[9ebe51a4-de65-46ba-8df8-5de02641bf12]</span><br><span class="line">[2019-02-09 17:42:42,908: INFO/ForkPoolWorker-1] Task celery.starmap[d42ce391-f6c2-4c2d-ac53-ffe0b12f6bdf] succeeded in 0.002243652008473873s: [20, 22, 24, 26, 28, 30, 32, 34, 36, 38]</span><br><span class="line">[2019-02-09 17:42:42,908: INFO/ForkPoolWorker-2] Task celery.starmap[6f1688fa-6339-41dc-8060-5111aa961427] succeeded in 0.0008158769924193621s: [40, 42, 44, 46, 48, 50, 52, 54, 56, 58]</span><br><span class="line">[2019-02-09 17:42:42,909: INFO/MainProcess] Received task: celery.starmap[949611d3-7a49-4231-8c62-5c04d2e4bde2]</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+<p>使用 <code>group</code> 方法，我们能够将一个 <code>chunk</code> 转成 <code>group</code>，这样就能够将 <code>chunk</code> 和 <code>chord</code> 结合起来使用： </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.task(name='task.tasks.lsum')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">lsum</span><span class="params">(chunks)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> sum([sum(l) <span class="keyword">for</span> l <span class="keyword">in</span> chunks])</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chord(group(add.s(i, i) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">100</span>)))(tsum.s()).get()  <span class="comment"># chord1</span></span><br><span class="line"><span class="number">9900</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>chord(add.chunks(zip(range(<span class="number">100</span>), range(<span class="number">100</span>)), <span class="number">10</span>).group())(lsum.s()).get()  <span class="comment"># chord2</span></span><br><span class="line"><span class="number">9900</span></span><br></pre></td></tr></table></figure>
+<p>虽然上面两个 <code>chord</code> 的结果是相同的，但是执行的过程是不一样的：</p>
+<ul>
+<li>chord1 会先启动 100 个 <code>add</code> 任务计算 1 - 100 的合，完成后再启动 <code>tsum</code> 求和。</li>
+<li>chord2 会先启动 10 个 <code>add</code> <code>starmap</code> 任务计算 1 - 100 的合，完成后再启动 <code>lsum</code> 求和。</li>
+</ul>
+<p>所以，根据实际使用场景，合理的使用 <code>chunk</code> 和 <code>group</code> 能够让我们的任务流更加清晰，也更加的高效。</p>
+<h3 id="小建议"><a href="#小建议" class="headerlink" title="小建议"></a>小建议</h3><p>Celery 虽然提供了任务工作流的功能，但是笔者并不推荐各位用这些原语来构造十分复杂和冗长的任务流，因为 Celery 只是提供了任务的串联和编排功能，对整个任务流程在执行过程中的一些控制（如暂停，失败重试，跳过等）能力却几乎为0，这意味着如果你构造出了一个十分复杂的流程，那么你就要去对这个流程执行中各种可能的情况进行预测和处理。如果你需要复杂流程编排、执行及控制的能力，请尝试使用工作流引擎来完成。</p>
+<h2 id="关于-worker"><a href="#关于-worker" class="headerlink" title="关于 worker"></a>关于 worker</h2><p>关于 Celery，还有另外一个十分重要的组件就是 worker 了，可以说 worker 为 Celery 提供了无穷无尽的计算能力，在整个框架中承担着十分重要的职责。那么，深入的了解 worker 的一些功能，能够在我们日常开发和生产中解决问题时提供更多的思路。下面会重点讲解 worker 的探测和远程控制，并提及一些注意事项。</p>
+<h3 id="探测器"><a href="#探测器" class="headerlink" title="探测器"></a>探测器</h3><p>通过使用探测器，我们能够及时的获取当前所有可用 worker 及其状态，探测器同样从 app 实例中获取：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> celery <span class="keyword">import</span> current_app <span class="keyword">as</span> app</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i = app.control.inspect()  <span class="comment"># 探测所有 worker</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.control.inspect().ping()  <span class="comment"># 对所有 worker 广播 ping 消息</span></span><br><span class="line">&#123;<span class="string">'worker1.example.com'</span>: &#123;<span class="string">'ok'</span>: <span class="string">'pong'</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i.registered()  <span class="comment"># 获取所有 worker 中注册的任务</span></span><br><span class="line">[&#123;<span class="string">'worker1.example.com'</span>: [<span class="string">'tasks.add'</span>,</span><br><span class="line">                          <span class="string">'tasks.sleeptask'</span>]&#125;]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i.active()  <span class="comment"># 获取所有 worker 当前正在执行的任务</span></span><br><span class="line">[&#123;<span class="string">'worker1.example.com'</span>:</span><br><span class="line">    [&#123;<span class="string">'name'</span>: <span class="string">'tasks.sleeptask'</span>,</span><br><span class="line">      <span class="string">'id'</span>: <span class="string">'32666e9b-809c-41fa-8e93-5ae0c80afbbf'</span>,</span><br><span class="line">      <span class="string">'args'</span>: <span class="string">'(8,)'</span>,</span><br><span class="line">      <span class="string">'kwargs'</span>: <span class="string">'&#123;&#125;'</span>&#125;]&#125;]</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>i.scheduled()  <span class="comment"># 获取所有 worker 的调度任务信息</span></span><br><span class="line">[&#123;<span class="string">'worker1.example.com'</span>:</span><br><span class="line">    [&#123;<span class="string">'eta'</span>: <span class="string">'2010-06-07 09:07:52'</span>, <span class="string">'priority'</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="string">'request'</span>: &#123;</span><br><span class="line">        <span class="string">'name'</span>: <span class="string">'tasks.sleeptask'</span>,</span><br><span class="line">        <span class="string">'id'</span>: <span class="string">'1a7980ea-8b19-413e-91d2-0b74f3844c4d'</span>,</span><br><span class="line">        <span class="string">'args'</span>: <span class="string">'[1]'</span>,</span><br><span class="line">        <span class="string">'kwargs'</span>: <span class="string">'&#123;&#125;'</span>&#125;&#125;,</span><br><span class="line">     &#123;<span class="string">'eta'</span>: <span class="string">'2010-06-07 09:07:53'</span>, <span class="string">'priority'</span>: <span class="number">0</span>,</span><br><span class="line">      <span class="string">'request'</span>: &#123;</span><br><span class="line">        <span class="string">'name'</span>: <span class="string">'tasks.sleeptask'</span>,</span><br><span class="line">        <span class="string">'id'</span>: <span class="string">'49661b9a-aa22-4120-94b7-9ee8031d219d'</span>,</span><br><span class="line">        <span class="string">'args'</span>: <span class="string">'[2]'</span>,</span><br><span class="line">        <span class="string">'kwargs'</span>: <span class="string">'&#123;&#125;'</span>&#125;&#125;]&#125;]</span><br></pre></td></tr></table></figure>
+<p>上面列出的只是探测器的部分功能，有兴趣的读者可以看一看<a href="https://celery.readthedocs.io/en/latest/reference/celery.app.control.html#celery.app.control.Inspect" target="_blank" rel="noopener">探测器 API 手册</a>。</p>
+<h3 id="远程控制"><a href="#远程控制" class="headerlink" title="远程控制"></a>远程控制</h3><p>Celery 能够通过 broker 中的一个高优先级队列来向所有的 worker 广播或是向某一些 worker 发送消息，从而实现远程控制的功能，上一小节的探测器功能就是通过远程控制来实现的。同时，worker 也能够响应这些消息，类似上一小节中的 <code>ping</code> 命令，但是由于我们无法得知集群中到底有多少个 worker，所以在使用一些响应式命令时，我们需要配置超时时间。如果某些 worker 在超时前始终没有回复我们发送的消息，并不代表这个 worker 不可用了，有可能因为网络延迟或是该 worker 正忙于处理其他命令而导致超时。</p>
+<h4 id="广播函数"><a href="#广播函数" class="headerlink" title="广播函数"></a>广播函数</h4><p>Celery 中的 <code>broadcast</code> 函数就是用于向所有的 worker 广播消息的，在远程控制的所有接口中，有一些（<code>ping</code>，<code>ratelimit</code>）则是广播函数的高阶实现，下面让我们看一下广播函数的使用示例，下面的代码向所有的 worker 发送了一条 rate_limit 消息，让所有的 worker 对名为 myapp.mytask 的任务进行限速：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> celery <span class="keyword">import</span> current_app <span class="keyword">as</span> app</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.control.broadcast(<span class="string">'rate_limit'</span>,</span><br><span class="line"><span class="meta">... </span>                         arguments=&#123;<span class="string">'task_name'</span>: <span class="string">'myapp.mytask'</span>,</span><br><span class="line"><span class="meta">... </span>                                    <span class="string">'rate_limit'</span>: <span class="string">'200/m'</span>&#125;)</span><br></pre></td></tr></table></figure>
+<p>想要深入了解广播函数，请移步 <a href="https://celery.readthedocs.io/en/latest/userguide/workers.html#the-broadcast-function" target="_blank" rel="noopener">broadcast 函数参考</a>。</p>
+<h4 id="撤销任务"><a href="#撤销任务" class="headerlink" title="撤销任务"></a>撤销任务</h4><p>有些时候，我们可能想要撤销一些已经发送出去的任务，这个时候 <code>revoke</code> 函数就派上用场了：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span><span class="keyword">from</span> celery <span class="keyword">import</span> current_app <span class="keyword">as</span> app</span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res = add.s(<span class="number">2</span>, <span class="number">2</span>).apply_async(countdown=<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>res.revoke()</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.control.revoke(res.id)</span><br></pre></td></tr></table></figure>
+<p>当我们调用 <code>revoke</code> 之后，Celery 会向 worker 发送一条消息，告知 worker 某个 ID 的任务执行请求已经被撤销了，当 worker 取出相应 ID 的请求后，就会放弃执行这条请求。但是如果在我们调用 <code>revoke</code> 之前，任务已经被执行了，那么这次调用相当于是无效的。但是，Celery 还给了我们另一个选择，我们能够终止正在执行某个任务的 worker 子进程：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.control.revoke(<span class="string">'d9078da5-9915-40a0-bfa1-392c7bde42ed'</span>,</span><br><span class="line"><span class="meta">... </span>                   terminate=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>app.control.revoke(<span class="string">'d9078da5-9915-40a0-bfa1-392c7bde42ed'</span>,</span><br><span class="line"><span class="meta">... </span>                   terminate=<span class="literal">True</span>, signal=<span class="string">'SIGKILL'</span>)  <span class="comment"># 自定义向 worker 子进程发送的信号</span></span><br></pre></td></tr></table></figure>
+<p>注意！上述操作是十分危险的！执行到一半的任务被强制中断可能会导致系统中出现数据不一致的情况。</p>
+<p>Celery 提供的远程控制能力不只上面提到的这些，感兴趣的读者可以移步<a href="https://celery.readthedocs.io/en/latest/userguide/workers.html#remote-control" target="_blank" rel="noopener">远程控制用户指南</a>。</p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在笔者的日常使用中发现，Celery 的 worker 在 prefork 模式下子进程存在内存泄漏的问题，并且在 github 上也有相关的一些 issue，如果读者们也遇到了 worker 子进程内存泄漏的问题的话，不妨考虑在启动 worker 进程时加上下面两个配置：</p>
+<ul>
+<li><a href="https://celery.readthedocs.io/en/latest/userguide/workers.html#max-tasks-per-child-setting" target="_blank" rel="noopener">max task per child</a></li>
+<li><a href="https://celery.readthedocs.io/en/latest/userguide/workers.html#max-memory-per-child-setting" target="_blank" rel="noopener">max memory per child</a></li>
+</ul>
+<p>如果你配置了 <code>max task per child</code>，那么 worker 进程会在任意一个 worker 子进程执行的任务达到一定数量后用一个新的进程来替换该子进程，若配置了 <code>max memory per child</code>，则子进程会在占用内存达到一定的值后被新的进程替换掉。</p>
+<p>使用这两个选项来缓解 Celery worker 内存占用过高的问题，从而避免 worker 因内存占用过多被操作系统强制杀死。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>我们首先了解了如何启动和配置 Celery，在有了 Celery 的核心 app 之后，我们又学习了如何定义和调用任务。而通过任务签名我们能够将一些简单的任务进行连接和编排而形成一个任务流。其次，Celery 本身也提供了一些周边的功能，如周期任务，探测器和远程控制等。希望各位在读完本文后对 Celery 有了更加深刻的理解，并在日常使用中能够玩的开心。</p>
+<p>总的来说，Celery 虽然不是一个完美的异步任务队列，但它一定是一个值得信赖的异步任务队列。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.773Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Celery/">Celery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/02/09/celery-introduction/&title=《Celery 使用指南》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/02/09/celery-introduction/&title=《Celery 使用指南》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/02/09/celery-introduction/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Celery 使用指南》 — live in passion&url=https://homholueng.github.io/2019/02/09/celery-introduction/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/02/09/celery-introduction/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/16/fluent-python-index-prologue/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 1 - 序章</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/11/04/celery-django-drug/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">celery 与 django 的致命组合</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/02/09/celery-introduction/&title=《Celery 使用指南》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/02/09/celery-introduction/&title=《Celery 使用指南》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/02/09/celery-introduction/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Celery 使用指南》 — live in passion&url=https://homholueng.github.io/2019/02/09/celery-introduction/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/02/09/celery-introduction/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMUlEQVR42u3aS27jMBAFQN//0s42g2Sk99hyAFHFVSBbJosLhv15veLx/ja+P0m+//Pdn9/83ywXDwwMjNsy3ocjYbSktXlPNgUDA+MBjOQonB/Nk09P1oyBgYERMCbLxcDAwLiWcTz98cXueF4MDAyMY0YSTOakBHlVoIuBgfEERh6a/v3fH6lvYGBg3IrxLkcSsl5V7CxWhYGBsTWjTaXlYee8PFCvBwMDY1PGZMr8SZ4yaxNzr/nOYWBg3IRx/BOTwzcvD6wFuv8cuBgYGFszkiCzDVbbDco35Ze3MDAwtmbkAeRaum2tGNke0BgYGHsz5q0Pk+MyP5pPNhoDA2NrRtvaNcfkCbW21QMDA2NXxjzdn781CVlPZsHAwHgMYy2gbZNxSWkzv7YW/x8wMDBuy1grSeaB7qSlLL84YmBgPIHRHrXttW++ZUVZFAMDY2tG2wYxOZSLC1+5NgwMjP0Yk4aw9pL3iaMZAwPjCYzjj9sfStJwk2aLouUCAwNjO0a+lLXL3Ce25qRnBAMD4wGMvEiZ/0Ib7razYGBgPJmxltZvmy3yRNvJ3RYDA2M7xrscbStGcq3MD+jF+BsDA+PmjLZY2JYz8+1Yy5vVMAwMjNsy1gLItaW0W1ZcUjEwMB7AyK93yZHatl+0QSwGBgbGvJyZLHGtwFCnEzEwMB7JyN9qr315K8YFBy4GBsYNGWsXu/bJWnHi4nQbBgbGDRlti8N8mnYRlxU1MTAw7sf4AvOQ0T9tXuFeAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

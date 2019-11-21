@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 9 - 符合 Python 风格的对象 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。 对象表示形式Python 提供了两种获取对象表示形式的方法:  repr()：以便于开发者理解的方式返回对象的字符串表示形式。 str()：以便于用户理解的方式返回对象的字符串表示形式。  为了支持以上两种方式，我们要实现 __repr__ 和 __s">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 9 - 符合 Python 风格的对象">
+<meta property="og:url" content="https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。 对象表示形式Python 提供了两种获取对象表示形式的方法:  repr()：以便于开发者理解的方式返回对象的字符串表示形式。 str()：以便于用户理解的方式返回对象的字符串表示形式。  为了支持以上两种方式，我们要实现 __repr__ 和 __s">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 9 - 符合 Python 风格的对象">
+<meta name="twitter:description" content="得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。 对象表示形式Python 提供了两种获取对象表示形式的方法:  repr()：以便于开发者理解的方式返回对象的字符串表示形式。 str()：以便于用户理解的方式返回对象的字符串表示形式。  为了支持以上两种方式，我们要实现 __repr__ 和 __s">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 9 - 符合 Python 风格的对象</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 9 - 符合 Python 风格的对象</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-14T07:51:43.000Z" itemprop="datePublished" class="page-time">
+  2019-04-14
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#对象表示形式"><span class="post-toc-number">1.</span> <span class="post-toc-text">对象表示形式</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#备选构造方法"><span class="post-toc-number">2.</span> <span class="post-toc-text">备选构造方法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#classmethod-与-staticmethod"><span class="post-toc-number">3.</span> <span class="post-toc-text">classmethod 与 staticmethod</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#格式化显示"><span class="post-toc-number">4.</span> <span class="post-toc-text">格式化显示</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#可散列的-Vector2d"><span class="post-toc-number">5.</span> <span class="post-toc-text">可散列的 Vector2d</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Python-的私有属性和“受保护的”属性"><span class="post-toc-number">6.</span> <span class="post-toc-text">Python 的私有属性和“受保护的”属性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用-slots-类属性节省空间"><span class="post-toc-number">7.</span> <span class="post-toc-text">使用 slots 类属性节省空间</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#覆盖类属性"><span class="post-toc-number">8.</span> <span class="post-toc-text">覆盖类属性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">9.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-pythonic-object" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 9 - 符合 Python 风格的对象</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-14 15:51:43" datetime="2019-04-14T07:51:43.000Z" itemprop="datePublished">2019-04-14</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。</p>
+<h2 id="对象表示形式"><a href="#对象表示形式" class="headerlink" title="对象表示形式"></a>对象表示形式</h2><p>Python 提供了两种获取对象表示形式的方法:</p>
+<ul>
+<li><code>repr()</code>：以便于开发者理解的方式返回对象的字符串表示形式。</li>
+<li><code>str()</code>：以便于用户理解的方式返回对象的字符串表示形式。</li>
+</ul>
+<p>为了支持以上两种方式，我们要实现 <code>__repr__</code> 和 <code>__str__</code> 两个特殊方法。还有另外两个特殊方法能够提供对象的其他表示形式：<code>__bytes__</code> 和 <code>__format__</code>。前者在 <code>bytes()</code> 函数中使用，而后者会在内置的 <code>format()</code> 函数和 <code>str.format()</code> 方法中使用。</p>
+<p><strong>在 Python2 中，<code>__repr__</code> 和 <code>__str__</code> 不应该返回 <code>Unicode</code> 对象，而在 Python3 中，它们必须返回 Unicode 对象！</strong></p>
+<p>下面是一个设计良好的对象的示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">from</span> array <span class="keyword">import</span> array</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vector2d</span>:</span></span><br><span class="line">    typecode = <span class="string">'d'</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, x, y)</span>:</span> </span><br><span class="line">        self.x = float(x) </span><br><span class="line">        self.y = float(y)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> (i <span class="keyword">for</span> i <span class="keyword">in</span> (self.x, self.y))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        class_name = type(self).__name__ </span><br><span class="line">        <span class="keyword">return</span> <span class="string">'&#123;&#125;(&#123;!r&#125;, &#123;!r&#125;)'</span>.format(class_name, *self)</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> str(tuple(self))</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__bytes__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> (bytes([ord(self.typecode)]) + </span><br><span class="line">                bytes(array(self.typecode, self)))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__eq__</span><span class="params">(self, other)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> tuple(self) == tuple(other)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__abs__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> math.hypot(self.x, self.y)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__bool__</span><span class="params">(self)</span>:</span> </span><br><span class="line">        <span class="keyword">return</span> bool(abs(self))</span><br></pre></td></tr></table></figure>
+<h2 id="备选构造方法"><a href="#备选构造方法" class="headerlink" title="备选构造方法"></a>备选构造方法</h2><p>下面我们为上一小节定义的 <code>Vector2d</code> 类定义一个备选的构造方法，这个构造方法读取一个字节序列并返回一个 <code>Vector2d</code> 对象：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@classmethod</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">frombytes</span><span class="params">(cls, octets)</span>:</span></span><br><span class="line">    typecode = chr(octets[<span class="number">0</span>])</span><br><span class="line">    memv = memoryview(octets[<span class="number">1</span>:]).cast(typecode) </span><br><span class="line">    <span class="keyword">return</span> cls(*memv)</span><br></pre></td></tr></table></figure>
+<h2 id="classmethod-与-staticmethod"><a href="#classmethod-与-staticmethod" class="headerlink" title="classmethod 与 staticmethod"></a>classmethod 与 staticmethod</h2><p>classmethod 改变了调用方法的方式，因此类方法的第一个参数是类本身，而不是实例。classmethod 最常见的用途是定义备选构造方法。</p>
+<p>staticmethod 装饰器也会改变方法的调用方式，但是第一个参数不是特殊的值。</p>
+<h2 id="格式化显示"><a href="#格式化显示" class="headerlink" title="格式化显示"></a>格式化显示</h2><p>内置的 <code>format()</code> 函数和 <code>str.format()</code> 方法把各个类型的格式化方式委托给相应的 <code>.__format__(format_spec)</code> 方法。<code>format_spec</code> 是格式说明符，它是：</p>
+<ul>
+<li><code>format(my_obj, format_spec)</code> 的第二个参数，或</li>
+<li><code>str.format()</code> 方法的格式字符串，<code>{}</code> 里代换字段中冒号后面的部分</li>
+</ul>
+<p>举个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: brl = <span class="number">1</span>/<span class="number">2.34</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: brl</span><br><span class="line">Out[<span class="number">2</span>]: <span class="number">0.4273504273504274</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: format(brl, <span class="string">'0.4f'</span>) <span class="comment"># format_spec 是 '0.4f'</span></span><br><span class="line">Out[<span class="number">3</span>]: <span class="string">'0.4274'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: <span class="string">'1 BRL = &#123;rate:0.2f&#125; USD'</span>.format(rate=brl) <span class="comment"># format_spec 是 '0.2f'</span></span><br><span class="line">Out[<span class="number">4</span>]: <span class="string">'1 BRL = 0.43 USD'</span></span><br></pre></td></tr></table></figure>
+<p>格式说明符使用的表示法叫格式规范微语言(<a href="https://docs.python.org/3/library/string.html#formatspec" target="_blank" rel="noopener">formatspec</a>)。格式规范微语言是可以扩展的，各个类可以自行决定如何解释 <code>format_spec</code> 参数。例如 datetime 模块中的类，他们的 <code>__format__</code> 方法使用的格式代码就与 <code>strftime()</code> 函数一样：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">5</span>]: <span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: now = datetime.now()</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: format(now, <span class="string">'%H:%M:%S'</span>)</span><br><span class="line">Out[<span class="number">7</span>]: <span class="string">'15:00:46'</span></span><br></pre></td></tr></table></figure>
+<h2 id="可散列的-Vector2d"><a href="#可散列的-Vector2d" class="headerlink" title="可散列的 Vector2d"></a>可散列的 Vector2d</h2><p>要创建可散列的类型，只需要正确的实现 <code>__hash__</code> 方法和 <code>__eq__</code> 方法即可。实现 <code>__hash__</code> 方法时，官方推荐使用位运算符异或 <code>^</code> 混合各分量的散列值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__hash__</span><span class="params">(self)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> hash(self.x) ^ hash(self.y)</span><br></pre></td></tr></table></figure>
+<h2 id="Python-的私有属性和“受保护的”属性"><a href="#Python-的私有属性和“受保护的”属性" class="headerlink" title="Python 的私有属性和“受保护的”属性"></a>Python 的私有属性和“受保护的”属性</h2><p>Python 不像 Java 那样使用 private 修饰符创建私有属性，但是 Python 有个简单的机制，能避免子类意外覆盖“私有”属性。</p>
+<p>计入我们在类 <code>Foo</code> 中以 <code>__attr</code> 的形式命名实例属性，Python 会把属性名存入实例的 <code>__dict__</code> 属性中，而且会在前面加上一个下划线和类型。因此，<code>__attr</code> 会变成 <code>_Foo__attr</code>；这个语言特性叫名称改写（name mangling）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">8</span>]: <span class="class"><span class="keyword">class</span> <span class="title">Foo</span>:</span></span><br><span class="line">   ...:     <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">   ...:         self.__attr = <span class="string">'attr'</span></span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: foo = Foo()</span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: foo.__dict__</span><br><span class="line">Out[<span class="number">10</span>]: &#123;<span class="string">'_Foo__attr'</span>: <span class="string">'attr'</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>不是所有 Python 程序员都喜欢名称改写功能，也不是所有人都喜欢 <code>self.__x</code> 这种不对称的名称。有些人不喜欢这种句法，他们约定使用一个下划线前缀编写“受保护”的属性（如 <code>self._x</code>）。Python 解释器虽然不会对使用单个下划线的属性名做特殊处理，不过这是很多 Python 程序员严格遵守的约定，他们不会在类外部访问这种属性。</p>
+<h2 id="使用-slots-类属性节省空间"><a href="#使用-slots-类属性节省空间" class="headerlink" title="使用 slots 类属性节省空间"></a>使用 <strong>slots</strong> 类属性节省空间</h2><p>默认情况下，Python 在各个实例中名为 <code>__dict__</code> 的字典里存储实例属性。而字典会消耗大量的内存，如果要处理数百万个属性不多的实例，通过 <code>__slots__</code> 类属性能够节省大量内存。</p>
+<blockquote>
+<p>继承自父类的 <code>__slots__</code> 属性没有效果。Python 只会使用各个类中定义的 <code>__slots__</code> 属性。</p>
+</blockquote>
+<p>定义 <code>__slots__</code> 的方式是，创建一个类属性，使用 <code>__slots__</code> 这个名字，并把它的值设为一个字符串构造的可迭代对象，其中各个元素表示各个实例属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Vector2d</span>:</span></span><br><span class="line">    __slots__ = (<span class="string">'x'</span>, <span class="string">'y'</span>)</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在类中定义 <code>__slots__</code> 属性之后，实例不能再有 <code>__slots__</code> 中所列名称之外的其他属性。这只是一个副作用，不是 <code>__slots__</code> 存在的真正原因。不要使用 <code>__slots__</code> 属性禁止类的用户新增实例属性。</p>
+</blockquote>
+<p>此外，还需要注意的一个实例属性就是 <code>__weakref__</code> 属性，为了让对象支持弱引用，必须有这个属性。用户自定义的类中默认就有该属性，可是，如果类中定义了 <code>__slots__</code> 属性，而且想把实例作为弱引用的目标，那么就要把 <code>__weakref__</code> 添加到 <code>__slots__</code> 中。</p>
+<p><strong>如果你的程序不用处理数百万个实例，或许不值得费劲去创建不寻常的类，仅当权衡当下的需求并仔细搜集资料后证明确实有必要时，才应该使用 <code>__slots__</code> 属性。</strong></p>
+<h2 id="覆盖类属性"><a href="#覆盖类属性" class="headerlink" title="覆盖类属性"></a>覆盖类属性</h2><p>如果父类中的方法希望获取用户在自定义子类中覆盖的类属性，那么就不应该硬编码获取属性时的类，而是通过如下方式获取：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method</span><span class="params">(self)</span>:</span></span><br><span class="line">    Class.attr <span class="comment"># Wrong</span></span><br><span class="line">    type(self).attr</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><strong>符合 Python 风格的对象应该正好符合所需，而不是堆砌语言特性。</strong></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.782Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&title=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&title=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/04/17/docker-docs-app-data/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Docker 应用数据的管理</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/07/fluent-python-object-relate/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 8 - 对象引用、可变性和垃圾回收</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&title=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&title=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 9 - 符合 Python 风格的对象》 — live in passion&url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/14/fluent-python-pythonic-object/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACwUlEQVR42u3aQW7cMBAEQP//0xsgpwTIKt0zpLMBiifDliWWDhyqh19f8Xj9HO9+8/plJNfn//V8h2MDDw8PbzT1d+PdNc/I5Mrkzu1f//AK8PDw8K7xnhfizeOfi0FeAJISgoeHh/dpvHZznIx2446Hh4f3P/I2D86LzT8rDHh4eHgxr40SNsFuW0La/8LDw8O7zWsbYJ/w88X+Hh4eHt6iq75pPs2W+yTsKGaLh4eHd4GXHwuYHcN6vn+yHc83ysUXAx4eHt6CN4sYcnze6Mpj3OLwAR4eHt41Xr6Iz8LWvFTkcUM0czw8PLwLvDy0nS30+TWb9ls9Hzw8PLw1r9ikjsLWzaa5nVUTwuDh4eFNeJuDUxt2si2eBRx/+GLAw8PDO8rbPCaJepOSsGm5FW0wPDw8vKO8ZFp5kJpg2qV/duwADw8P7wavnVyylLexb/sKVmk0Hh4e3iFe3uDPt7ynXlYbRvz2Mx4eHt4FXruK5st0u0Gfbd+LooKHh4d3lPcKRjvF/DhpXn7ymeDh4eHd40Vnsg6FDpsW2rBg4OHh4X0Lb3Y0atP+nx26il40Hh4e3gVeEr8mU8kD3OepzI4ORGEEHh4e3iFe29Zqe/RJwLEpFX+5Hg8PD+8CL9kiJ237PLZoA98NGw8PD+82r906tw2wJLTNw4gisMDDw8M7ypstze12eVNm2pKDh4eH9528/WY3n2jbcsuD42HHDA8PDy/m7Q9C5UUiP3YwKxt4eHh438N7lWMfH8xeYluu3n4x4OHh4a15s7KxiRLypT95rcfKCR4eHl7JawPZpK31vECf2nBHnwd4eHh413h5g39WBvLYd7U5xsPDw/sw3mxp3mD2YQceHh7eJ/BmxwjyO+Sb9ej3eHh4eNd4bRgxiy2SZlXe9IpCEDw8PLwLvPrzfnOj0Tb67NPx8PDwFk//AaW1DQErM3PRAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

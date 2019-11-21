@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 8 - 对象引用、可变性和垃圾回收 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="标识、相等性和别名1234567891011121314151617In [1]: charles = &amp;#123;&apos;name&apos;: &apos;Charles L. Dodgson&apos;, &apos;born&apos;: 1832&amp;#125;In [2]: lewis = charlesIn [3]: lewis == charlesOut[3]: TrueIn [4]: lewis is charlesOut[4]: Tru">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 8 - 对象引用、可变性和垃圾回收">
+<meta property="og:url" content="https://homholueng.github.io/2019/04/07/fluent-python-object-relate/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="标识、相等性和别名1234567891011121314151617In [1]: charles = &amp;#123;&apos;name&apos;: &apos;Charles L. Dodgson&apos;, &apos;born&apos;: 1832&amp;#125;In [2]: lewis = charlesIn [3]: lewis == charlesOut[3]: TrueIn [4]: lewis is charlesOut[4]: Tru">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 8 - 对象引用、可变性和垃圾回收">
+<meta name="twitter:description" content="标识、相等性和别名1234567891011121314151617In [1]: charles = &amp;#123;&apos;name&apos;: &apos;Charles L. Dodgson&apos;, &apos;born&apos;: 1832&amp;#125;In [2]: lewis = charlesIn [3]: lewis == charlesOut[3]: TrueIn [4]: lewis is charlesOut[4]: Tru">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 8 - 对象引用、可变性和垃圾回收</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 8 - 对象引用、可变性和垃圾回收</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-07T07:52:43.000Z" itemprop="datePublished" class="page-time">
+  2019-04-07
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#标识、相等性和别名"><span class="post-toc-number">1.</span> <span class="post-toc-text">标识、相等性和别名</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#默认做浅复制"><span class="post-toc-number">2.</span> <span class="post-toc-text">默认做浅复制</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#函数的参数作为引用时"><span class="post-toc-number">3.</span> <span class="post-toc-text">函数的参数作为引用时</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#del-与垃圾回收"><span class="post-toc-number">4.</span> <span class="post-toc-text">del 与垃圾回收</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#弱引用"><span class="post-toc-number">5.</span> <span class="post-toc-text">弱引用</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-object-relate" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 8 - 对象引用、可变性和垃圾回收</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-07 15:52:43" datetime="2019-04-07T07:52:43.000Z" itemprop="datePublished">2019-04-07</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="标识、相等性和别名"><a href="#标识、相等性和别名" class="headerlink" title="标识、相等性和别名"></a>标识、相等性和别名</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: charles = &#123;<span class="string">'name'</span>: <span class="string">'Charles L. Dodgson'</span>, <span class="string">'born'</span>: <span class="number">1832</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: lewis = charles</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: lewis == charles</span><br><span class="line">Out[<span class="number">3</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: lewis <span class="keyword">is</span> charles</span><br><span class="line">Out[<span class="number">4</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: alex = &#123;<span class="string">'name'</span>: <span class="string">'Charles L. Dodgson'</span>, <span class="string">'born'</span>: <span class="number">1832</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: alex == charles</span><br><span class="line">Out[<span class="number">6</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: alex <span class="keyword">is</span> charles</span><br><span class="line">Out[<span class="number">7</span>]: <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<p><code>is</code> 运算符比较两个对象的 <code>id()</code>。</p>
+<h2 id="默认做浅复制"><a href="#默认做浅复制" class="headerlink" title="默认做浅复制"></a>默认做浅复制</h2><p>复制列表（或多数内置的可变集合）最简单的方式是使用内置的类型构造方法。例如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">8</span>]: l1 = [<span class="number">3</span>, [<span class="number">55</span>, <span class="number">44</span>], (<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>)]</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: l2 = list(l1)</span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: l2</span><br><span class="line">Out[<span class="number">10</span>]: [<span class="number">3</span>, [<span class="number">55</span>, <span class="number">44</span>], (<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>)]</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: l2 == l1</span><br><span class="line">Out[<span class="number">11</span>]: <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: l2 <span class="keyword">is</span> l1</span><br><span class="line">Out[<span class="number">12</span>]: <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+<p>然而，构造方法或者 <code>[:]</code> 做的是浅复制，如果集合中有可变元素，可能会导致意想不到的问题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">13</span>]: l1[<span class="number">1</span>].append(<span class="number">33</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: l1</span><br><span class="line">Out[<span class="number">14</span>]: [<span class="number">3</span>, [<span class="number">55</span>, <span class="number">44</span>, <span class="number">33</span>], (<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>)]</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: l2</span><br><span class="line">Out[<span class="number">15</span>]: [<span class="number">3</span>, [<span class="number">55</span>, <span class="number">44</span>, <span class="number">33</span>], (<span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>)]</span><br></pre></td></tr></table></figure>
+<h2 id="函数的参数作为引用时"><a href="#函数的参数作为引用时" class="headerlink" title="函数的参数作为引用时"></a>函数的参数作为引用时</h2><p>Python 唯一支持的参数传递模式是共享传参（call by sharing），指的是函数的各个形式参数获得实参中各个引用的副本，也就是说，函数内部的形参是实参的别名。</p>
+<h2 id="del-与垃圾回收"><a href="#del-与垃圾回收" class="headerlink" title="del 与垃圾回收"></a>del 与垃圾回收</h2><p><code>del</code> 语句删除名称，而不是对象。<code>del</code> 命令可能会导致对象被当做垃圾回收，但是仅当删除的变量保存的是对象的最后一个引用，或者无法得到对象时（孤岛）。</p>
+<h2 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h2><p>弱引用不会增加对象的引用数量。引用的目标对象称为所指对象（referent）。因此我们说，弱引用不会妨碍所指对象被当作垃圾回收。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> weakref</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: a_set = &#123;<span class="number">0</span>, <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: wref = weakref.ref(a_set)</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: wref() <span class="keyword">is</span> <span class="literal">None</span></span><br><span class="line">Out[<span class="number">4</span>]: <span class="literal">False</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: a_set = &#123;<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: wref() <span class="keyword">is</span> <span class="literal">None</span></span><br><span class="line">Out[<span class="number">6</span>]: <span class="literal">True</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Python 控制台会自动把 <code>_</code> 变量 绑定到结果不为 <code>None</code> 的表达式结果上。这凸显了一个实际问题：微观管理内存时，往往会得到意外的结果，因为不明显的隐式赋值会为对象创建新引用。控制台中的 <code>_</code> 变量是一例。调用跟踪对象也常导致意料之外的引用。</p>
+</blockquote>
+<p><code>weakref</code> 模块的文档（<a href="http://docs.python.org/3/library/weakref.html" target="_blank" rel="noopener">http://docs.python.org/3/library/weakref.html</a>) 指出，<code>weakref.ref</code> 类其实是低层接口，供高级用途使用，多数程序最 好使用 weakref 集合和 finalize。也就是说，应该使用 <code>WeakKeyDictionary</code>、<code>WeakValueDictionary</code>、<code>WeakSet</code> 和 finalize（在内部使用弱引用），不要自己动手创建并处理 <code>weakref.ref</code> 实例。</p>
+<p>不是每个 Python 对象都能够作为弱引用的目标。基本的 <code>list</code> 和 <code>dict</code> 实例不能作为所指出对象，但是它们的子类可以轻地解决这个问题：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">18</span>]: <span class="keyword">import</span> weakref</span><br><span class="line"></span><br><span class="line">In [<span class="number">19</span>]: weakref.ref([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>])</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">TypeError                                 Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-19</span><span class="number">-7</span>bab81ad732a&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 weakref.ref([1, 2, 3])</span><br><span class="line"></span><br><span class="line">TypeError: cannot create weak reference to <span class="string">'list'</span> object</span><br><span class="line"></span><br><span class="line">In [<span class="number">20</span>]: <span class="class"><span class="keyword">class</span> <span class="title">MyList</span><span class="params">(list)</span>:</span></span><br><span class="line">    ...:     <span class="keyword">pass</span></span><br><span class="line">    ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">21</span>]: weakref.ref(MyList([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]))</span><br><span class="line">Out[<span class="number">21</span>]: &lt;weakref at <span class="number">0x10b0c5688</span>; dead&gt;</span><br></pre></td></tr></table></figure>
+<p>这些局限基本上是 CPython 的实现细节，在其他 Python 解释器中情况可能不一样。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.782Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&title=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&title=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/04/14/fluent-python-pythonic-object/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 9 - 符合 Python 风格的对象</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/06/docker-docs-network/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Docker 网络基础</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&title=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&title=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 8 - 对象引用、可变性和垃圾回收》 — live in passion&url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/07/fluent-python-object-relate/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACo0lEQVR42u3aQVLDQAwEwPz/03AlBTgjaWVCVfuUMraznYO1jPR4xMfH5fH9muQJX8/3rjx24OHh4d2y9PyuyRO+r7N8Lx4eHt4aL3nc9Vu3t4gJ7/oaPDw8vPfh9ai9YpA/GQ8PD++/8PKA4LoYJEUCDw8P7914+aOTe/MwolpUFrMWPDw8vM7etfBa/9vPK/09PDw8vHFXvbrxzaPYfFxgtFo8PDy8BV7+wq1uWCeb6cm34+Hh4d3DS6LVagyxHUAkZQYPDw/vTl7++p6cyYOGA6EtHh4e3iFerxmfN/Wr2+VqIPIiyMDDw8Nb4E1i1uqGuBpY9AbCytUPDw8P7xAvKQN5iytpoSUBR7UVh4eHh3cnrxoo9ILa5PNk64+Hh4e3x8s3vvn5yZBWUngKgwV4eHh4t/B6kcSpRlcSzhbCCDw8PLyjvGQj22tf9X6UeRjxZMHDw8O7nTdv8/fwvYLxw714eHh4y7zkQVGTqTWGdSoIfnoyHh4e3hpvHi5U44x50ysKkfHw8PAWePkI1CM+5mWj2kh7sTXHw8PDW+NVl5hvl6s/4tlRBjw8PLwN3iQ+yLfI1aGEyUrw8PDw9nhnY9n8mnk5KVQ8PDw8vKO8avDa20ZPwtk8nigUCTw8PLwxL29WlSPU4kLzmLhQ2PDw8PCWeb1FTNjJfNQIiYeHh7fGSyLafPgp/2tvuKrZ+sLDw8Mb8z6KR/WnqRaM629M/vr0GQ8PD2+Blx9nv7gXyFbHFPDw8PD2ePmrvDoIlSx9o2zg4eHh3cPLB62SJc4bXdWi9esZPDw8vDfg9Qan5iFFNXrGw8PDe09eL3TIt+Z5KXrRBsPDw8Nb4OWv7ORl3QsvqsjoXjw8PLwFXvUf/mpoWy0eyUZ5pb+Hh4eH95r3CWdq+T5kqit7AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

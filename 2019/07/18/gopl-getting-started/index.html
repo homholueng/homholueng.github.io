@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Go 语言圣经 - 1. 入门 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Go">
+    <meta name="description" content="1.2. 命令行参数通过 os.Args 切片能够拿到程序启动时得到的命令行参数： 123456789101112131415package mainimport 	&quot;fmt&quot;	&quot;os&quot;)func main() &amp;#123;	var s, sep string	for _, arg := range os.Args &amp;#123;		s += sep + arg		sep = &quot; &quot;	&amp;#125;">
+<meta name="keywords" content="Go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 语言圣经 - 1. 入门">
+<meta property="og:url" content="https://homholueng.github.io/2019/07/18/gopl-getting-started/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="1.2. 命令行参数通过 os.Args 切片能够拿到程序启动时得到的命令行参数： 123456789101112131415package mainimport 	&quot;fmt&quot;	&quot;os&quot;)func main() &amp;#123;	var s, sep string	for _, arg := range os.Args &amp;#123;		s += sep + arg		sep = &quot; &quot;	&amp;#125;">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-28T14:26:50.080Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go 语言圣经 - 1. 入门">
+<meta name="twitter:description" content="1.2. 命令行参数通过 os.Args 切片能够拿到程序启动时得到的命令行参数： 123456789101112131415package mainimport 	&quot;fmt&quot;	&quot;os&quot;)func main() &amp;#123;	var s, sep string	for _, arg := range os.Args &amp;#123;		s += sep + arg		sep = &quot; &quot;	&amp;#125;">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Go 语言圣经 - 1. 入门</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Go 语言圣经 - 1. 入门</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-07-18T13:59:05.000Z" itemprop="datePublished" class="page-time">
+  2019-07-18
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-2-命令行参数"><span class="post-toc-number">1.</span> <span class="post-toc-text">1.2. 命令行参数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-3-查找重复的行"><span class="post-toc-number">2.</span> <span class="post-toc-text">1.3. 查找重复的行</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-8-本章要点"><span class="post-toc-number">3.</span> <span class="post-toc-text">1.8. 本章要点</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-gopl-getting-started" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Go 语言圣经 - 1. 入门</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-07-18 21:59:05" datetime="2019-07-18T13:59:05.000Z" itemprop="datePublished">2019-07-18</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="1-2-命令行参数"><a href="#1-2-命令行参数" class="headerlink" title="1.2. 命令行参数"></a>1.2. 命令行参数</h2><p>通过 <code>os.Args</code> 切片能够拿到程序启动时得到的命令行参数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> </span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"os"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> s, sep <span class="keyword">string</span></span><br><span class="line">	<span class="keyword">for</span> _, arg := <span class="keyword">range</span> os.Args &#123;</span><br><span class="line">		s += sep + arg</span><br><span class="line">		sep = <span class="string">" "</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(s)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行以下命令会输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go run echo1.go 1 2 3 4 5</span><br><span class="line">/var/folders/8v/11x3hg3x5g758rwj8kl4c42w0000gn/T/go-build732224661/b001/exe/echo1 1 2 3 4 5</span><br></pre></td></tr></table></figure>
+<h2 id="1-3-查找重复的行"><a href="#1-3-查找重复的行" class="headerlink" title="1.3. 查找重复的行"></a>1.3. 查找重复的行</h2><p>类似于 C 或其它语言里的 <code>printf</code> 函数，<code>fmt.Printf</code> 函数对一些表达式产生格式化输出。该函数的首个参数是个格式字符串，指定后续参数被如何格式化，<code>Printf</code> 有一大堆这种转换，Go 程序员称之为动词（verb）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">%d          十进制整数</span><br><span class="line">%x, %o, %b  十六进制，八进制，二进制整数。</span><br><span class="line">%f, %g, %e  浮点数： 3.141593 3.141592653589793 3.141593e+00</span><br><span class="line">%t          布尔：true或false</span><br><span class="line">%c          字符（rune） (Unicode码点)</span><br><span class="line">%s          字符串</span><br><span class="line">%q          带双引号的字符串&quot;abc&quot;或带单引号的字符&apos;c&apos;</span><br><span class="line">%v          变量的自然形式（natural format）</span><br><span class="line">%T          变量的类型</span><br><span class="line">%%          字面上的百分号标志（无操作数）</span><br></pre></td></tr></table></figure>
+<h2 id="1-8-本章要点"><a href="#1-8-本章要点" class="headerlink" title="1.8. 本章要点"></a>1.8. 本章要点</h2><p>在你开始写一个新程序之前，最好先去检查一下是不是已经有了现成的库可以帮助你更高效地完成这件事情。你可以在 <a href="https://golang.org/pkg" target="_blank" rel="noopener">https://golang.org/pkg</a> 和 <a href="https://godoc.org" target="_blank" rel="noopener">https://godoc.org</a> 中找到标准库和社区写的 package。godoc 这个工具可以让你直接在本地命令行阅读标准库的文档。比如下面这个例子。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> go doc http.ListenAndServe</span><br><span class="line">package http // import "net/http"</span><br><span class="line">func ListenAndServe(addr string, handler Handler) error</span><br><span class="line">    ListenAndServe listens on the TCP network address addr and then</span><br><span class="line">    calls Serve with handler to handle requests on incoming connections.</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-28T14:26:50.080Z" itemprop="dateUpdated">2019-07-28 22:26:50</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&title=《Go 语言圣经 - 1. 入门》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&title=《Go 语言圣经 - 1. 入门》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/18/gopl-getting-started/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Go 语言圣经 - 1. 入门》 — live in passion&url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/24/gopl-program-structure/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Go 语言圣经 - 2. 程序结构</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/07/13/fluent-python-ad-and-disad-of-inherit/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 12 - 继承的优缺点</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&title=《Go 语言圣经 - 1. 入门》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&title=《Go 语言圣经 - 1. 入门》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/18/gopl-getting-started/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Go 语言圣经 - 1. 入门》 — live in passion&url=https://homholueng.github.io/2019/07/18/gopl-getting-started/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/18/gopl-getting-started/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJUlEQVR42u3aQW7DMAwF0dz/0um2QGNlPiUXMDleFYFj8ykAS5F6vfD1/nP9/nx9/9WdV/dcPfPAJUOGjMcy3suLvGD94qtn8mVaxyZDhow5jHVwhETu5xgemwwZMmQQBk/ZafqWIUOGjBqDhM4LTZ64ZciQIYOnS96AS4tC/gQZMmRMY/Cu+///fct8Q4YMGY9i1Aq7dACZjg3iqGTIkNGawRNcukE9VSaSeGTIkNGbkR6ASFtm6YaTp+wPv4MMGTLGMEjQaXK8bzN8mXBlyJAxgEFC52CSdnkq//AtGTJktGbw4iwt4Egq5yVpGqEMGTI6MfY3sTxEfsyCLFCw9jJkyGjNSJMgaY3VkF+2tTJkyGjN4C8mzTjUxE+3o3xjLEOGjAGMO0LhjbydFCxDhoxpjNrwslYO7heOMmTImMbYeRAv7HamFkGFK0OGjEaM9EBYWq7V2nkvfMmQIWMC49RRCf7JznENtKwyZMgYwyBNND4e4GmUJ+4vR1dlyJDRjkGKvzQgvn09NhyVIUPGGAYPZX2dwsiQIUNGrSm/M8jcaa6h2laGDBntGDtptNZoq7X2gt9BhgwZ7Rg729FaYuXjzFtStgwZMh7LIEk2LRz5ysVDShkyZAxmpIkvff3OMqG3yJAhQ0ZpeEnYtTR9rCMoQ4aMpow0OdaSMuEd+L8hQ4aMRzFI6XbqcwIjR8RkyJAxh3Gq1OPHL9Igjg01ZciQ8TzGD0HX2xmMwTZLAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

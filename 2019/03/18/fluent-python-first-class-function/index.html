@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 5 - 一等函数 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="在 Python 中，函数是一等对象。编程语言理论家把 “一等对象” 定义为满足下述条件的程序实体：  在运行时创建 能赋值给变量或数据结构中的元素 能作为参数传递给函数 能作为函数的返回结果  函数内省与用户定义的常规类一样，函数使用 __dict__ 属性存储赋予它的用户属性。但是，函数也拥有一些专有而用户定义的一般对象没有的属性：  __annotations__：dict 类型，参数和返回">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 5 - 一等函数">
+<meta property="og:url" content="https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="在 Python 中，函数是一等对象。编程语言理论家把 “一等对象” 定义为满足下述条件的程序实体：  在运行时创建 能赋值给变量或数据结构中的元素 能作为参数传递给函数 能作为函数的返回结果  函数内省与用户定义的常规类一样，函数使用 __dict__ 属性存储赋予它的用户属性。但是，函数也拥有一些专有而用户定义的一般对象没有的属性：  __annotations__：dict 类型，参数和返回">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.776Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 5 - 一等函数">
+<meta name="twitter:description" content="在 Python 中，函数是一等对象。编程语言理论家把 “一等对象” 定义为满足下述条件的程序实体：  在运行时创建 能赋值给变量或数据结构中的元素 能作为参数传递给函数 能作为函数的返回结果  函数内省与用户定义的常规类一样，函数使用 __dict__ 属性存储赋予它的用户属性。但是，函数也拥有一些专有而用户定义的一般对象没有的属性：  __annotations__：dict 类型，参数和返回">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 5 - 一等函数</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 5 - 一等函数</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-18T14:48:59.000Z" itemprop="datePublished" class="page-time">
+  2019-03-18
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#函数内省"><span class="post-toc-number">1.</span> <span class="post-toc-text">函数内省</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#获取关于参数的信息"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">获取关于参数的信息</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#支持函数式编程的包"><span class="post-toc-number">2.</span> <span class="post-toc-text">支持函数式编程的包</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#operator-模块"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">operator 模块</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#functools-模块"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">functools 模块</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-first-class-function" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 5 - 一等函数</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-18 22:48:59" datetime="2019-03-18T14:48:59.000Z" itemprop="datePublished">2019-03-18</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>在 Python 中，函数是一等对象。编程语言理论家把 “一等对象” 定义为满足下述条件的程序实体：</p>
+<ul>
+<li>在运行时创建</li>
+<li>能赋值给变量或数据结构中的元素</li>
+<li>能作为参数传递给函数</li>
+<li>能作为函数的返回结果</li>
+</ul>
+<h2 id="函数内省"><a href="#函数内省" class="headerlink" title="函数内省"></a>函数内省</h2><p>与用户定义的常规类一样，函数使用 <code>__dict__</code> 属性存储赋予它的用户属性。但是，函数也拥有一些专有而用户定义的<strong>一般对象</strong>没有的属性：</p>
+<ul>
+<li><code>__annotations__</code>：<code>dict</code> 类型，参数和返回值的注解。</li>
+<li><code>__call__</code>：<code>method-wrapper</code> 类型，实现 <code>()</code> 运算符，即可调用对象协议。</li>
+<li><code>__closure__</code>：<code>tuple</code> 类型，函数闭包，即自由变量的绑定。</li>
+<li><code>__code__</code>：<code>code</code> 类型，编译成字节码的函数元数据和函数定义体。</li>
+<li><code>__defaults__</code>：<code>tuple</code> 类型，形式参数的默认值。</li>
+<li><code>__get__</code>：<code>method-wrapper</code> 类型，实现只读描述符协议。</li>
+<li><code>__globals__</code>：<code>dict</code> 类型，函数所在模块中的全局变量。</li>
+<li><code>__kwdefaults__</code>：<code>dict</code> 类型，仅限关键字形式参数的默认值。</li>
+<li><code>__name__</code>：<code>str</code> 类型，函数名称。</li>
+<li><code>__qualname__</code>：<code>str</code> 类型，函数的限定名称，如 <code>Random.choice</code>。</li>
+</ul>
+<p>在这里要说明一下，仅限关键字参数是 Python 3 中的新特性，仅限关键字参数只能通过关键字参数指定，它一定不会捕获未命名的定位参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># cls 为仅限关键字参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tag</span><span class="params">(name, *content, cls=None, **attrs)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># b 也是仅限关键字参数</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">f</span><span class="params">(a, *, b)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
+<h3 id="获取关于参数的信息"><a href="#获取关于参数的信息" class="headerlink" title="获取关于参数的信息"></a>获取关于参数的信息</h3><p>我们以在 <code>clip.py</code> 模块下定义的 <code>clip</code> 函数作为示例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clip</span><span class="params">(text, max_len=<span class="number">80</span>)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    在 max_len 前面或后面的第一个空格处截断文本</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    end = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">if</span> len(text) &gt; max_len:</span><br><span class="line">        space_before = text.rfind(<span class="string">' '</span>, <span class="number">0</span>, max_len)</span><br><span class="line">        <span class="keyword">if</span> space_before &gt;= <span class="number">0</span>:</span><br><span class="line">            end = space_before</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            space_after = text.rfind(<span class="string">' '</span>, max_len)</span><br><span class="line">            <span class="keyword">if</span> space_after &gt;= <span class="number">0</span>:</span><br><span class="line">                end = space_after</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> end <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        end = len(text)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> text[:end].rstrip()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">In [<span class="number">25</span>]: clip.__code__.co_varnames</span><br><span class="line">Out[<span class="number">25</span>]: (<span class="string">'text'</span>, <span class="string">'max_len'</span>, <span class="string">'end'</span>, <span class="string">'space_before'</span>, <span class="string">'space_after'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">26</span>]: clip.__code__.co_argcount</span><br><span class="line">Out[<span class="number">26</span>]: <span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>通过 <code>__code__</code> 对象来获取函数信息未免有些不方便，我们一般会使用 <code>inspect</code> 模块来获取函数相关信息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">29</span>]: <span class="keyword">from</span> inspect <span class="keyword">import</span> signature</span><br><span class="line"></span><br><span class="line">In [<span class="number">30</span>]: sig = signature(clip)</span><br><span class="line"></span><br><span class="line">In [<span class="number">31</span>]: sig</span><br><span class="line">Out[<span class="number">31</span>]: &lt;Signature (text, max_len=<span class="number">80</span>)&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">32</span>]: <span class="keyword">for</span> name, param <span class="keyword">in</span> sig.parameters.items():</span><br><span class="line">    ...:     print(param.kind, <span class="string">':'</span>, name, <span class="string">'='</span>, param.default)</span><br><span class="line">    ...:</span><br><span class="line">POSITIONAL_OR_KEYWORD : text = &lt;<span class="class"><span class="keyword">class</span> '<span class="title">inspect</span>.<span class="title">_empty</span>'&gt;</span></span><br><span class="line"><span class="class"><span class="title">POSITIONAL_OR_KEYWORD</span> :</span> max_len = <span class="number">80</span></span><br></pre></td></tr></table></figure>
+<p><code>inspect.signature</code> 函数返回一个 <code>inspect.Signature</code> 对象，它有一个 parameters 属性，这是一个有序映射，把参数名 <code>inspect.Parameter</code> 对象对应起来。<code>inspect.Parameter</code> 对象的 <code>kind</code> 属性有以下五种值：</p>
+<ul>
+<li>POSITIONAL_OR_KEYWORD：可以通过定位参数和关键字参数传入的形参。</li>
+<li>VAR_POSITIONAL：定位参数元组。</li>
+<li>VAR_KEYWORD：关键字参数字典。</li>
+<li>KEYWORD_ONLY：仅限关键字参数（Python 3 新增）。</li>
+<li>POSITIONAL_ONLY：仅限定位参数；目前，Python 声明函数的句法不支持，但是有些使 用 C 语言实现且不接受关键字参数的函数（如 <code>divmod</code>）支持。</li>
+</ul>
+<p><code>inspect.Signature</code> 对象有个 <code>bind</code> 方法，它可以把任意个参数绑定到签名中的形参上，所用的规则与实参到形参的匹配方式一样。框架可以使用这个方法在真正调用函数前验证参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">33</span>]: <span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line">In [<span class="number">34</span>]: sig = inspect.signature(clip)</span><br><span class="line"></span><br><span class="line">In [<span class="number">35</span>]: my_clip = &#123;<span class="string">'text'</span>: <span class="string">'1 2 3 4 5'</span>, <span class="string">'max_len'</span>: <span class="number">5</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">39</span>]: bound_args = sig.bind(**my_clip)</span><br><span class="line"></span><br><span class="line">In [<span class="number">40</span>]: bound_args</span><br><span class="line">Out[<span class="number">40</span>]: &lt;BoundArguments (text=<span class="string">'1 2 3 4 5'</span>, max_len=<span class="number">5</span>)&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">41</span>]: <span class="keyword">for</span> name, value <span class="keyword">in</span> bound_args.arguments.items():</span><br><span class="line">    ...:     print(name, <span class="string">'='</span>, value)</span><br><span class="line">    ...:</span><br><span class="line">text = <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span></span><br><span class="line">max_len = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">42</span>]: <span class="keyword">del</span> my_clip[<span class="string">'text'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">43</span>]: sig.bind(**my_clip)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">TypeError                                 Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-43</span><span class="number">-1821306</span>ba99f&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 sig.bind(**my_clip)</span><br><span class="line"></span><br><span class="line">~/.pyenv/versions/<span class="number">3.6</span><span class="number">.4</span>/lib/python3<span class="number">.6</span>/inspect.py <span class="keyword">in</span> bind(*args, **kwargs)</span><br><span class="line">   <span class="number">2966</span>         <span class="keyword">if</span> the passed arguments can <span class="keyword">not</span> be bound.</span><br><span class="line">   <span class="number">2967</span>         <span class="string">"""</span></span><br><span class="line"><span class="string">-&gt; 2968         return args[0]._bind(args[1:], kwargs)</span></span><br><span class="line"><span class="string">   2969</span></span><br><span class="line"><span class="string">   2970     def bind_partial(*args, **kwargs):</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">~/.pyenv/versions/3.6.4/lib/python3.6/inspect.py in _bind(self, args, kwargs, partial)</span></span><br><span class="line"><span class="string">   2881                             msg = 'missing a required argument: &#123;arg!r&#125;'</span></span><br><span class="line"><span class="string">   2882                             msg = msg.format(arg=param.name)</span></span><br><span class="line"><span class="string">-&gt; 2883                             raise TypeError(msg) from None</span></span><br><span class="line"><span class="string">   2884             else:</span></span><br><span class="line"><span class="string">   2885                 # We have a positional argument to process</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">TypeError: missing a required argument: 'text'</span></span><br></pre></td></tr></table></figure>
+<h2 id="支持函数式编程的包"><a href="#支持函数式编程的包" class="headerlink" title="支持函数式编程的包"></a>支持函数式编程的包</h2><h3 id="operator-模块"><a href="#operator-模块" class="headerlink" title="operator 模块"></a>operator 模块</h3><p>比较哟用的两个函数是 <code>itemgetter</code> 及 <code>attrgetter</code>，由于 <code>itemgetter</code> 使用的是 <code>[]</code> 运算符来取值，所以其不仅仅支持序列，还支持映射和任何实现 <code>__getitem__</code> 方法的类：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">from</span> operator <span class="keyword">import</span> itemgetter</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: metro_data = [  (<span class="string">'Tokyo'</span>, <span class="string">'JP'</span>, <span class="number">36.933</span>, (<span class="number">35.689722</span>, <span class="number">139.691667</span>)),  (<span class="string">'Delhi NCR'</span>, <span class="string">'IN'</span>, <span class="number">21.935</span>, (<span class="number">28.613889</span>, <span class="number">77.208889</span>)),  (<span class="string">'Mexi</span></span><br><span class="line"><span class="string">   ...: co City'</span>, <span class="string">'MX'</span>, <span class="number">20.142</span>, (<span class="number">19.433333</span>, <span class="number">-99.133333</span>)),  (<span class="string">'New York-Newark'</span>, <span class="string">'US'</span>, <span class="number">20.104</span>, (<span class="number">40.808611</span>, <span class="number">-74.020386</span>)),  (<span class="string">'Sao Paulo'</span>, <span class="string">'</span></span><br><span class="line"><span class="string">   ...: BR'</span>, <span class="number">19.649</span>, (<span class="number">-23.547778</span>, <span class="number">-46.635833</span>)),  ]</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: <span class="keyword">for</span> city <span class="keyword">in</span> sorted(metro_data, key=itemgetter(<span class="number">1</span>)):</span><br><span class="line">   ...:     print(city)</span><br><span class="line">   ...:</span><br><span class="line">(<span class="string">'Sao Paulo'</span>, <span class="string">'BR'</span>, <span class="number">19.649</span>, (<span class="number">-23.547778</span>, <span class="number">-46.635833</span>))</span><br><span class="line">(<span class="string">'Delhi NCR'</span>, <span class="string">'IN'</span>, <span class="number">21.935</span>, (<span class="number">28.613889</span>, <span class="number">77.208889</span>))</span><br><span class="line">(<span class="string">'Tokyo'</span>, <span class="string">'JP'</span>, <span class="number">36.933</span>, (<span class="number">35.689722</span>, <span class="number">139.691667</span>))</span><br><span class="line">(<span class="string">'Mexico City'</span>, <span class="string">'MX'</span>, <span class="number">20.142</span>, (<span class="number">19.433333</span>, <span class="number">-99.133333</span>))</span><br><span class="line">(<span class="string">'New York-Newark'</span>, <span class="string">'US'</span>, <span class="number">20.104</span>, (<span class="number">40.808611</span>, <span class="number">-74.020386</span>))</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: cc_name = itemgetter(<span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: <span class="keyword">for</span> city <span class="keyword">in</span> metro_data:</span><br><span class="line">   ...:     print(cc_name(city))</span><br><span class="line">   ...:</span><br><span class="line">(<span class="string">'JP'</span>, <span class="string">'Tokyo'</span>)</span><br><span class="line">(<span class="string">'IN'</span>, <span class="string">'Delhi NCR'</span>)</span><br><span class="line">(<span class="string">'MX'</span>, <span class="string">'Mexico City'</span>)</span><br><span class="line">(<span class="string">'US'</span>, <span class="string">'New York-Newark'</span>)</span><br><span class="line">(<span class="string">'BR'</span>, <span class="string">'Sao Paulo'</span>)</span><br></pre></td></tr></table></figure>
+<p><code>attrgetter</code> 与 <code>itemgetter</code> 作用类似，它创建的函数根据名称提取对象的属性。如果把多个属性名传给 attrgetter，它也会返回提取的值构成的元组。此外，如果参数名中包含 <code>.</code>（点号），<code>attrgetter</code> 会深入嵌套对象，获取指定的属性。</p>
+<p>在 <code>operator</code> 模块余下的函数中，最后介绍一下 <code>methodcaller</code>，其创建的函数会在对象上调用参数指定的方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">11</span>]: <span class="keyword">from</span> operator <span class="keyword">import</span> methodcaller</span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: s = <span class="string">'The time has come'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: upcase = methodcaller(<span class="string">'upper'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: upcase(s)</span><br><span class="line">Out[<span class="number">15</span>]: <span class="string">'THE TIME HAS COME'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: hiphenate = methodcaller(<span class="string">'replace'</span>, <span class="string">' '</span>, <span class="string">'-'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">17</span>]: hiphenate(s)</span><br><span class="line">Out[<span class="number">17</span>]: <span class="string">'The-time-has-come'</span></span><br></pre></td></tr></table></figure>
+<h3 id="functools-模块"><a href="#functools-模块" class="headerlink" title="functools 模块"></a>functools 模块</h3><p>另外，我们也可以透过 <code>functools</code> 中的 <code>partial</code> 和 <code>partialmethod</code> 函数来将现有函数的某些参数固定来生成新的函数，减少重复并提升代码的可读性，这两个函数在此不多做赘述。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.776Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&title=《Chapter 5 - 一等函数》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&title=《Chapter 5 - 一等函数》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 5 - 一等函数》 — live in passion&url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/24/fluent-python-design-pattern-with-function/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 6 - 使用一等函数实现设计模式</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/17/fluent-python-text-and-byte/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 4 - 文本和字节序列</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&title=《Chapter 5 - 一等函数》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&title=《Chapter 5 - 一等函数》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 5 - 一等函数》 — live in passion&url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/18/fluent-python-first-class-function/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACt0lEQVR42u3aQW7jQAwEwPz/0851gcR2N6lRvEDpZCj2aEoBRIrk11d8PP45Xp9//Dh+fj+/yrPPFx94eHh4i60/29z+wq9vQbJassIvv8XDw8M7xkuW23y/3fTrMJOshoeHh/dpvDZ4JKFolmrj4eHh/V+8vACRhJk81cbDw8P7BF67dF6onYWKP6i14OHh4cW8vIv0OZ+P9Pfw8PDw1l31fWqbP74333n6Wzw8PLwDvLbxn7e1ZqNaeWpeXBEPDw/vUl77gM4LELMgkReLo/3g4eHhHeC1j+BZs79tfbU3qKij4OHh4V3Ka4PB61uTl1+vKojU/T08PDy8ES8fAsgLrG2poi03FI0xPDw8vBt5bRKct6/a6+Znov4eHh4e3gFe25TKz89uYjusUL8r4OHh4Y14bcG0Pd8m37NEHA8PD+9O3iwAtOFk1r7Kd1LPfOHh4eGNeDl1tpVkzfyvbYjCw8PDO8HLX/vzEJIPCrSDXMP/GB4eHt6lvM0Ss2S6HQuYNeTw8PDwzvHaBHozatAWFPJBhKf7x8PDwzvM27z8J0lzm7jnI1ZP94aHh4d3mJe/0m9S5LwZthnwGlZK8PDw8GJe3ohqm1Xn1oluNx4eHt4tvFnS3JYtkvS9TeKjTeDh4eGteZs22KxI0Ta69mfw8PDwTvCSwNA2q/Kt5I23JFmvox8eHh7eRbzNJVfTXqMw86blhoeHh3eM1154c2vy8u6mwYaHh4d3gvcoj7askCTlm8T9TaDCw8PDO8CbdYv2ifVmdOACDB4eHt6ad20wSJr6s3ZafoPw8PDw7uHN2k6zQaskzMyKEUUZFw8PD+9GXptwv14/Dwlt+QMPDw/v83l5SWI2XtAm/Xh4eHinefmwaZ4Qz5LpNgi9GT7Aw8PDO8DbvPC3D/d8FGDTeMPDw8M7xvsGUSVK319mrusAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

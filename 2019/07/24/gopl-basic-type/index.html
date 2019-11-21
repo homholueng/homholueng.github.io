@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Go 语言圣经 - 3. 基础数据类型 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Go">
+    <meta name="description" content="3.1. 整形Go 语言同时提供了有符号和无符号类型的整数运算。这里有 int8、int16、int32 和 int64 四种截然不同大小的有符号整数类型，分别对应 8、16、32、64bit 大小的有符号整数，与此对应的是 uint8、uint16、uint32 和 uint64 四种无符号整数类型。 这里还有两种一般对应特定 CPU 平台机器字大小的有符号和无符号整数 int 和 uint，其">
+<meta name="keywords" content="Go">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go 语言圣经 - 3. 基础数据类型">
+<meta property="og:url" content="https://homholueng.github.io/2019/07/24/gopl-basic-type/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="3.1. 整形Go 语言同时提供了有符号和无符号类型的整数运算。这里有 int8、int16、int32 和 int64 四种截然不同大小的有符号整数类型，分别对应 8、16、32、64bit 大小的有符号整数，与此对应的是 uint8、uint16、uint32 和 uint64 四种无符号整数类型。 这里还有两种一般对应特定 CPU 平台机器字大小的有符号和无符号整数 int 和 uint，其">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-25T05:03:52.686Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Go 语言圣经 - 3. 基础数据类型">
+<meta name="twitter:description" content="3.1. 整形Go 语言同时提供了有符号和无符号类型的整数运算。这里有 int8、int16、int32 和 int64 四种截然不同大小的有符号整数类型，分别对应 8、16、32、64bit 大小的有符号整数，与此对应的是 uint8、uint16、uint32 和 uint64 四种无符号整数类型。 这里还有两种一般对应特定 CPU 平台机器字大小的有符号和无符号整数 int 和 uint，其">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Go 语言圣经 - 3. 基础数据类型</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Go 语言圣经 - 3. 基础数据类型</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-07-24T12:30:20.000Z" itemprop="datePublished" class="page-time">
+  2019-07-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-1-整形"><span class="post-toc-number">1.</span> <span class="post-toc-text">3.1. 整形</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#fmt-使用技巧"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">fmt 使用技巧</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-2-浮点数"><span class="post-toc-number">2.</span> <span class="post-toc-text">3.2. 浮点数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-3-复数"><span class="post-toc-number">3.</span> <span class="post-toc-text">3.3. 复数</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-4-布尔型"><span class="post-toc-number">4.</span> <span class="post-toc-text">3.4. 布尔型</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-5-字符串"><span class="post-toc-number">5.</span> <span class="post-toc-text">3.5. 字符串</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-5-1-字符串面值"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">3.5.1. 字符串面值</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-5-3-UTF-8"><span class="post-toc-number">5.1.1.</span> <span class="post-toc-text">3.5.3. UTF-8</span></a></li></ol></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-5-4-字符串和-Byte-切片"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">3.5.4. 字符串和 Byte 切片</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-6-常量"><span class="post-toc-number">6.</span> <span class="post-toc-text">3.6. 常量</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-6-1-iota-常量生成器"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">3.6.1. iota 常量生成器</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-6-2-无类型常量"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">3.6.2. 无类型常量</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-gopl-basic-type" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Go 语言圣经 - 3. 基础数据类型</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-07-24 20:30:20" datetime="2019-07-24T12:30:20.000Z" itemprop="datePublished">2019-07-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="3-1-整形"><a href="#3-1-整形" class="headerlink" title="3.1. 整形"></a>3.1. 整形</h2><p>Go 语言同时提供了有符号和无符号类型的整数运算。这里有 <code>int8</code>、<code>int16</code>、<code>int32</code> 和 <code>int64</code> 四种截然不同大小的有符号整数类型，分别对应 8、16、32、64bit 大小的有符号整数，与此对应的是 <code>uint8</code>、<code>uint16</code>、<code>uint32</code> 和 <code>uint64</code> 四种无符号整数类型。</p>
+<p>这里还有两种一般对应特定 CPU 平台机器字大小的有符号和无符号整数 <code>int</code> 和 <code>uint</code>，其大小会根据当前运行环境来确定。</p>
+<p>Unicode 字符 <code>rune</code> 类型是和 <code>int32</code> 等价的类型，通常用于表示一个 Unicode 码点。这两个名称可以互换使用。同样 <code>byte</code> 也是 <code>uint8</code> 类型的等价类型，<code>byte</code> 类型一般用于强调数值是一个原始的数据而不是一个小的整数。</p>
+<p>最后，还有一种无符号的整数类型 <code>uintptr</code>，没有指定具体的 bit 大小但是足以容纳指针。</p>
+<p><strong><code>int</code> 和 <code>int32</code> 也是不同的类型，即使 <code>int</code> 的大小也是 32bit，在需要将 <code>int</code> 当作 <code>int32</code> 类型的地方需要一个显式的类型转换操作。</strong></p>
+<p>任何大小的整数字面值都可以用以 0 开始的八进制格式书写，例如 <code>0666</code>；或用以 0x 或 0X 开头的十六进制格式书写，例如 <code>0xdeadbeef</code>。</p>
+<h3 id="fmt-使用技巧"><a href="#fmt-使用技巧" class="headerlink" title="fmt 使用技巧"></a>fmt 使用技巧</h3><p>我们能够通过格式化标志的副词来告诉 <code>fmt</code> 要用哪一个参数进行格式化的输出：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">x := <span class="keyword">int64</span>(<span class="number">0xdeadbeef</span>)</span><br><span class="line">fmt.Printf(<span class="string">"%d %[1]x %#[1]x %#[1]X\n"</span>, x) <span class="comment">// 3735928559 deadbeef 0xdeadbeef 0XDEADBEEF</span></span><br></pre></td></tr></table></figure>
+<p>同时，打印字符时，使用 <code>%q</code> 能够打印带单引号的字符：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ascii := <span class="string">'a'</span></span><br><span class="line">fmt.Printf(<span class="string">"%d %[1]c %[1]q\n"</span>, ascii)   <span class="comment">// "97 a 'a'"</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-2-浮点数"><a href="#3-2-浮点数" class="headerlink" title="3.2. 浮点数"></a>3.2. 浮点数</h2><p>Go 语言提供了两种精度的浮点数，<code>float32</code> 和 <code>float64</code>。</p>
+<p>浮点数的范围极限值可以在 <code>math</code> 包找到。常量 <code>math.MaxFloat32</code> 表示 <code>float32</code> 能表示的最大数值，大约是 <code>3.4e38</code>；对应的 <code>math.MaxFloat64</code> 常量大约是 <code>1.8e308</code>。</p>
+<h2 id="3-3-复数"><a href="#3-3-复数" class="headerlink" title="3.3. 复数"></a>3.3. 复数</h2><p>Go 语言提供了两种精度的复数类型：<code>complex64</code> 和 <code>complex128</code>，分别对应 <code>float32</code> 和 <code>float64</code> 两种浮点数精度。内置的 <code>complex</code> 函数用于构建复数，内建的 <code>real</code> 和 <code>imag</code> 函数分别返回复数的实部和虚部：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x <span class="keyword">complex128</span> = <span class="built_in">complex</span>(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 1+2i</span></span><br><span class="line"><span class="keyword">var</span> y <span class="keyword">complex128</span> = <span class="built_in">complex</span>(<span class="number">3</span>, <span class="number">4</span>) <span class="comment">// 3+4i</span></span><br><span class="line">fmt.Println(x*y)                 <span class="comment">// "(-5+10i)"</span></span><br><span class="line">fmt.Println(<span class="built_in">real</span>(x*y))           <span class="comment">// "-5"</span></span><br><span class="line">fmt.Println(<span class="built_in">imag</span>(x*y))           <span class="comment">// "10"</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-4-布尔型"><a href="#3-4-布尔型" class="headerlink" title="3.4. 布尔型"></a>3.4. 布尔型</h2><p>布尔值并不会隐式转换为数字值 <code>0</code> 或 <code>1</code>，反之亦然。</p>
+<h2 id="3-5-字符串"><a href="#3-5-字符串" class="headerlink" title="3.5. 字符串"></a>3.5. 字符串</h2><p>一个字符串是一个不可改变的字节序列。字符串可以包含任意的数据，包括 <code>byte</code> 值 <code>0</code>，但是通常是用来包含人类可读的文本。文本字符串通常被解释为采用 UTF8 编码的 Unicode 码点（<code>rune</code>）序列。</p>
+<p>内置的 <code>len</code> 函数可以返回一个字符串中的字节数目（<strong>不是 <code>rune</code> 字符数目</strong>），索引操作 <code>s[i]</code> 返回第 i 个字节的字节值。</p>
+<p><strong>第 i 个字节并不一定是字符串的第 i 个字符，因为对于非 ASCII 字符的 UTF8 编码会要两个或多个字节。</strong></p>
+<p>因为字符串是不可修改的，因此尝试修改字符串内部数据的操作也是被禁止的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">"hello world"</span></span><br><span class="line">s[<span class="number">0</span>] = <span class="string">'L'</span> <span class="comment">// compile error: cannot assign to s[0]</span></span><br></pre></td></tr></table></figure>
+<p>不变性意味着如果两个字符串共享相同的底层数据的话也是安全的，这使得复制任何长度的字符串代价是低廉的。同样，一个字符串 <code>s</code> 和对应的子字符串切片 <code>s[7:]</code> 的操作也可以安全地共享相同的内存，因此字符串切片操作代价也是低廉的。在这两种情况下都没有必要分配新的内存。 </p>
+<h3 id="3-5-1-字符串面值"><a href="#3-5-1-字符串面值" class="headerlink" title="3.5.1. 字符串面值"></a>3.5.1. 字符串面值</h3><p>一个原生的字符串面值形式是 `…`，使用反引号代替双引号。在原生的字符串面值中，没有转义操作；全部的内容都是字面的意思，包含退格和换行，因此一个程序中的原生字符串面值可能跨越多行</p>
+<h4 id="3-5-3-UTF-8"><a href="#3-5-3-UTF-8" class="headerlink" title="3.5.3. UTF-8"></a>3.5.3. UTF-8</h4><p>UTF8 是一个将 Unicode 码点编码为字节序列的变长编码。UTF8 编码使用 1 到 4 个字节来表示每个 Unicode 码点，每个符号编码后第一个字节的高端 bit 位用于表示编码总共有多少个字节。</p>
+<p>Go 语言的源文件采用 UTF8 编码，并且 Go 语言处理 UTF8 编码的文本也很出色。<code>unicode</code> 包提供了诸多处理 <code>rune</code> 字符相关功能的函数（比如区分字母和数字，或者是字母的大写和小写转换等），<code>unicode/utf8</code> 包则提供了用于 <code>rune</code> 字符序列的 UTF8 编码和解码的功能。</p>
+<p>得益于 UTF8 编码优良的设计，诸多字符串操作都不需要解码操作，对于 UTF8 编码后文本的处理和原始的字节处理逻辑是一样的。</p>
+<p>另一方面，如果我们真的关心每个 Unicode 字符，我们可以使用其它处理方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">"unicode/utf8"</span></span><br><span class="line"></span><br><span class="line">s := <span class="string">"Hello, 世界"</span></span><br><span class="line">fmt.Println(<span class="built_in">len</span>(s))                    <span class="comment">// "13"</span></span><br><span class="line">fmt.Println(utf8.RuneCountInString(s)) <span class="comment">// "9"</span></span><br></pre></td></tr></table></figure>
+<p>Go 语言的 <code>range</code> 循环在处理字符串的时候，会自动隐式解码 UTF8 字符串，但是其对于非 ASCII，索引更新的步长将超过 1 个字节。</p>
+<h3 id="3-5-4-字符串和-Byte-切片"><a href="#3-5-4-字符串和-Byte-切片" class="headerlink" title="3.5.4. 字符串和 Byte 切片"></a>3.5.4. 字符串和 Byte 切片</h3><p>标准库中有四个包对字符串处理尤为重要：<code>bytes</code>、<code>strings</code>、<code>strconv</code> 和 <code>unicode</code> 包。</p>
+<ul>
+<li><code>strings</code> 包提供了许多如字符串的查询、替换、比较、截断、拆分和合并等功能。</li>
+<li><code>bytes</code> 包也提供了很多类似功能的函数，但是针对和字符串有着相同结构的 <code>[]byte</code> 类型。因为字符串是只读的，因此逐步构建字符串会导致很多分配和复制。在这种情况下，使用 <code>bytes.Buffer</code> 类型会更有效。</li>
+<li><code>strconv</code> 包提供了布尔型、整型数、浮点数和对应字符串的相互转换，还提供了双引号转义相关的转换。</li>
+<li><code>unicode</code> 包提供了 <code>IsDigit</code>、<code>IsLetter</code>、<code>IsUpper</code> 和 <code>IsLower</code> 等类似功能，它们用于给字符分类。</li>
+</ul>
+<p><code>bytes</code> 包还提供了 <code>Buffer</code> 类型用于字节 <code>slice</code> 的缓存。一个 <code>Buffer</code> 开始是空的，但是随着 <code>string</code>、<code>byte</code> 或 <code>[]byte</code> 等类型数据的写入可以动态增长。</p>
+<h2 id="3-6-常量"><a href="#3-6-常量" class="headerlink" title="3.6. 常量"></a>3.6. 常量</h2><p>常量表达式的值在编译期计算，而不是在运行期。每种常量的潜在类型都是基础类型：<code>boolean</code>、<code>string</code> 或数字。</p>
+<p>一个常量的声明语句定义了常量的名字，和变量的声明语法类似，常量的值不可修改，这样可以防止在运行期被意外或恶意的修改。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> pi = <span class="number">3.14159</span> <span class="comment">// approximately; math.Pi is a better approximation</span></span><br></pre></td></tr></table></figure>
+<p>常量间的所有算术运算、逻辑运算和比较运算的结果也是常量，对常量的类型转换操作或以下函数调用都是返回常量结果：<code>len</code>、<code>cap</code>、<code>real</code>、<code>imag</code>、<code>complex</code> 和 <code>unsafe.Sizeof</code>。</p>
+<h3 id="3-6-1-iota-常量生成器"><a href="#3-6-1-iota-常量生成器" class="headerlink" title="3.6.1. iota 常量生成器"></a>3.6.1. iota 常量生成器</h3><p>常量声明可以使用 <code>iota</code> 常量生成器初始化，它用于生成一组以相似规则初始化的常量，但是不用每行都写一遍初始化表达式。在一个 <code>const</code> 声明语句中，在第一个声明的常量所在的行，<code>iota</code> 将会被置为 0，然后在每一个有常量声明的行加一。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Weekday <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    Sunday Weekday = <span class="literal">iota</span></span><br><span class="line">    Monday</span><br><span class="line">    Tuesday</span><br><span class="line">    Wednesday</span><br><span class="line">    Thursday</span><br><span class="line">    Friday</span><br><span class="line">    Saturday</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="3-6-2-无类型常量"><a href="#3-6-2-无类型常量" class="headerlink" title="3.6.2. 无类型常量"></a>3.6.2. 无类型常量</h3><p>Go 语言的常量有个不同寻常之处。虽然一个常量可以有任意一个确定的基础类型，例如 <code>int</code> 或 <code>float64</code>，或者是类似 <code>time.Duration</code> 这样命名的基础类型，但是许多常量并没有一个明确的基础类型。编译器为这些没有明确基础类型的数字常量提供比基础类型更高精度的算术运算；你可以认为至少有 <code>256bit</code> 的运算精度。这里有六种未明确类型的常量类型，分别是</p>
+<ul>
+<li>无类型的布尔型</li>
+<li>无类型的整数</li>
+<li>无类型的字符</li>
+<li>无类型的浮点数</li>
+<li>无类型的复数</li>
+<li>无类型的字符串</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-25T05:03:52.686Z" itemprop="dateUpdated">2019-07-25 13:03:52</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&title=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&title=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/24/gopl-basic-type/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/31/gopl-complex-type/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Go 语言圣经 - 4. 复合数据类型</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/07/24/gopl-program-structure/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Go 语言圣经 - 2. 程序结构</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&title=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&title=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/24/gopl-basic-type/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Go 语言圣经 - 3. 基础数据类型》 — live in passion&url=https://homholueng.github.io/2019/07/24/gopl-basic-type/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/24/gopl-basic-type/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMklEQVR42u3aS07DQBAFQO5/6bBFQjHv9ThInimvIuTEU140/fv6iq/Xj+vnX35/Tu6/vuf3nbddGBgYj2W8Lq/rByQPvsa8O0N+NgwMjHMY7eOTA10fpQ3rfzwdAwMDIw6+OXv2+jAwMDDan2sTuyStxMDAwFgpYmfJXJIaJsH9tlocAwPjgYy86/7/nz8y38DAwHgU41VeK422NhwXp8LAwNiakQe4trmfJ3lRgRq8MgwMjL0Zd5WLeaOtPVw+VMDAwNiVMVsCawcALfU6rXz7fwMDA2NTxixctsfNg2werDEwME5g3JBRlkPQtm0XrWhgYGBszUiCY3642QQ1T0mjKhwDA2M7Rtu4nyV8eZAdrn1gYGBszWhTtKjhNSpoVwpdDAyMvRntj64PD/KCNl8+w8DAOIGxvpA6HDeOithiRwMDA2MLxl0ts7tSzHzu+kfYxcDA2I7xuQ2O9rvtS8TAwDiBsbIMkUwP20MPi2QMDIytGXkjrB1wzorSfBWsWLnAwMDYlDFbp5gtpLZtu7evAwMD4wDGSrMsCd950jkcNmBgYBzAmPXqZg9eGUK8/S4GBsamjFd55cXqyjCyDdMYGBh7M2Zhrj1icty2bzYM2RgYGI9lzILsLH2865VhYGCcyWhDZ5ImfiLti5YtMDAwjmfMRphJ0FzKYTEwMDBGQTkvUNtv3RZwMTAwHsXIU7qk1Jw13ZI7b6jFMTAwHsiY5V35UkWx91EWrhgYGAcwvgGGDnRyDN+svAAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

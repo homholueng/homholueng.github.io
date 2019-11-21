@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 19 - 动态属性和特性 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="特性至关重要的地方在于，特性的存在使得开发者可以非常安全并且确定可行地将公共数据属性作为类的公共接口的一部分开放出来。  19.1.3　使用 __new__ 方法以灵活的方式创建对象我们通常把 __init__ 称为构造方法，这是从其他语言借鉴过来的术语。其实，用于构建实例的是特殊方法 __new__：这是个类方法（使用特殊方式处理，因此不必使用 @classmethod 装饰器），必须返回一个">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 19 - 动态属性和特性">
+<meta property="og:url" content="https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="特性至关重要的地方在于，特性的存在使得开发者可以非常安全并且确定可行地将公共数据属性作为类的公共接口的一部分开放出来。  19.1.3　使用 __new__ 方法以灵活的方式创建对象我们通常把 __init__ 称为构造方法，这是从其他语言借鉴过来的术语。其实，用于构建实例的是特殊方法 __new__：这是个类方法（使用特殊方式处理，因此不必使用 @classmethod 装饰器），必须返回一个">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-10-17T02:24:43.790Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 19 - 动态属性和特性">
+<meta name="twitter:description" content="特性至关重要的地方在于，特性的存在使得开发者可以非常安全并且确定可行地将公共数据属性作为类的公共接口的一部分开放出来。  19.1.3　使用 __new__ 方法以灵活的方式创建对象我们通常把 __init__ 称为构造方法，这是从其他语言借鉴过来的术语。其实，用于构建实例的是特殊方法 __new__：这是个类方法（使用特殊方式处理，因此不必使用 @classmethod 装饰器），必须返回一个">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 19 - 动态属性和特性</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 19 - 动态属性和特性</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-10-17T02:24:43.000Z" itemprop="datePublished" class="page-time">
+  2019-10-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-1-3-使用-new-方法以灵活的方式创建对象"><span class="post-toc-number">1.</span> <span class="post-toc-text">19.1.3　使用 __new__ 方法以灵活的方式创建对象</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-1-4-shelve-模块"><span class="post-toc-number">2.</span> <span class="post-toc-text">19.1.4 shelve 模块</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-1-5-使用特性获取链接的记录"><span class="post-toc-number">3.</span> <span class="post-toc-text">19.1.5 使用特性获取链接的记录</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#防止实例属性覆盖类属性"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">防止实例属性覆盖类属性</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#使用特性覆盖类的实例属性"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">使用特性覆盖类的实例属性</span></a></li></ol></li></ol><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#19-2-使用特性验证属性"><span class="post-toc-number"></span> <span class="post-toc-text">19.2 使用特性验证属性</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-2-2-能验证值的特性"><span class="post-toc-number">1.</span> <span class="post-toc-text">19.2.2 能验证值的特性</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#19-3-特性全解析"><span class="post-toc-number"></span> <span class="post-toc-text">19.3 特性全解析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#19-6-处理属性的重要属性和函数"><span class="post-toc-number"></span> <span class="post-toc-text">19.6 处理属性的重要属性和函数</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-6-1-影响属性处理方式的特殊属性"><span class="post-toc-number">1.</span> <span class="post-toc-text">19.6.1 影响属性处理方式的特殊属性</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-6-2-处理属性的内置函数"><span class="post-toc-number">2.</span> <span class="post-toc-text">19.6.2 处理属性的内置函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#19-6-3-处理属性的特殊方法"><span class="post-toc-number">3.</span> <span class="post-toc-text">19.6.3 处理属性的特殊方法</span></a></li></ol>
+        </li></nav>
+    </aside>
+
+
+<article id="post-fluent-python-dynamic-attribute-and-property" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 19 - 动态属性和特性</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-10-17 10:24:43" datetime="2019-10-17T02:24:43.000Z" itemprop="datePublished">2019-10-17</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <blockquote>
+<p>特性至关重要的地方在于，特性的存在使得开发者可以非常安全并且确定可行地将公共数据属性作为类的公共接口的一部分开放出来。</p>
+</blockquote>
+<h3 id="19-1-3-使用-new-方法以灵活的方式创建对象"><a href="#19-1-3-使用-new-方法以灵活的方式创建对象" class="headerlink" title="19.1.3　使用 __new__ 方法以灵活的方式创建对象"></a>19.1.3　使用 <code>__new__</code> 方法以灵活的方式创建对象</h3><p>我们通常把 <code>__init__</code> 称为构造方法，这是从其他语言借鉴过来的术语。其实，用于构建实例的是特殊方法 <code>__new__</code>：这是个类方法（使用特殊方式处理，因此不必使用 <code>@classmethod</code> 装饰器），必须返回一个实例。返回的实例会作为第一个参数（即 self）传给 <code>__init__</code> 方法。因为调用 <code>__init__</code> 方法时要传入实例，而且禁止返回任何值，所以 <code>__init__</code> 方法其实是“初始化方法”。真正的构造方法是 <code>__new__</code>。我们几乎不需要自己编写 <code>__new__</code> 方法，因为从 object 类继承的实现已经足够了。</p>
+<p>刚才说明的过程，即从 <code>__new__</code> 方法到 <code>__init__</code> 方法，是最常见的，但不是唯一的。<code>__new__</code> 方法也可以返回其他类的实例，此时，解释器不会调用 <code>__init__</code> 方法。</p>
+<h3 id="19-1-4-shelve-模块"><a href="#19-1-4-shelve-模块" class="headerlink" title="19.1.4 shelve 模块"></a>19.1.4 shelve 模块</h3><p>标准库中有个 shelve（架子）模块，这名字听起来怪怪的，可是如果知道 pickle（泡菜）是 Python 对象序列化格式的名字，还是在那个格式与对象之间相互转换的某个模块的名字，就会觉得以 shelve 命名是合理的。泡菜坛子摆放在架子上，因此 shelve 模块提供了 pickle 存储方式。</p>
+<p><code>shelve.open</code> 高阶函数返回一个 <code>shelve.Shelf</code> 实例，这是简单的键 值对象数据库，背后由 dbm 模块支持，具有下述特点：</p>
+<ul>
+<li><code>shelve.Shelf</code> 是 <code>abc.MutableMapping</code> 的子类，因此提供了处理映射类型的重要方法。</li>
+<li><code>shelve.Shelf</code> 类还提供了几个管理 I/O 的方法，如 sync 和 close；它也是一个上下文管理器。</li>
+<li>只要把新值赋予键，就会保存键和值。</li>
+<li>键必须是字符串。</li>
+<li>值必须是 pickle 模块能处理的对象。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> shelve</span><br><span class="line"></span><br><span class="line">db = shelve.open(DB_NAME)</span><br><span class="line">db[key] = SomeObject()</span><br><span class="line"></span><br><span class="line">obj = db[key]</span><br></pre></td></tr></table></figure>
+<h3 id="19-1-5-使用特性获取链接的记录"><a href="#19-1-5-使用特性获取链接的记录" class="headerlink" title="19.1.5 使用特性获取链接的记录"></a>19.1.5 使用特性获取链接的记录</h3><h4 id="防止实例属性覆盖类属性"><a href="#防止实例属性覆盖类属性" class="headerlink" title="防止实例属性覆盖类属性"></a>防止实例属性覆盖类属性</h4><p>在使用特性时，如果我们要使用对象的类属性，为了防止对象的实例属性覆盖掉我们对雷属性的访问，建议按照以下的方式访问类属性：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Obj</span>:</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attr</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__class__.some_attr</span><br></pre></td></tr></table></figure>
+<h4 id="使用特性覆盖类的实例属性"><a href="#使用特性覆盖类的实例属性" class="headerlink" title="使用特性覆盖类的实例属性"></a>使用特性覆盖类的实例属性</h4><p>我们可以使用特性覆盖我们实例中的某些属性，但是，当我们要在类中访问实例的属性时，就需要按照如下方式进行访问：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Obj</span>:</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">attr</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.__dict__[<span class="string">'attr'</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="19-2-使用特性验证属性"><a href="#19-2-使用特性验证属性" class="headerlink" title="19.2 使用特性验证属性"></a>19.2 使用特性验证属性</h2><h3 id="19-2-2-能验证值的特性"><a href="#19-2-2-能验证值的特性" class="headerlink" title="19.2.2 能验证值的特性"></a>19.2.2 能验证值的特性</h3><p>下面所展示的类使用 property 来向外暴露内部的属性，并且防止用户将属性设置为非法的值：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LineItem</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, description, weight, price)</span>:</span></span><br><span class="line">        self.description = description</span><br><span class="line">        self.weight = weight  <span class="comment"># 在这里就使用了 setter 来赋值</span></span><br><span class="line">        self.price = price</span><br><span class="line">        </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">subtoal</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.weight * self.price</span><br><span class="line">    </span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">weight</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> self.__weight  <span class="comment"># 真正存储值的地方</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @weight.setter</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">weight</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> value &gt; <span class="number">0</span>:</span><br><span class="line">            self.__weight = value</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">'value must be &gt; 0'</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="19-3-特性全解析"><a href="#19-3-特性全解析" class="headerlink" title="19.3 特性全解析"></a>19.3 特性全解析</h2><p>虽然内置的 property 经常用作装饰器，但它其实是一个类。property 构造方法的完整签名如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">property(fget=<span class="literal">None</span>, fset=<span class="literal">None</span>, fdel=<span class="literal">None</span>, doc=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<p>经典的特性设置方式其实是这样的：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LineItem</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">set_weight</span><span class="params">(self, value)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_weight</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">    weight = property(get_weight, set_weight)</span><br></pre></td></tr></table></figure>
+<p>而且，我们知道实例属性会覆盖类属性，虽然特性是类属性，<strong>但是实例属性并不会覆盖类的特性</strong>。</p>
+<p>虽然特性是个强大的功能，不过有时更适合使用简单的或底层的替代方案。</p>
+<h2 id="19-6-处理属性的重要属性和函数"><a href="#19-6-处理属性的重要属性和函数" class="headerlink" title="19.6 处理属性的重要属性和函数"></a>19.6 处理属性的重要属性和函数</h2><h3 id="19-6-1-影响属性处理方式的特殊属性"><a href="#19-6-1-影响属性处理方式的特殊属性" class="headerlink" title="19.6.1 影响属性处理方式的特殊属性"></a>19.6.1 影响属性处理方式的特殊属性</h3><ul>
+<li><code>__class__</code>：对象所属类的引用（即 <code>obj.__class__</code> 与 <code>type(obj)</code> 的作用相同）。Python 的某些特殊方法，例如 <code>__getattr__</code>，只在对象的类中寻找，而不在实例中寻找。</li>
+<li><code>__dict__</code>：一个映射，存储对象或类的可写属性。有 <code>__dict__</code> 属性的对象，任何时候都能随意设置新属性。如果类有 <code>__slots__</code> 属性，它的实例可能没有 <code>__dict__</code> 属性。</li>
+<li><code>__slot__</code>：类可以定义这个这属性，限制实例能有哪些属性。</li>
+</ul>
+<h3 id="19-6-2-处理属性的内置函数"><a href="#19-6-2-处理属性的内置函数" class="headerlink" title="19.6.2 处理属性的内置函数"></a>19.6.2 处理属性的内置函数</h3><ul>
+<li><code>dir</code>：列出对象的大多数属性。dir 函数的目的是交互式使用，因此没有提供完整的属性列表，只列出一组“重要的”属性名。</li>
+</ul>
+<h3 id="19-6-3-处理属性的特殊方法"><a href="#19-6-3-处理属性的特殊方法" class="headerlink" title="19.6.3 处理属性的特殊方法"></a>19.6.3 处理属性的特殊方法</h3><ul>
+<li><code>__delattr__(self, name)</code>：只要使用 del 语句删除属性，就会调用这个方法。</li>
+<li><code>__dir__(self)</code>：把对象传给 dir 函数时调用，列出属性。</li>
+<li><code>__getattr__(self, name)</code>：仅当获取指定的属性失败，搜索过 obj、Class 和超类之后调用。</li>
+<li><code>__getattribute__(self, name)</code>：尝试获取指定的属性时总会调用这个方法，不过，寻找的属性是特殊属性或特殊方法时除外。</li>
+<li><code>__setattr__(self, name, value)</code>：尝试设置指定的属性时总会调用这个方法。</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-10-17T02:24:43.790Z" itemprop="dateUpdated">2019-10-17 10:24:43</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&title=《Chapter 19 - 动态属性和特性》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&title=《Chapter 19 - 动态属性和特性》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 19 - 动态属性和特性》 — live in passion&url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/11/03/fluent-python-attribute-descriptor/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 20 - 属性描述符</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/10/08/fluent-python-asyncio/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 18 - 使用 asyncio 包处理并发</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&title=《Chapter 19 - 动态属性和特性》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&title=《Chapter 19 - 动态属性和特性》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 19 - 动态属性和特性》 — live in passion&url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/10/17/fluent-python-dynamic-attribute-and-property/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADK0lEQVR42u3awXKjQAwE0Pz/T3vPWymTbg27ZZTHyeXAwMOHjqT5+oqPV3C8u+r75+Sc7ysnK9x8YGNjYz+EnWByZLtCsnLygnILNjY29lZ2Gz/Xiyav5vr7BDOLSWxsbGzs62tf8ZGXH/cWPNjY2NjY11GUn3Mde0k0HjWesLGxsdex85iZ8e4tJ/5rLw0bGxv749n5VPTzP/+T+TY2Njb2B7Nf5dHGUjtImLWfagU2Njb2InYeACct/rYBlFzVlhnY2NjYW9n5oidj2rzIubfkeHstNjY29iJ2O9adDYBn8TZrbOWhi42Njb2J3QZScpv2m7bgmW0twsbGxt7HThbKW/m3/Q7BkxzFKjY2NvY6dr50Uk6chOJ1dLUlUDMiwcbGxt7MPm/N58OA9sxhmYSNjY29lJ2HR9KCv2u1pGipW1TY2NjYi9j1P/HHW3NmW3DyIqe4FzY2NvZqdrt0Hionzam2/Pjh5WJjY2MvYufFwOxFzK49374Z7TnFxsbGXsGeMdrh610j3nz9H4IWGxsbewU7KQbywqN96LzAOPpVZzUQNjY29qPYyc3ab/JHaddv22FvBwPY2NjYK9h5pLXt+PPtNecD4+IVYGNjYz+c3d6mHaO2zf2TwUDeAsPGxsbexM5DIh8GtP/559tu2gFD8WzY2NjYD2S3BUMSS3fh87Ikj89iKoKNjY29gt3e8mQQm0TjbCBRb9nBxsbGfiD7ZIh7/jrarT+zNtZfn7GxsbEXsdvWTBsneRP/pFGVrIONjY29mz0byuYD2jZaZi+u2GqJjY2NvY59ElRtmZGvdhKuRW5jY2NjL2LnTZw8SGYPmn9uBwnFviRsbGzsB7Lzb/IyIH/o2bBhVmJhY2Njb2K/ymMWKiftpFm5Eg0DsLGxsVew2wDIx7SztlFy9/yFzrb7YGNjYz+R3YZWG375dDW/Y/57DtMbGxsb+4Hsk2BIyobkoU+epz4fGxsbG7sc9Lat/1lLK29FYWNjY2Mn58+a+0m5kj8PNjY29u9hJ7GR33jWbMr/2oZivXEHGxsb+1HsfNCbN4/aAUDyEtt2VT4qxsbGxn4s+w+f1yFMQY59DwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

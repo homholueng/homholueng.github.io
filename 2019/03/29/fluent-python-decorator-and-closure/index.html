@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 7 - 函数装饰器和闭包 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="使用装饰器改进策略模式在 Python 策略模式中。我们可以使用装饰器来帮助我们统一管理自定义的策略函数： 1234567891011121314151617181920promos = []def promotion(promo_func):    promos.append(promo_func)    return promo_func@promotiondef fidelity(order">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 7 - 函数装饰器和闭包">
+<meta property="og:url" content="https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="使用装饰器改进策略模式在 Python 策略模式中。我们可以使用装饰器来帮助我们统一管理自定义的策略函数： 1234567891011121314151617181920promos = []def promotion(promo_func):    promos.append(promo_func)    return promo_func@promotiondef fidelity(order">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/free_variable.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.781Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 7 - 函数装饰器和闭包">
+<meta name="twitter:description" content="使用装饰器改进策略模式在 Python 策略模式中。我们可以使用装饰器来帮助我们统一管理自定义的策略函数： 1234567891011121314151617181920promos = []def promotion(promo_func):    promos.append(promo_func)    return promo_func@promotiondef fidelity(order">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/free_variable.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 7 - 函数装饰器和闭包</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 7 - 函数装饰器和闭包</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-28T16:06:19.000Z" itemprop="datePublished" class="page-time">
+  2019-03-29
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用装饰器改进策略模式"><span class="post-toc-number">1.</span> <span class="post-toc-text">使用装饰器改进策略模式</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#闭包"><span class="post-toc-number">2.</span> <span class="post-toc-text">闭包</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#nonlocal-声明"><span class="post-toc-number">3.</span> <span class="post-toc-text">nonlocal 声明</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实现一个简单的装饰器"><span class="post-toc-number">4.</span> <span class="post-toc-text">实现一个简单的装饰器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#标准库中的装饰器"><span class="post-toc-number">5.</span> <span class="post-toc-text">标准库中的装饰器</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#使用-functools-lru-cache-做备忘"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">使用 functools.lru_cache 做备忘</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#单分派泛函数"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">单分派泛函数</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-decorator-and-closure" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 7 - 函数装饰器和闭包</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-29 00:06:19" datetime="2019-03-28T16:06:19.000Z" itemprop="datePublished">2019-03-29</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="使用装饰器改进策略模式"><a href="#使用装饰器改进策略模式" class="headerlink" title="使用装饰器改进策略模式"></a>使用装饰器改进策略模式</h2><p>在 Python 策略模式中。我们可以使用装饰器来帮助我们统一管理自定义的策略函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">promos = []</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">promotion</span><span class="params">(promo_func)</span>:</span></span><br><span class="line">    promos.append(promo_func)</span><br><span class="line">    <span class="keyword">return</span> promo_func</span><br><span class="line"></span><br><span class="line"><span class="meta">@promotion</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fidelity</span><span class="params">(order)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@promotion</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bulk_item</span><span class="params">(order)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@promotion</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">large_order</span><span class="params">(order)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">best_promo</span><span class="params">(order)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> max(promo(order) <span class="keyword">for</span> promo <span class="keyword">in</span> promos)</span><br></pre></td></tr></table></figure>
+<p>使用装饰器来管理策略函数的好处在于：策略函数能够定义在系统的任何地方，只要其使用 <code>@promotion</code> 来进行修饰我们就能够对其进行统一管理。</p>
+<p>对于一些需要开放出去让开发者进行自定义，但是系统内部又需要进行统一管理的组件，使用装饰器是一个不错的选择。另外，如果我们需要进行统一管理的组件内部包含了更多的信息，此时函数可能相对来说就显得太轻量了，这时候，我们不发考虑使用元类来实现分散组件的统一管理。</p>
+<h2 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h2><p>闭包指延伸了作用域的函数，其中包含函数定义体中引用、但是不在定义体中定义的非全局变量。</p>
+<p>举个例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_averager</span><span class="params">()</span>:</span></span><br><span class="line">    series = []</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">(new_value)</span>:</span></span><br><span class="line">        series.append(new_value)</span><br><span class="line">        total = sum(series)</span><br><span class="line">        <span class="keyword">return</span> total / len(series)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> averager</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: avg = make_averager()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: avg(<span class="number">10</span>)</span><br><span class="line">Out[<span class="number">3</span>]: <span class="number">10.0</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: avg(<span class="number">11</span>)</span><br><span class="line">Out[<span class="number">4</span>]: <span class="number">10.5</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: avg(<span class="number">12</span>)</span><br><span class="line">Out[<span class="number">5</span>]: <span class="number">11.0</span></span><br></pre></td></tr></table></figure>
+<p>在 <code>averager</code> 函数中，<code>series</code> 是自由变量（free variable），这是一个技术术语，指未在本地作用域中绑定的变量，如下图所示，<code>averager</code> 的闭包延伸到其作用域之外，并包含了自由变量 <code>series</code> 的绑定：</p>
+<img src="/2019/03/29/fluent-python-decorator-and-closure/free_variable.png" title="[自由变量]">
+<p>继续深入探查 <code>avg</code> 函数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">6</span>]: avg.__code__.co_varnames</span><br><span class="line">Out[<span class="number">6</span>]: (<span class="string">'new_value'</span>, <span class="string">'total'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: avg.__code__.co_freevars</span><br><span class="line">Out[<span class="number">7</span>]: (<span class="string">'series'</span>,)</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: avg.__closure__</span><br><span class="line">Out[<span class="number">8</span>]: (&lt;cell at <span class="number">0x104affd98</span>: list object at <span class="number">0x104bd8688</span>&gt;,)</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: avg.__closure__[<span class="number">0</span>].cell_contents</span><br><span class="line">Out[<span class="number">9</span>]: [<span class="number">10</span>, <span class="number">11</span>, <span class="number">12</span>]</span><br></pre></td></tr></table></figure>
+<p>可以看到，<code>series</code> 绑定在 <code>avg</code> 函数的 <code>__closure__</code> 属性中。<code>avg.__closure__</code> 中的各个元素对应于 <code>avg.__code__.co_freevars</code> 中的一个名称。这些元素的 <code>cell_contents</code> 属性保存着该变量真正的值。</p>
+<p>综上，闭包是一种函数，它会保留定义函数时存在的自由变量的绑定，这样调用函数时，虽然定义作用域不可用了，但是仍能使用那些绑定。</p>
+<h2 id="nonlocal-声明"><a href="#nonlocal-声明" class="headerlink" title="nonlocal 声明"></a>nonlocal 声明</h2><p>上面例子中实现的 <code>make_averager</code> 函数的效率其实并不高，因为我们将所有的值都存在了一个数组中，然后每次都会调用 <code>sum</code> 来求和并且算平均值；更加高效的做法是只记录历史总值和元素个数，然后使用这两个数计算平均值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_averager</span><span class="params">()</span>:</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">(new_value)</span>:</span></span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        total += new_value</span><br><span class="line">        <span class="keyword">return</span> total / count</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> averager</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: avg = make_averager()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: avg(<span class="number">10</span>)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">UnboundLocalError                         Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-3</span>-ace390caaa2e&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 avg(10)</span><br><span class="line"></span><br><span class="line">&lt;ipython-input<span class="number">-1</span><span class="number">-97</span>b2ca7b5c4e&gt; <span class="keyword">in</span> averager(new_value)</span><br><span class="line">      <span class="number">4</span></span><br><span class="line">      <span class="number">5</span>     <span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">(new_value)</span>:</span></span><br><span class="line">----&gt; 6         count += 1</span><br><span class="line">      <span class="number">7</span>         total += new_value</span><br><span class="line">      <span class="number">8</span>         <span class="keyword">return</span> total / count</span><br><span class="line"></span><br><span class="line">UnboundLocalError: local variable <span class="string">'count'</span> referenced before assignment</span><br></pre></td></tr></table></figure>
+<p>但是在使用的时候却跑出了 <code>UnboundLocalError</code> 错误，出现这个错误的原因是当 <code>count</code> 是数字或任何不可变类型时，<code>count += 1</code> 语句的作用其实与 <code>count = count + 1</code> 一样。因此，我们在 averager 的定义体中为 <code>count</code> 赋值了，这会把 <code>count</code> 变成局部变量，这样，<code>count</code> 就不是自由变量了，因此不会保存在闭包中。</p>
+<p>为了解决这个问题，Python 3 引入了 <code>nonlocal</code> 声明。它的作用是把变量标记为自由变量，即使在函数中为变量赋予新值了，也会变成自由变量：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_averager</span><span class="params">()</span>:</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">(new_value)</span>:</span></span><br><span class="line">        <span class="keyword">nonlocal</span> count, total</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        total += new_value</span><br><span class="line">        <span class="keyword">return</span> total / count</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> averager</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在 python2 中，还没有引入 <code>nonlocal</code> 关键字，此时可以使用一个可变对象（如字典）把这些变量存储起来，并让该可变对象称为一个自由变量。</p>
+</blockquote>
+<h2 id="实现一个简单的装饰器"><a href="#实现一个简单的装饰器" class="headerlink" title="实现一个简单的装饰器"></a>实现一个简单的装饰器</h2><p>我们知道，在函数上使用装饰器会使得我们丢失函数的真正信息，这个时候，可以借助 <code>functools.wraps</code> 装饰器来把被装饰的函数相关属性复制到装饰后的函数中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">clock</span><span class="params">(func)</span>:</span></span><br><span class="line"><span class="meta">    @functools.wraps(func)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">clocked</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        t0 = time.time()</span><br><span class="line">        result = func(*args, **kwargs)</span><br><span class="line">        elapsed = time.time() - t0</span><br><span class="line">        </span><br><span class="line">        name = func.__name__ </span><br><span class="line">        arg_lst = [] </span><br><span class="line">        <span class="keyword">if</span> args:</span><br><span class="line">            arg_lst.append(<span class="string">', '</span>.join(repr(arg) <span class="keyword">for</span> arg <span class="keyword">in</span> args)) </span><br><span class="line">        <span class="keyword">if</span> kwargs: </span><br><span class="line">            pairs = [<span class="string">'%s=%r'</span> % (k, w) <span class="keyword">for</span> k, w <span class="keyword">in</span> sorted(kwargs.items())]</span><br><span class="line">            arg_lst.append(<span class="string">', '</span>.join(pairs)) </span><br><span class="line">        </span><br><span class="line">        arg_str = <span class="string">', '</span>.join(arg_lst) </span><br><span class="line">        print(<span class="string">'[%0.8fs] %s(%s) -&gt; %r '</span> % (elapsed, name, arg_str, result))</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> clocked</span><br></pre></td></tr></table></figure>
+<h2 id="标准库中的装饰器"><a href="#标准库中的装饰器" class="headerlink" title="标准库中的装饰器"></a>标准库中的装饰器</h2><h3 id="使用-functools-lru-cache-做备忘"><a href="#使用-functools-lru-cache-做备忘" class="headerlink" title="使用 functools.lru_cache 做备忘"></a>使用 functools.lru_cache 做备忘</h3><p><code>functools.lru_cache</code> 会为其装饰的函数添加基于 LRU（Least Recently Used）缓存，避免一些耗时操作的重复计算，下面我们使用斐波那契数的递归计算来作为例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fibonacci(n - <span class="number">2</span>) + fibonacci(n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: fibonacci(<span class="number">6</span>)</span><br><span class="line">[0.00000000s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000095s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00012326s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00000119s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00000119s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000000s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00003910s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00008202s] fibonacci(3) -&gt; 2</span><br><span class="line">[0.00026703s] fibonacci(4) -&gt; 3</span><br><span class="line">[0.00000072s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00000000s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000000s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00003386s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00006771s] fibonacci(3) -&gt; 2</span><br><span class="line">[0.00000000s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000119s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00003695s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00000095s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00000191s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000095s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00003672s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00009012s] fibonacci(3) -&gt; 2</span><br><span class="line">[0.00015903s] fibonacci(4) -&gt; 3</span><br><span class="line">[0.00026083s] fibonacci(5) -&gt; 5</span><br><span class="line">[0.00056100s] fibonacci(6) -&gt; 8</span><br><span class="line">Out[<span class="number">9</span>]: <span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>可以看到，对于相同参数的调用重复了很多次，让我们加上缓存试试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> functools</span><br><span class="line"></span><br><span class="line"><span class="meta">@functools.lru_cache()</span></span><br><span class="line"><span class="meta">@clock</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fibonacci</span><span class="params">(n)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> n &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span> n</span><br><span class="line">    <span class="keyword">return</span> fibonacci(n - <span class="number">2</span>) + fibonacci(n - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: fibonacci(<span class="number">6</span>)</span><br><span class="line">[0.00000000s] fibonacci(0) -&gt; 0</span><br><span class="line">[0.00000215s] fibonacci(1) -&gt; 1</span><br><span class="line">[0.00014687s] fibonacci(2) -&gt; 1</span><br><span class="line">[0.00000191s] fibonacci(3) -&gt; 2</span><br><span class="line">[0.00020289s] fibonacci(4) -&gt; 3</span><br><span class="line">[0.00000191s] fibonacci(5) -&gt; 5</span><br><span class="line">[0.00024819s] fibonacci(6) -&gt; 8</span><br><span class="line">Out[<span class="number">11</span>]: <span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>加上缓存之后，调用次数明显减少，另外，这个装饰器是会接收配置参数的：</p>
+<ul>
+<li>maxsize：指定最多存储多少个调用的结果</li>
+<li>typed：将不同类型的参数分开保存（例如将 1 与 1.0 区分开），顺带一说，<code>lru_cache</code> 使用字典存储结果，而且键根据调用时传入的位置参数和关键字参数创建，所以被其装饰的函数的所有参数都必须是可散列的。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">functools.lru_cache(maxsize=<span class="number">128</span>, typed=<span class="literal">False</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="单分派泛函数"><a href="#单分派泛函数" class="headerlink" title="单分派泛函数"></a>单分派泛函数</h3><p>有些时候我们可能需要根据函数参数类型来确定接下来要执行的逻辑，由于 Python 中没有泛型的概念，所以这个时候一般的做法是使用 <code>if/else</code> 语句来判断参数类型，或者使用字典来维护每种不同类型的参数所对应的处理逻辑。</p>
+<p>但是在 Python 3.4 之后，我们有了新的选择：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> singledispatch</span><br><span class="line"><span class="keyword">import</span> numbers</span><br><span class="line"></span><br><span class="line"><span class="meta">@singledispatch</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">process_it</span><span class="params">(obj)</span>:</span></span><br><span class="line">    print(<span class="string">'This is a object'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@process_it.register(str)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_</span><span class="params">(text)</span>:</span></span><br><span class="line">    print(<span class="string">'This is a str'</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@process_it.register(numbers.Integral)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_</span><span class="params">(n)</span>:</span></span><br><span class="line">    print(<span class="string">'This is a interger'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">17</span>]: process_it(<span class="string">'str'</span>)</span><br><span class="line">This <span class="keyword">is</span> a str</span><br><span class="line"></span><br><span class="line">In [<span class="number">18</span>]: process_it(<span class="number">1</span>)</span><br><span class="line">This <span class="keyword">is</span> a interger</span><br><span class="line"></span><br><span class="line">In [<span class="number">19</span>]: process_it(object())</span><br><span class="line">This <span class="keyword">is</span> a object</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>PyPI 中 的 singledispatch 包（<a href="https://pypi.python.org/pypi/singledispatch）" target="_blank" rel="noopener">https://pypi.python.org/pypi/singledispatch）</a> 可以向后兼容 Python 2.6 到 Python 3.3</p>
+</blockquote>
+<p>另外，对于一些功能比较特殊的装饰器，最好通过实现 <code>__call__</code> 方法的类实现。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.781Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&title=《Chapter 7 - 函数装饰器和闭包》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&title=《Chapter 7 - 函数装饰器和闭包》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 7 - 函数装饰器和闭包》 — live in passion&url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/04/06/docker-docs-network/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Docker 网络基础</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/24/fluent-python-design-pattern-with-function/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 6 - 使用一等函数实现设计模式</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&title=《Chapter 7 - 函数装饰器和闭包》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&title=《Chapter 7 - 函数装饰器和闭包》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 7 - 函数装饰器和闭包》 — live in passion&url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/29/fluent-python-decorator-and-closure/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrklEQVR42u3aS27jMBAFQN//0jNAdoOM5NcfyglQWgW2RbIYQKRe8/WKrz9f19Un37/N27y6977H5QsPDw9v0M3362ooyV3JdFzdddVjuXc8PDy8Y7xkQM88ypN+8zHg4eHhfZa3O7hkOu4XBjw8PLzfyLv/vEq6n0Q8PDy8n8ZLwoj5IpFHG3kLa1kLHh4eXi1lHQ30+b8P1vfw8PDwBlX1apQwqdrn2/HCaPHw8PAO8HpFpnvA5Df3mHwkUfd4eHh4Y94kUOiFC0lIUZ2m//SCh4eHd4yXx6yTYn/ySVLWyicUDw8P73letdifHyaoHtXKJwUPDw/vHG+ync3D1t5RrfLWOZ8zPDw8vAGvGitUH+JJMJEHx/mC8aYAhoeHhzfm5Y/dpNF8S10d4qgMhoeHh3eAN48kEmq+zMyDDDw8PLwneZPotndkqrqEFMIIPDw8vFVer7RfjQOSsCOfxMI/AA8PD+8RXjWGmPMmS8WbzTceHh7eAd5Wo/MjVr1Bj94k8PDw8JZ4k9Ah7yYPO3pFNTw8PLxneFthweQ4Qn7oqnx8AQ8PD2+J13uZn0QDJ44ORFkLHh4e3iovufK6/KTNXux7OUF4eHh4x3iv4lUtbiWHqCaHGAr7dzw8PLwxb9J0L97tbamrwfE/3+Lh4eGt8pKhT7a8E0weAUdvDHh4eHjHeNUHcS9mnQy6sFDh4eHhHeBVB5o/6KsRcC/ALYcseHh4eGPevGSVPKCTeKI3fW/uwsPDwzvA2yp6TUpl1RaOLCd4eHh4RV7S8dZmNx/o1rTi4eHhneNtbZeTElceCi9kLXh4eHgf5SUv/FuLSvVowuUv8fDw8H4AL2Hvxq/J8YLLz/Hw8PCO8aqb4x6ylzHnrS1kLXh4eHgBb3JKax4W7C4YzQsPDw8v7f0vEIt9grm4oLkAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

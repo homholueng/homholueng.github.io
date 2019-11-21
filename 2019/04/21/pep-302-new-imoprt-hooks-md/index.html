@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>PEP 302 - New Import Hooks | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="Abstract该提议为了使得开发者能够对 Python 的模块导入机制进行更好的自定义，提出了一种新的导入钩子，这种新型的机制能够更好注入到现有的导入机制中，并且对模块的查找和导入提供了更细粒度的控制。 Motivation在该提议出现之前，如果开发者要自定义模块的导入机制，需要重载内置的 __import__ 函数，但是重载该函数十分麻烦，需要完全实现整个 import 的机制，还需要处理各种">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PEP 302 - New Import Hooks">
+<meta property="og:url" content="https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="Abstract该提议为了使得开发者能够对 Python 的模块导入机制进行更好的自定义，提出了一种新的导入钩子，这种新型的机制能够更好注入到现有的导入机制中，并且对模块的查找和导入提供了更细粒度的控制。 Motivation在该提议出现之前，如果开发者要自定义模块的导入机制，需要重载内置的 __import__ 函数，但是重载该函数十分麻烦，需要完全实现整个 import 的机制，还需要处理各种">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-23T15:34:53.076Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="PEP 302 - New Import Hooks">
+<meta name="twitter:description" content="Abstract该提议为了使得开发者能够对 Python 的模块导入机制进行更好的自定义，提出了一种新的导入钩子，这种新型的机制能够更好注入到现有的导入机制中，并且对模块的查找和导入提供了更细粒度的控制。 Motivation在该提议出现之前，如果开发者要自定义模块的导入机制，需要重载内置的 __import__ 函数，但是重载该函数十分麻烦，需要完全实现整个 import 的机制，还需要处理各种">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">PEP 302 - New Import Hooks</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">PEP 302 - New Import Hooks</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-21T08:36:44.000Z" itemprop="datePublished" class="page-time">
+  2019-04-21
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Abstract"><span class="post-toc-number">1.</span> <span class="post-toc-text">Abstract</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Motivation"><span class="post-toc-number">2.</span> <span class="post-toc-text">Motivation</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Use-Case"><span class="post-toc-number">3.</span> <span class="post-toc-text">Use Case</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Rationale"><span class="post-toc-number">4.</span> <span class="post-toc-text">Rationale</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Specification-part-1-The-Importer-Protocol"><span class="post-toc-number">5.</span> <span class="post-toc-text">Specification part 1: The Importer Protocol</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Finder"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">Finder</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Loader"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">Loader</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Specification-part-2-Registering-Hooks"><span class="post-toc-number">6.</span> <span class="post-toc-text">Specification part 2: Registering Hooks</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Packages-and-the-role-of-path"><span class="post-toc-number">7.</span> <span class="post-toc-text">Packages and the role of __path__</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Optional-Extensions-to-the-Importer-Protocol"><span class="post-toc-number">8.</span> <span class="post-toc-text">Optional Extensions to the Importer Protocol</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-pep-302-new-imoprt-hooks-md" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">PEP 302 - New Import Hooks</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-21 16:36:44" datetime="2019-04-21T08:36:44.000Z" itemprop="datePublished">2019-04-21</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>该提议为了使得开发者能够对 Python 的模块导入机制进行更好的自定义，提出了一种新的导入钩子，这种新型的机制能够更好注入到现有的导入机制中，并且对模块的查找和导入提供了更细粒度的控制。</p>
+<h2 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h2><p>在该提议出现之前，如果开发者要自定义模块的导入机制，需要重载内置的 <code>__import__</code> 函数，但是重载该函数十分麻烦，需要完全实现整个 <code>import</code> 的机制，还需要处理各种复杂的情况。</p>
+<h2 id="Use-Case"><a href="#Use-Case" class="headerlink" title="Use Case"></a>Use Case</h2><p>该提议提出的方案用于加载一些与一般模块存储方式不同的模块，例如打包好的模块，pyc 文件，从网络或数据库中读取的模块等等。</p>
+<h2 id="Rationale"><a href="#Rationale" class="headerlink" title="Rationale"></a>Rationale</h2><p>较早的一个方案是在 <code>sys.path</code> 中添加非 <code>str</code> 的类来作为 hook，但这是一种十分丑陋的 hack（ugly hack），原因如下：</p>
+<ul>
+<li>破坏了 <code>sys.path</code> 中数据类型的一致性。</li>
+<li>与 <code>PYTHONPATH</code> 环境变量不兼容。</li>
+</ul>
+<p>该提议提出的钩子机制设计如下：在 <code>sys</code> 模块中添加一个新的 <code>path_hooks</code> 列表，该列表中的对象会被遍历以检测其是否能够处理 <code>sys.path</code> 中的某一条记录，直到找到能够处理的对象为止。但是每进行一次导入操作就遍历一次 <code>sys.path_hooks</code> 的话对性能会有一定的影响，所以遍历 <code>sys.path_hooks</code> 的结果会被缓存到 <code>sys.path_importer_cache</code> 中，该缓存是 <code>sys.path</code> 中的记录到 <code>path_hooks</code> 返回的模块导入器的映射。</p>
+<p>为了最小化对 <code>import.c</code> 的影响以及避免增加额外的性能开销。该方案默认不会为现有的文件系统导入逻辑添加显式的钩子和导入器对象，如果 <code>sys.path_hooks</code> 中没有任何一个对象能够处理 <code>sys.path</code> 中的记录的话，就会回归到内置的导入逻辑。同时，这条记录在 <code>sys.path_importer_cache</code> 中映射会被置为 <code>None</code>，避免再次进行 <code>sys.path_hooks</code> 的遍历。</p>
+<p>那么问题来了：对于那些不需要处理 <code>sys.path</code> 的自定义导入器应该如何处理呢？</p>
+<p>为了解决这个问题，该提议还给出了另外一个新的机制：在 <code>sys</code> 模块中添加一个新的导入器列表 <code>meta_path</code>，这个列表中的导入器会在 <code>sys.path</code> 之前进行遍历并询问其是否能够处理即将要被导入的模块，该列表默认为空。</p>
+<h2 id="Specification-part-1-The-Importer-Protocol"><a href="#Specification-part-1-The-Importer-Protocol" class="headerlink" title="Specification part 1: The Importer Protocol"></a>Specification part 1: The Importer Protocol</h2><p>Python 解释器在遇到导入模块的语句时，会调用 <code>__import__</code> 函数，解释器会向其传递四个参数，其中包括<strong>被导入的模块</strong>以及当前全局命名空间。<strong>然后 <code>__import__</code> 函数会检测正在进行导入操作的模块是一个包还是包中的子模块。如果它是一个包，那么 <code>__import__</code> 会先尝试从相对路径下进行导入，如果是包中的子模块，那么会尝试从该模块的父包中进行导入。</strong>而且，类似 <code>import spam.ham</code> 这样的导入操作会在 <code>import spam</code> 完成后，才会将 <code>ham</code> 作为 <code>spam</code> 的子模块进行导入。</p>
+<p>而导入器协议（importer protocol）会在更高一层执行，当一个 importer 收到 <code>spam.ham</code> 的导入请求时，说明 <code>spam</code> 模块已经被成功导入了，而导入协议中定义了两种对象：finder 和 loader。</p>
+<h3 id="Finder"><a href="#Finder" class="headerlink" title="Finder"></a>Finder</h3><p>Finder 对象必须实现以下方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">finder.find_module(fullname, path=<span class="literal">None</span>)</span><br></pre></td></tr></table></figure>
+<p>传入的 <code>fullname</code> 是模块的完全限定名（e.g. <code>spam.ham</code>）。而对于第二个参数 <code>path</code>，如果当前导入的模块是顶层模块，那么 <code>path</code> 的值为 <code>None</code>；如果当前导入的不是顶层模块，那么 <code>path</code> 的值是 <code>package.__path__</code>。</p>
+<p>如果 Finder 能够处理当前正在导入的模块，其 <code>find_module()</code> 方法应该返回一个 Loader 对象；反之应该返回 <code>None</code>。</p>
+<p>该方法中抛出的异常会传播给调用者，且本次导入操作会被放弃。</p>
+<h3 id="Loader"><a href="#Loader" class="headerlink" title="Loader"></a>Loader</h3><p>Finder 对象必须实现以下方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.load_module(fullname)</span><br></pre></td></tr></table></figure>
+<p>传入的 <code>fullname</code> 是模块的完全限定名（e.g. <code>spam.ham</code>）。</p>
+<p>该方法应该返回一个已经加载完成的模块或抛出 <code>ImporteError</code> 异常；如果要求该方法加载不能被当前 Loader 加载的模块，也应该抛出 <code>ImporteError</code> 异常。而且，<code>load_module()</code> 方法在其执行模块中的代码之前必须履行以下职责：</p>
+<ul>
+<li>如果 <code>sys.modules</code> 中存在名为 <code>fullname</code> 模块对象，Loader 必须使用该现有模块（否则 <code>reload（</code>）将无法正常工作）。反之，如果 <code>sys.modules</code> 中不存在名为 <code>fullname</code> 的模块，则Loader 必须创建一个新模块对象并将其添加到 <code>sys.modules</code> 中。<strong>注意，在 Loader 执行模块代码之前，必须先将模块对象添加到 <code>sys.modules</code> 中，因为模块可以（直接或间接）导入自身；事先将它添加到 <code>sys.modules</code> 可以防止无限制的递归或是多次加载。</strong>如果模块加载失败， Loader 需要删除它可能已插入 <code>sys.modules</code> 的任何模块；如果模块已经位于 <code>sys.modules</code> 中，那么 Loader 可以不处理该模块。</li>
+<li>必须为模块设置 <code>__file__</code> 属性，且类型必须是字符串，但它可以是一个虚拟的值，例如 <code>“&lt;frozen&gt;”</code>。</li>
+<li>必须为模块设置 <code>__name__</code> 属性。</li>
+<li>如果导入的是包，那么必须设置 <code>__path__</code> 属性，且该类型必须是 <code>list</code>。</li>
+<li>必须将模块的 <code>__loader__</code> 属性设置为 Laoder 自身，用于自省和重载，也可用于获取 <code>importer</code> 的信息。</li>
+<li>必须微模块设置 <code>__package__</code> 属性。</li>
+</ul>
+<p>以下是一个 <code>load_module()</code> 的一个实现模板：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">load_module</span><span class="params">(self, fullname)</span>:</span></span><br><span class="line">    code = self.get_code(fullname)</span><br><span class="line">    ispkg = self.is_package(fullname)</span><br><span class="line">    mod = sys.modules.setdefault(fullname, imp.new_module(fullname))</span><br><span class="line">    mod.__file__ = <span class="string">"&lt;%s&gt;"</span> % self.__class__.__name__</span><br><span class="line">    mod.__loader__ = self</span><br><span class="line">    <span class="keyword">if</span> ispkg:</span><br><span class="line">        mod.__path__ = []</span><br><span class="line">        mod.__package__ = fullname</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        mod.__package__ = fullname.rpartition(<span class="string">'.'</span>)[<span class="number">0</span>]</span><br><span class="line">    exec(code, mod.__dict__)</span><br><span class="line">    <span class="keyword">return</span> mod</span><br></pre></td></tr></table></figure>
+<h2 id="Specification-part-2-Registering-Hooks"><a href="#Specification-part-2-Registering-Hooks" class="headerlink" title="Specification part 2: Registering Hooks"></a>Specification part 2: Registering Hooks</h2><p>在新的导入钩子机制下，存在两种类型的钩子：</p>
+<ul>
+<li>Meta hooks：在导入过程最开始的时候调用；通过将 Finder 对象添加到 <code>sys.meta_path</code> 中实现注册。</li>
+<li>Path hooks：在处理 <code>sys.path</code> 过程中遇到相关路径的时候调用；通过将导入器工厂添加到 <code>sys.path_hooks</code> 中实现注册。</li>
+</ul>
+<p><code>sys.path_hooks</code> 是一个可调用对象（导入器工厂）的列表，这些对象会以 <code>sys.path</code> 中的每一条数据作为参数进行调用。如果某个对象能够处理当前传入的 path，那么其应该返回一个导入器对象；反之则应该抛出 <code>ImportError</code>。</p>
+<p>如之前章节中所描述的，这些导入器对象会被缓存在 <code>sys.path_importer_cache</code> 中，如果在某些情况下需要重新执行一次 Path hook，可以手动删除 <code>sys.path_importer_cache</code> 某些映射。</p>
+<h2 id="Packages-and-the-role-of-path"><a href="#Packages-and-the-role-of-path" class="headerlink" title="Packages and the role of __path__"></a>Packages and the role of <code>__path__</code></h2><p>如果一个模块拥有 <code>__path__</code> 属性的话，那么 Python 的导入机制就会将该模块当成包来对待。当导入该模块下的子模块时，会使用该模块的 <code>__path__</code> 属性而不是 <code>sys.path</code> 中的某一项，而应用在 <code>sys.path</code> 上的规则同样适用于 <code>pkg.__path__</code>，也就是说在遍历 <code>pkg.__path__</code> 时，也会查询 <code>sys.path_hooks</code> 是否有能够处理的导入器工厂。</p>
+<h2 id="Optional-Extensions-to-the-Importer-Protocol"><a href="#Optional-Extensions-to-the-Importer-Protocol" class="headerlink" title="Optional Extensions to the Importer Protocol"></a>Optional Extensions to the Importer Protocol</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.get_data(path)</span><br></pre></td></tr></table></figure>
+<p>该方法应该从底层存储中获取文件的内容并返回；如果文件不存在的话，应该抛出 <code>IOError</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.is_package(fullname)</span><br></pre></td></tr></table></figure>
+<p>该方法应该判断指定模块是否是一个包。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.get_code(fullname)</span><br></pre></td></tr></table></figure>
+<p>该方法应该返回与指定模块相符的 code 对象；如果指定模块是内置或扩展模块的话，则返回 <code>None</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.get_source(fullname)</span><br></pre></td></tr></table></figure>
+<p>该方法应该返回指定模块的源码；如果无法获取该模块的源码，则返回 <code>None</code>；如果当前 Loader 无法处理该模块，则应该抛出 <code>ImportError</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loader.get_filename(fullname)</span><br></pre></td></tr></table></figure>
+<p>该方法应该返回指定模块的 <code>__file__</code> 属性的值；如果模块不存在，则应该抛出 <code>ImportError</code>。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-23T15:34:53.076Z" itemprop="dateUpdated">2019-04-23 23:34:53</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&title=《PEP 302 - New Import Hooks》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&title=《PEP 302 - New Import Hooks》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PEP 302 - New Import Hooks》 — live in passion&url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/04/27/fluent-python-sequence/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 10 - 序列的修改、散列和切片</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/20/linux-cl-and-shell-more-bash-shell-cmd/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 4 - 更多的 bash shell 命令</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&title=《PEP 302 - New Import Hooks》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&title=《PEP 302 - New Import Hooks》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PEP 302 - New Import Hooks》 — live in passion&url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/21/pep-302-new-imoprt-hooks-md/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACu0lEQVR42u3aQW7DMAwEwPz/0+01QGt3SYpuDuNT4Dq2xgUkZqnXKz6+3o6fZ97PJ3f4eZ/7K/OnNA88PDy8wdDvB3H1mKsrey+o993LV4CHh4e3xruaUe8f2Zvck4FWx3N5Hg8PD+/DeMm0Pi+X86fg4eHhfSYvf8z9t/JrHl0Y8PDw8GJeUvje32gyufdK6sNZCx4eHt5CF+lzPq/09/Dw8PDGXfUkeK0OKGmPJWV6NFo8PDy8BV4+4fYeXy2m88UpL9zx8PDwzvJ60Wo1wpgEtfkmg18+4+Hh4S3w8m1P1YUhCXzz5SEZWzmSwMPDw2vx7i8t/OAP7nA2a42ehYeHh/cILyl2q9sF8r/mLa6oMYaHh4e3wJsUrPOG2SSMyO+Dh4eH9wyv2vKvhg55QJwvA5flOx4eHt5RXu9HfhJJTIKGfDNB4f+Gh4eHd4hXbW71SttCcDDYaHV5Bg8PD2+BV80/e22q6pLQ28KFh4eH9ySvOsRJyDuveFfaYHh4eHjxbJkPaF5G95C98BcPDw9vg5c3rnoNs8lmqaS1Vv4f4uHh4S3wqstDL36dbCDIgww8PDy8bd7KrYuh8GSLQGF/BB4eHt4hXrUxn5e8+TavySKEh4eH9wxvsrNgsmzkC8OkJYaHh4e3wesVu3l0m8evyRLSa8jh4eHh7fFewTFpa+VhxySSKCfKeHh4eANetQ1WndyrL3HyLTw8PLwnefNwtlc0917fa/K28PDw8A7BqpuuklZWvtWgeuc/yno8PDy8Bd58ju09uBoZz9t1eHh4eGd5vcXgFCZfHprFNx4eHt4ar9fWSjYKVOOJ3qK10rXDw8PDO8pLQtg8TZ0EytF2VTw8PLx/5fXC3/yek37WgYUBDw8PL+ZVp+xJw2xSWFdDZDw8PLwNXvUHfy+YmC8Gh/ea4eHh4XV43wQ52k9FDoOlAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>celery 与 django 的致命组合 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python,Celery,Django">
+    <meta name="description" content="1. 背景说明​    笔者在某个项目中中采用了 event-driven 的架构，并使用 Celery 来作为架构模式中的 worker 角色。Celery 在收到 master 发出的任务执行信号后，即会从数据库中读取任务信息并开始执行，于此同时，在执行过程中还会将必要的信息持久化到数据库中，而在这整个流程中，所有的数据库操作都通过 Django orm 框架来完成。 笔者的开发环境如下：">
+<meta name="keywords" content="Python,Celery,Django">
+<meta property="og:type" content="article">
+<meta property="og:title" content="celery 与 django 的致命组合">
+<meta property="og:url" content="https://homholueng.github.io/2018/11/04/celery-django-drug/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="1. 背景说明​    笔者在某个项目中中采用了 event-driven 的架构，并使用 Celery 来作为架构模式中的 worker 角色。Celery 在收到 master 发出的任务执行信号后，即会从数据库中读取任务信息并开始执行，于此同时，在执行过程中还会将必要的信息持久化到数据库中，而在这整个流程中，所有的数据库操作都通过 Django orm 框架来完成。 笔者的开发环境如下：">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2018/11/04/celery-django-drug/1532015206_73_w1123_h403.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.772Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="celery 与 django 的致命组合">
+<meta name="twitter:description" content="1. 背景说明​    笔者在某个项目中中采用了 event-driven 的架构，并使用 Celery 来作为架构模式中的 worker 角色。Celery 在收到 master 发出的任务执行信号后，即会从数据库中读取任务信息并开始执行，于此同时，在执行过程中还会将必要的信息持久化到数据库中，而在这整个流程中，所有的数据库操作都通过 Django orm 框架来完成。 笔者的开发环境如下：">
+<meta name="twitter:image" content="https://homholueng.github.io/2018/11/04/celery-django-drug/1532015206_73_w1123_h403.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">celery 与 django 的致命组合</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">celery 与 django 的致命组合</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-11-04T04:44:47.000Z" itemprop="datePublished" class="page-time">
+  2018-11-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-背景说明"><span class="post-toc-number">1.</span> <span class="post-toc-text">1. 背景说明</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-出现问题"><span class="post-toc-number">2.</span> <span class="post-toc-text">2. 出现问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-追根溯源"><span class="post-toc-number">3.</span> <span class="post-toc-text">3. 追根溯源</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-Celery-多进程（prefork）模式"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">3.1 Celery 多进程（prefork）模式</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-Django-ORM-连接管理"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">3.2 Django ORM 连接管理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-验证猜想"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">3.3 验证猜想</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-致命组合"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">3.4 致命组合</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-5-结论及解决方案"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">3.5 结论及解决方案</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-5-1-关闭-persistent-connections-功能"><span class="post-toc-number">3.5.1.</span> <span class="post-toc-text">3.5.1 关闭 persistent connections 功能</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-5-2-手动关闭-Django-ORM-中维护的连接"><span class="post-toc-number">3.5.2.</span> <span class="post-toc-text">3.5.2 手动关闭 Django ORM 中维护的连接</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#3-5-4-使用其他的并发实现方式"><span class="post-toc-number">3.5.3.</span> <span class="post-toc-text">3.5.4 使用其他的并发实现方式</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-后记"><span class="post-toc-number">4.</span> <span class="post-toc-text">4. 后记</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-celery-django-drug" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">celery 与 django 的致命组合</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-11-04 12:44:47" datetime="2018-11-04T04:44:47.000Z" itemprop="datePublished">2018-11-04</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="1-背景说明"><a href="#1-背景说明" class="headerlink" title="1. 背景说明"></a>1. 背景说明</h2><p>​    笔者在某个项目中中采用了 event-driven 的架构，并使用 Celery 来作为架构模式中的 worker 角色。Celery 在收到 master 发出的任务执行信号后，即会从数据库中读取任务信息并开始执行，于此同时，在执行过程中还会将必要的信息持久化到数据库中，而在这整个流程中，所有的数据库操作都通过 Django orm 框架来完成。</p>
+<p>笔者的开发环境如下：</p>
+<ul>
+<li>mac OS 10.13.4 </li>
+<li>Python 2.7.9</li>
+<li>Django 1.8.11 </li>
+<li>Celery 3.1.18</li>
+<li>Django-celery 3.1.16</li>
+<li>Mysql 5.7.22</li>
+</ul>
+<h2 id="2-出现问题"><a href="#2-出现问题" class="headerlink" title="2. 出现问题"></a>2. 出现问题</h2><p>​    Celery worker 在执行的过程中，会偶发性的出现一些由 PyMySQL 抛出的异常，如（出现过的错误包括但不仅限于以下错误）：</p>
+<ul>
+<li><code>error: Error -3 while decompressing data: incorrect header check</code>：读取数据库中数据出错</li>
+<li><code>OperationalError: (2006, &quot;MySQL server has gone away (error(32, &#39;Broken pipe&#39;))&quot;)</code>：数据库连接中断报错</li>
+<li><code>error: Command Out Of Sync</code>：多条进程占用同一条链接出错</li>
+<li>….</li>
+</ul>
+<p>​    通过多次测试和排查，发现问题是由于多个 Celery worker 使用了同一个数据库连接而导致的，由于多个 worker 使用了同一条连接，所以在进行数据库读写的时候，就很有可能会因为读到了由另一个 Worker 写入的脏数据或者是因为事务隔离而导致的数据不一致而引发异常，部分不可恢复的异常抛出后，由于连接被断开，就会导致其他 worker 在使用同一条链接时引发 <code>MySQL server has gone away</code> 的错误，而且由于并行程序存调度的不确定性，导致很难精确的复现某个错误，使得问题的根源具有一定的隐蔽性。那么，究竟是什么原因导致多个 worker 使用了同一条数据库连接呢？</p>
+<h2 id="3-追根溯源"><a href="#3-追根溯源" class="headerlink" title="3. 追根溯源"></a>3. 追根溯源</h2><h3 id="3-1-Celery-多进程（prefork）模式"><a href="#3-1-Celery-多进程（prefork）模式" class="headerlink" title="3.1 Celery 多进程（prefork）模式"></a>3.1 Celery 多进程（prefork）模式</h3><blockquote>
+<p><strong>By default multiprocessing is used to perform concurrent execution of tasks</strong>, but you can also use Eventlet. </p>
+</blockquote>
+<p>Celery 的官方文档中有说明，Celery 默认使用 multiprocessing 库来实现任务的并行，而 multiprocessing 是通过 fork 来实现进程的创建操作的，那么 Celery 的 worker 进程会不会都是由一个父进程通过 fork 创建出来的呢？</p>
+<p>在 celery worker 启动后，通过 <code>ps</code> 查看子进程的状态，结果如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ ps -ef | grep celery</span><br><span class="line">501 46229 54985   0  4:50下午 ttys004    0:01.41 python manage.py celery worker -c 4</span><br><span class="line">501 46251 46229   0  4:50下午 ttys004    0:00.02 python manage.py celery worker -c 4</span><br><span class="line">501 46252 46229   0  4:50下午 ttys004    0:00.02 python manage.py celery worker -c 4</span><br><span class="line">501 46253 46229   0  4:50下午 ttys004    0:00.02 python manage.py celery worker -c 4</span><br><span class="line">501 46254 46229   0  4:50下午 ttys004    0:00.02 python manage.py celery worker -c 4</span><br></pre></td></tr></table></figure>
+<p>通过进程状态查看工具，可以发现进程 <code>46251</code>，<code>46252</code>，<code>46253</code> ，<code>46254</code> 都是由进程 <code>46299</code> fork 出来的，而在 fork 操作时子进程会复制父进程内存空间中的所有数据，所以在这个时候，所有的子进程都拿到了父进程中的数据库连接，当多个子进程操作该连接时，就会引发上述问题。</p>
+<p>至于为什么子进程会拿到和父进程一样的连接，还得从 Django ORM 连接管理部分的实现说起。</p>
+<h3 id="3-2-Django-ORM-连接管理"><a href="#3-2-Django-ORM-连接管理" class="headerlink" title="3.2 Django ORM 连接管理"></a>3.2 Django ORM 连接管理</h3><p>既然问题是由于共享数据库连接导致的，Django ORM 中数据库连接管理的实现就是问题的根源所在。</p>
+<p>首先，Django ORM 中所有的数据库操作都会通过 <code>django.db</code> 模块下的 <code>connections</code> 全局变量来获取特定数据库的连接，源码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/models/sql/query.py</span></span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> connections</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_compiler</span><span class="params">(self, using=None, connection=None)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> using <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">and</span> connection <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">raise</span> ValueError(<span class="string">"Need either using or connection"</span>)</span><br><span class="line">        <span class="keyword">if</span> using:</span><br><span class="line">            connection = connections[using] <span class="comment"># 关注点，在这里获取数据库连接</span></span><br><span class="line">        <span class="keyword">return</span> connection.ops.compiler(self.compiler)(self, connection, using)</span><br></pre></td></tr></table></figure>
+<p>而<code>connections</code> 声明的源码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> django.db.utils <span class="keyword">import</span> ConnectionHandler</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">connections = ConnectionHandler()</span><br><span class="line"></span><br><span class="line"><span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>原来 <code>connections</code> 这个全局变量是一个 <code>ConnectionHandler</code> 类，那么这个 <code>ConnectionHandler</code> 又是何方神圣呢，<code>ConnectionHandler</code> 实现部分源码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/utils.py</span></span><br><span class="line"><span class="keyword">from</span> threading <span class="keyword">import</span> local</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConnectionHandler</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, databases=None)</span>:</span></span><br><span class="line">        self._databases = databases</span><br><span class="line">        self._connections = local() <span class="comment"># django 通过 ThreadLocal 来管理 [线程 -&gt; 数据库连接] 的映射关系</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment"># ....</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, alias)</span>:</span> <span class="comment"># 关注点</span></span><br><span class="line">        <span class="keyword">if</span> hasattr(self._connections, alias):</span><br><span class="line">            <span class="keyword">return</span> getattr(self._connections, alias)</span><br><span class="line"></span><br><span class="line">        self.ensure_defaults(alias)</span><br><span class="line">        self.prepare_test_settings(alias)</span><br><span class="line">        db = self.databases[alias]</span><br><span class="line"></span><br><span class="line">        backend = load_backend(db[<span class="string">'ENGINE'</span>]) <span class="comment"># 加载特定的数据库后端</span></span><br><span class="line">        conn = backend.DatabaseWrapper(db, alias) <span class="comment"># 初始化 DatabaseWrapper</span></span><br><span class="line">        setattr(self._connections, alias, conn) <span class="comment"># 存到 ThreadLocal 中</span></span><br><span class="line">        <span class="keyword">return</span> conn</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__setitem__</span><span class="params">(self, key, value)</span>:</span></span><br><span class="line">        setattr(self._connections, key, value)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__delitem__</span><span class="params">(self, key)</span>:</span></span><br><span class="line">        delattr(self._connections, key)</span><br><span class="line">     <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>当我们通过 <code>connections[usings]</code> 获取数据库连接时，就会调用 <code>ConnectionHandler</code> 的 <code>__getitem__()</code> 方法，此时 <code>ConnectionHandler</code> 会先通过我们在 <code>settings.py</code> 中的配置的数据库信息加载相应的数据库后端，同时初始化该后端实现的 <code>DatabaseWrapper</code> 对象并返回。</p>
+<p><code>DatabaseWrapper</code> 是 Django 用于表示数据库连接的一个包装类，由数据库后端自行实现，并且该必须继承自 <code>BaseDatabaseWrapper</code>，该类的部分实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/backends/base/base.py</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseDatabaseWrapper</span><span class="params">(object)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Represents a database connection.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, settings_dict, alias=DEFAULT_DB_ALIAS,</span></span></span><br><span class="line"><span class="function"><span class="params">                 allow_thread_sharing=False)</span>:</span></span><br><span class="line">        self.connection = <span class="literal">None</span> <span class="comment"># 真正的数据库连接对象</span></span><br><span class="line">        self.close_at = <span class="literal">None</span> <span class="comment"># 关注点，连接到期时间，下文会有详细讲解</span></span><br><span class="line">        self.allow_thread_sharing = allow_thread_sharing</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_connection_params</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError(<span class="string">'subclasses of BaseDatabaseWrapper may require a get_connection_params() method'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_new_connection</span><span class="params">(self, conn_params)</span>:</span></span><br><span class="line">        <span class="keyword">raise</span> NotImplementedError(<span class="string">'subclasses of BaseDatabaseWrapper may require a get_new_connection() method'</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">ensure_connection</span><span class="params">(self)</span>:</span> <span class="comment"># 在每次使用之前都会确保当前连接是否有效</span></span><br><span class="line">        <span class="keyword">if</span> self.connection <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">with</span> self.wrap_database_errors:</span><br><span class="line">                self.connect()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self)</span>:</span></span><br><span class="line">        conn_params = self.get_connection_params()</span><br><span class="line">        self.connection = self.get_new_connection(conn_params) <span class="comment"># 在这里真正建立数据库连接 </span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>绕来绕去，笔者终于找到了真正的数据库连接的藏身之处，Django 通过 <code>BaseDatabaseWrapper</code> 来实现对单个数据库连接的封装和管理，而获取数据库连接的方法则交给子类来实现。笔者本地的数据库后端配置如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.mysql'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: <span class="string">''</span>,  </span><br><span class="line">        <span class="string">'USER'</span>: <span class="string">''</span>,  </span><br><span class="line">        <span class="string">'PASSWORD'</span>: <span class="string">''</span>,  </span><br><span class="line">        <span class="string">'HOST'</span>: <span class="string">'localhost'</span>,</span><br><span class="line">        <span class="string">'PORT'</span>: <span class="string">'3306'</span>,</span><br><span class="line">        <span class="string">'CONN_MAX_AGE'</span>: <span class="number">3600</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>顺着声明，找到相应后端的 <code>DatabaseWrapper</code> 的实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/backends/mysql</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">import</span> MySQLdb <span class="keyword">as</span> Database</span><br><span class="line"><span class="keyword">except</span> ImportError <span class="keyword">as</span> e:</span><br><span class="line">    <span class="keyword">from</span> django.core.exceptions <span class="keyword">import</span> ImproperlyConfigured</span><br><span class="line">    <span class="keyword">raise</span> ImproperlyConfigured(<span class="string">"Error loading MySQLdb module: %s"</span> % e)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DatabaseWrapper</span><span class="params">(BaseDatabaseWrapper)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_new_connection</span><span class="params">(self, conn_params)</span>:</span></span><br><span class="line">        conn = Database.connect(**conn_params) <span class="comment"># 真正的数据库连接在此处建立</span></span><br><span class="line">        conn.encoders[SafeText] = conn.encoders[six.text_type]</span><br><span class="line">        conn.encoders[SafeBytes] = conn.encoders[bytes]</span><br><span class="line">        <span class="keyword">return</span> conn</span><br></pre></td></tr></table></figure>
+<p>至此，Django ORM 中对数据库连接的管理已经非常清晰了：Django 通过 <code>ConnectionHandler</code> 来管理整个 Django APP 中的所有数据库连接，并且使用 <code>ThreadLocal</code> 来隔离不同线程所能获取到的数据库连接，同时，通过 <code>DatabaseWrapper</code> 封装了对真正的数据库连接的操作，整个结构关系如下图所示：</p>
+<img src="/2018/11/04/celery-django-drug/1532015206_73_w1123_h403.png" title="[类图]">
+<h3 id="3-3-验证猜想"><a href="#3-3-验证猜想" class="headerlink" title="3.3 验证猜想"></a>3.3 验证猜想</h3><p>在了解了 Django ORM 对数据库连接的管理方式之后，我们就能够来探讨导致多个 worker 共享同一个数据库连接的真正原因了。为了验证不同的子进程确实使用了同一个数据库连接，笔者监听了 Celery worker 进程初始化的信号，并在 worker 进程初始化完成后查看当前进程的相关信息</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> logging</span><br><span class="line">    <span class="keyword">import</span> threading</span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> celery <span class="keyword">import</span> signals</span><br><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> connections</span><br><span class="line"></span><br><span class="line"><span class="meta">@signals.worker_process_init.connect</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">worker_init</span><span class="params">(**kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">import</span> threading</span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="keyword">for</span> conn <span class="keyword">in</span> connections.all(): <span class="comment"># 这里会读取 settings 中所有数据库配置对应的连接</span></span><br><span class="line">        logger.error(</span><br><span class="line">            <span class="string">'\n &lt;pid&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'---------------------------------- \n '</span></span><br><span class="line">            <span class="string">'&lt;connection&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;wrapper&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'---------------------------------- \n '</span></span><br><span class="line">            <span class="string">'&lt;thread&gt;: %s\n '</span></span><br><span class="line">			<span class="string">'&lt;local&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;handler&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;parent pid&gt;: %s \n '</span></span><br><span class="line">            <span class="string">'&lt;allow_thread_sharing&gt;: %s\n'</span> % (</span><br><span class="line">                os.getpid(), <span class="comment"># 获取当前进程 ID</span></span><br><span class="line">                conn.connection, <span class="comment"># 获取 DatabaseWrapper 中存储的真正的数据库连接对象</span></span><br><span class="line">                conn, <span class="comment"># 当前取得的 DatabaseWrapper</span></span><br><span class="line">                threading.currentThread(), </span><br><span class="line">				threading.local(),</span><br><span class="line">                connections, <span class="comment"># 当前取得的 ConnectionHandler 对象</span></span><br><span class="line">                os.getppid(), <span class="comment"># 获取父进程的 ID</span></span><br><span class="line">                conn.allow_thread_sharing)) <span class="comment"># 查看当前 DatabaseWrapper 是否是线程安全的</span></span><br></pre></td></tr></table></figure>
+<p><code>ConnectionHandler</code> 的 <code>all()</code> 方法实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/utils.py</span></span><br><span class="line"></span><br><span class="line">DEFAULT_DB_ALIAS = <span class="string">'default'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConnectionHandler</span><span class="params">(object)</span>:</span></span><br><span class="line"><span class="meta">    @cached_property</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">databases</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self._databases <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            self._databases = settings.DATABASES</span><br><span class="line">        <span class="keyword">if</span> self._databases == &#123;&#125;:</span><br><span class="line">            self._databases = &#123;</span><br><span class="line">                DEFAULT_DB_ALIAS: &#123;</span><br><span class="line">                    <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.dummy'</span>,</span><br><span class="line">                &#125;,</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">if</span> DEFAULT_DB_ALIAS <span class="keyword">not</span> <span class="keyword">in</span> self._databases:</span><br><span class="line">            <span class="keyword">raise</span> ImproperlyConfigured(<span class="string">"You must define a '%s' database"</span> % DEFAULT_DB_ALIAS)</span><br><span class="line">        <span class="keyword">return</span> self._databases</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__iter__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> iter(self.databases)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">all</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> [self[alias] <span class="keyword">for</span> alias <span class="keyword">in</span> self]</span><br></pre></td></tr></table></figure>
+<p>输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">[2018-07-20 09:50:05,601: ERROR/Worker-3]</span><br><span class="line"> &lt;pid&gt;: 41293</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x107b6e350&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10739d250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x107df54d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x1061edd50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 41281</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:50:05,601: ERROR/Worker-2]</span><br><span class="line"> &lt;pid&gt;: 41292</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x107b6e350&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10739d250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x107df44d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x1061edd50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 41281</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:50:05,604: ERROR/Worker-1]</span><br><span class="line"> &lt;pid&gt;: 41291</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x107b6e350&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10739d250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x107df44d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x1061edd50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 41281</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:50:05,604: ERROR/Worker-4]</span><br><span class="line"> &lt;pid&gt;: 41294</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x107b6e350&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10739d250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x107df54d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x1061edd50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 41281</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br></pre></td></tr></table></figure>
+<p>可以看到，4个 worker 进程 <code>41291</code>, <code>41292</code>, <code>41293</code>, <code>41294</code> 被启动了，随后通过 <code>lsof</code> 查看这些进程打开的 mysql 连接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ lsof -p 41291,41292,41293,41294 | grep :mysql</span><br><span class="line">python2.7 41291 lianghonghao   10u   IPv6 0xb37e546feaec2979        0t0     TCP localhost:62502-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 41292 lianghonghao   10u   IPv6 0xb37e546feaec2979        0t0     TCP localhost:62502-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 41293 lianghonghao   10u   IPv6 0xb37e546feaec2979        0t0     TCP localhost:62502-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 41294 lianghonghao   10u   IPv6 0xb37e546feaec2979        0t0     TCP localhost:62502-&gt;localhost:mysql (ESTABLISHED)</span><br></pre></td></tr></table></figure>
+<p>果然，四个进程同时使用了 <code>localhost:62502-&gt;localhost:mysql</code> 这条 TCP 连接。</p>
+<p>如果我们在 Worker 进程初始化之后手动关闭 <code>DatabseWrapper</code> 中的连接，然后重新建立呢？修改代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@signals.worker_process_init.connect</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">worker_init</span><span class="params">(**kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">import</span> threading</span><br><span class="line">    <span class="keyword">import</span> os</span><br><span class="line">    <span class="keyword">for</span> conn <span class="keyword">in</span> connections.all():</span><br><span class="line">        conn.close() <span class="comment"># 关闭连接</span></span><br><span class="line">        conn.connect() <span class="comment"># 重新建立</span></span><br><span class="line">        logger.error(</span><br><span class="line">            <span class="string">'\n &lt;pid&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'---------------------------------- \n '</span></span><br><span class="line">            <span class="string">'&lt;connection&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;wrapper&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'---------------------------------- \n '</span></span><br><span class="line">            <span class="string">'&lt;thread&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;local&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;handler&gt;: %s\n '</span></span><br><span class="line">            <span class="string">'&lt;parent pid&gt;: %s \n '</span></span><br><span class="line">            <span class="string">'&lt;allow_thread_sharing&gt;: %s\n'</span> % (</span><br><span class="line">                os.getpid(),  <span class="comment"># 获取当前进程 ID</span></span><br><span class="line">                conn.connection,  <span class="comment"># 获取 DatabaseWrapper 中存储的真正的数据库连接对象</span></span><br><span class="line">                conn,  <span class="comment"># 当前取得的 DatabaseWrapper</span></span><br><span class="line">                threading.currentThread(),</span><br><span class="line">                threading.local(),</span><br><span class="line">                connections,  <span class="comment"># 当前取得的 ConnectionHandler 对象</span></span><br><span class="line">                os.getppid(),  <span class="comment"># 获取父进程的 ID</span></span><br><span class="line">                conn.allow_thread_sharing))  <span class="comment"># 查看当前 DatabaseWrapper 是否是线程安全的</span></span><br></pre></td></tr></table></figure>
+<p>运行程序，输出如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">[2018-07-20 09:55:49,137: ERROR/Worker-2]</span><br><span class="line"> &lt;pid&gt;: 42715</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x10fb87b50&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10f33a250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x10fd904d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x10e18ad50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 42705</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:55:49,138: ERROR/Worker-3]</span><br><span class="line"> &lt;pid&gt;: 42716</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x10fb87b50&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10f33a250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x10fd914d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x10e18ad50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 42705</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:55:49,140: ERROR/Worker-1]</span><br><span class="line"> &lt;pid&gt;: 42714</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x10fb87b50&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10f33a250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x10fd904d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x10e18ad50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 42705</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br><span class="line"></span><br><span class="line">[2018-07-20 09:55:49,141: ERROR/Worker-4]</span><br><span class="line"> &lt;pid&gt;: 42717</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;connection&gt;: &lt;pymysql.connections.Connection object at 0x10fb87b50&gt;</span><br><span class="line"> &lt;wrapper&gt;: &lt;django.db.backends.mysql.base.DatabaseWrapper object at 0x10f33a250&gt;</span><br><span class="line"> ----------------------------------</span><br><span class="line"> &lt;thread&gt;: &lt;_MainThread(MainThread, started 140735510033280)&gt;</span><br><span class="line"> &lt;local&gt;: &lt;thread._local object at 0x10fd914d0&gt;</span><br><span class="line"> &lt;handler&gt;: &lt;django.db.utils.ConnectionHandler object at 0x10e18ad50&gt;</span><br><span class="line"> &lt;parent pid&gt;: 42705</span><br><span class="line"> &lt;allow_thread_sharing&gt;: False</span><br></pre></td></tr></table></figure>
+<p>查看 worker 进程打开的连接：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ lsof -p 42714,42715,42716,42717 | grep :mysql</span><br><span class="line">python2.7 42714 lianghonghao    3u   IPv6 0xb37e546fd9bde279        0t0     TCP localhost:62813-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 42715 lianghonghao    3u   IPv6 0xb37e546feaec34f9        0t0     TCP localhost:62811-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 42716 lianghonghao    3u   IPv6 0xb37e546feaec4079        0t0     TCP localhost:62812-&gt;localhost:mysql (ESTABLISHED)</span><br><span class="line">python2.7 42717 lianghonghao    3u   IPv6 0xb37e546fd9bdff39        0t0     TCP localhost:62814-&gt;localhost:mysql (ESTABLISHED)</span><br></pre></td></tr></table></figure>
+<p>可以看到，在子进程初始化后断开并重新建立之后，就不会出现多个 worker 同时占用一个连接的情况了。</p>
+<p>那么，到底是什么原因导致了子进程拿到了和父进程一样的连接呢？</p>
+<h3 id="3-4-致命组合"><a href="#3-4-致命组合" class="headerlink" title="3.4 致命组合"></a>3.4 致命组合</h3><p>首先，普及一个知识，Django 中是没有数据库连接池的，这就意味着每次请求都需要经历一次连接建立和连接断开的过程。</p>
+<p>在 Django 1.6 版本之后，加入了一个新的功能：<a href="https://docs.djangoproject.com/en/1.8/ref/databases/" target="_blank" rel="noopener">persistent connections</a>，开发者能够通过在数据库配置中设置 <code>CONN_MAX_AGE</code> 变量的值来指定一个数据库从建立到销毁前能够被保留的时间。至于 Django 为什么不采用数据库连接池而是使用连接持久化的方案，可以参考一下这个帖子中的讨论：<a href="https://groups.google.com/forum/#!topic/django-developers/NwY9CHM4xpU" target="_blank" rel="noopener">Database pooling vs. persistent connections</a>。</p>
+<p>Django 建立每个连接时都会将该连接到期的时间设置到 <code>DatabaseWrapper</code> 的 <code>close_at</code> 属性中：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/backends/base/base.py</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseDatabaseWrapper</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">connect</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line">        max_age = self.settings_dict[<span class="string">'CONN_MAX_AGE'</span>]</span><br><span class="line">        self.close_at = <span class="literal">None</span> <span class="keyword">if</span> max_age <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> time.time() + max_age <span class="comment"># 上文提到的连接到期时间</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>同时，在每次请求开始前和结束后，检测当前内存中数据库连接的可用性，并关闭过期和不可用的连接：</p>
+<blockquote>
+<p>Persistent connections avoid the overhead of re-establishing a connection to the database in each request. They’re controlled by the <a href="https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-CONN_MAX_AGE" target="_blank" rel="noopener"><code>CONN_MAX_AGE</code></a> parameter which defines the maximum lifetime of a connection. It can be set independently for each database.</p>
+</blockquote>
+<p>实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/__init__.py</span></span><br><span class="line"><span class="keyword">from</span> django.core <span class="keyword">import</span> signals</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">close_old_connections</span><span class="params">(**kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> conn <span class="keyword">in</span> connections.all():</span><br><span class="line">        conn.close_if_unusable_or_obsolete()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监听请求开始和结束的事件，并在触发时检测连接的有效性</span></span><br><span class="line">signals.request_started.connect(close_old_connections)</span><br><span class="line">signals.request_finished.connect(close_old_connections)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/backends/base/base.py</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BaseDatabaseWrapper</span><span class="params">(object)</span>:</span></span><br><span class="line">	</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close_if_unusable_or_obsolete</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.connection <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">if</span> self.get_autocommit() != self.settings_dict[<span class="string">'AUTOCOMMIT'</span>]:</span><br><span class="line">                self.close()</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">			</span><br><span class="line">            <span class="comment"># 如果连接在上次使用过程中遇到了无法恢复的错误也会被关闭</span></span><br><span class="line">            <span class="comment"># If an exception other than DataError or IntegrityError occurred</span></span><br><span class="line">            <span class="comment"># since the last commit / rollback, check if the connection works.</span></span><br><span class="line">            <span class="keyword">if</span> self.errors_occurred:</span><br><span class="line">                <span class="keyword">if</span> self.is_usable():</span><br><span class="line">                    self.errors_occurred = <span class="literal">False</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    self.close()</span><br><span class="line">                    <span class="keyword">return</span></span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 重点在这里</span></span><br><span class="line">            <span class="comment"># 如果连接没过期就不会被关闭</span></span><br><span class="line">            <span class="comment"># persistent connections 的使用影响了这段逻辑</span></span><br><span class="line">            <span class="keyword">if</span> self.close_at <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> time.time() &gt;= self.close_at:</span><br><span class="line">                self.close()</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close</span><span class="params">(self)</span>:</span></span><br><span class="line">        self.validate_thread_sharing()</span><br><span class="line">        <span class="keyword">if</span> self.closed_in_transaction <span class="keyword">or</span> self.connection <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 关闭数据库连接并置空</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self._close()</span><br><span class="line">        <span class="keyword">finally</span>:</span><br><span class="line">            <span class="keyword">if</span> self.in_atomic_block:</span><br><span class="line">                self.closed_in_transaction = <span class="literal">True</span></span><br><span class="line">                self.needs_rollback = <span class="literal">True</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.connection = <span class="literal">None</span> </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_close</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self.connection <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">with</span> self.wrap_database_errors:</span><br><span class="line">                <span class="keyword">return</span> self.connection.close() <span class="comment"># 真正的数据库连接在这里关闭</span></span><br></pre></td></tr></table></figure>
+<p>其实这个功能的出发点是好的，但是和 multiprocessing 结合使用，就有可能导致致命的错误，通过查阅资料和阅读 Celery 和 djcelery 的源码后，笔者发现两者都在某些时刻尝试去清理子进程从父进程处获得的数据库连接以保证正常运行，如果没有使用 persistent connections 功能，就能够在子进程<strong>初始化完成后</strong>和<strong>任务开始执行前</strong>成功关闭从父进程处继承来的连接，当子进程需要进行数据库操作时，就会重新建立新的连接，也就不会出现多个进程同时使用一条连接的情况。以下为 <code>celery</code> 中的部分源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># celery.fixups.django.py</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DjangoWorkerFixup</span><span class="params">(object)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, app)</span>:</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            self._close_old_connections = symbol_by_name(</span><br><span class="line">                <span class="string">'django.db:close_old_connections'</span>, <span class="comment"># 重点</span></span><br><span class="line">            )</span><br><span class="line">        <span class="keyword">except</span> (ImportError, AttributeError):</span><br><span class="line">            self._close_old_connections = <span class="literal">None</span></span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">install</span><span class="params">(self)</span>:</span></span><br><span class="line">		</span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        signals.task_prerun.connect(self.on_task_prerun) <span class="comment"># 在任务开始前执行</span></span><br><span class="line">        signals.task_postrun.connect(self.on_task_postrun) <span class="comment"># 在任务结束后执行</span></span><br><span class="line">        <span class="comment"># ...</span></span><br><span class="line">        </span><br><span class="line">        self.close_database()</span><br><span class="line">        self.close_cache()</span><br><span class="line">        <span class="keyword">return</span> self</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_task_prerun</span><span class="params">(self, sender, **kwargs)</span>:</span></span><br><span class="line">        <span class="string">"""Called before every task."""</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> getattr(sender.request, <span class="string">'is_eager'</span>, <span class="literal">False</span>):</span><br><span class="line">            self.close_database()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close_database</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> self._close_old_connections:</span><br><span class="line">            <span class="keyword">return</span> self._close_old_connections()  <span class="comment"># Django 1.6</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># ...</span></span><br></pre></td></tr></table></figure>
+<p>以下为 <code>djcelery</code> 的部分源码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># djcelery.loaders.py</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DjangoLoader</span><span class="params">(BaseLoader)</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_process_cleanup</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="string">"""Does everything necessary for Django to work in a long-living,</span></span><br><span class="line"><span class="string">        multiprocessing environment.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        """</span></span><br><span class="line">        <span class="comment"># See http://groups.google.com/group/django-users/</span></span><br><span class="line">        <span class="comment">#            browse_thread/thread/78200863d0c07c6d/</span></span><br><span class="line">        self.close_database()</span><br><span class="line">        self.close_cache()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 在每个任务开始前执行</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">on_task_init</span><span class="params">(self, task_id, task)</span>:</span></span><br><span class="line">        <span class="string">"""Called before every task."""</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            is_eager = task.request.is_eager</span><br><span class="line">        <span class="keyword">except</span> AttributeError:</span><br><span class="line">            is_eager = <span class="literal">False</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> is_eager:</span><br><span class="line">            self.close_database()</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_close_database</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            funs = [conn.close <span class="keyword">for</span> conn <span class="keyword">in</span> db.connections]</span><br><span class="line">        <span class="keyword">except</span> AttributeError:</span><br><span class="line">            <span class="keyword">if</span> hasattr(db, <span class="string">'close_old_connections'</span>):  <span class="comment"># Django 1.6+</span></span><br><span class="line">                funs = [db.close_old_connections] <span class="comment"># 在这里获取到 django.db:close_old_connections</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                funs = [db.close_connection]  <span class="comment"># pre multidb</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> close <span class="keyword">in</span> funs:</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                close()</span><br><span class="line">            <span class="keyword">except</span> DATABASE_ERRORS <span class="keyword">as</span> exc:</span><br><span class="line">                str_exc = str(exc)</span><br><span class="line">                <span class="keyword">if</span> <span class="string">'closed'</span> <span class="keyword">not</span> <span class="keyword">in</span> str_exc <span class="keyword">and</span> <span class="string">'not connected'</span> <span class="keyword">not</span> <span class="keyword">in</span> str_exc:</span><br><span class="line">                    <span class="keyword">raise</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">close_database</span><span class="params">(self, **kwargs)</span>:</span></span><br><span class="line">        db_reuse_max = self.conf.get(<span class="string">'CELERY_DB_REUSE_MAX'</span>, <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> db_reuse_max:</span><br><span class="line">            <span class="keyword">return</span> self._close_database()</span><br><span class="line">        <span class="keyword">if</span> self._db_reuse &gt;= db_reuse_max * <span class="number">2</span>:</span><br><span class="line">            self._db_reuse = <span class="number">0</span></span><br><span class="line">            self._close_database()</span><br><span class="line">        self._db_reuse += <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>而在笔者的数据库配置中，已经设置了 <code>CONN_MAX_AGE</code> 为 3600（一个连接从建立成功后有 3600s 的有效期），而 <code>djcelery</code> 和 <code>celery</code> 清理都是通过调用 <code>django.db.close_old_connections()</code> 来清理数据库连接的，正是因为该方法在检查没有出现异常的连接时，若该连接没有过期则不会进行关闭，才导致了 <code>djcelery</code> 和 <code>celery</code> 的准备工作没有起作用，关键代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># django/db/backends/base/base.py</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> self.close_at <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span> <span class="keyword">and</span> time.time() &gt;= self.close_at:</span><br><span class="line">    self.close()</span><br><span class="line">    <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+<p>所以一个完美的 BUG 就这么出现了：</p>
+<ol>
+<li>父进程在进行子进程初始化工作之前调用了 Django ORM 进行数据库操作，导致父进程中的 <code>DatabaseWrapper</code> 中的连接被初始化。</li>
+<li>子进程被 fork 出来后，由于完全复制了父进程的内存数据，导致所有 worker 共享了同一个 MySQL 连接（同一个 socket file）。</li>
+<li>djcelery 和 Celery 虽然在子进程初始化和任务开始时对子进程中的连接进行了清理，但是由于 persistent connections 功能的存在，导致数据库连接没有被关闭。</li>
+<li>当多个子进程同时使用时，极有可能原地爆炸。</li>
+</ol>
+<h3 id="3-5-结论及解决方案"><a href="#3-5-结论及解决方案" class="headerlink" title="3.5 结论及解决方案"></a>3.5 结论及解决方案</h3><p>所以，Django 的 persistent connections 在与 <code>multiprocessing</code> 同时使用时，要多加注意，一定要在把父进程中的数据库连接关闭之后再创建子进程。</p>
+<h4 id="3-5-1-关闭-persistent-connections-功能"><a href="#3-5-1-关闭-persistent-connections-功能" class="headerlink" title="3.5.1 关闭 persistent connections 功能"></a>3.5.1 关闭 persistent connections 功能</h4><p>关闭 persistent connections 功能，这样在子进程初始化完成后和任务开始前会把从父进程中继承过来的连接关闭。</p>
+<h4 id="3-5-2-手动关闭-Django-ORM-中维护的连接"><a href="#3-5-2-手动关闭-Django-ORM-中维护的连接" class="headerlink" title="3.5.2 手动关闭 Django ORM 中维护的连接"></a>3.5.2 手动关闭 Django ORM 中维护的连接</h4><p>不关闭 persistent connections 功能，监听子进程初始化完成和任务开始的信号，并在收到信号时手动强制关闭当前进程中 Django ORM 的连接，实现如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> django.db <span class="keyword">import</span> connections</span><br><span class="line"></span><br><span class="line"><span class="meta">@signals.task_prerun.connect</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task_prerun</span><span class="params">(**kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> conn <span class="keyword">in</span> connections.all():</span><br><span class="line">        conn.close() <span class="comment"># 这里会调用 DatabaseWrapper 的 close() 方法</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@signals.worker_process_init.connect</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">worker_init</span><span class="params">(**kwargs)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> conn <span class="keyword">in</span> connections.all():</span><br><span class="line">        conn.close()</span><br></pre></td></tr></table></figure>
+<h4 id="3-5-4-使用其他的并发实现方式"><a href="#3-5-4-使用其他的并发实现方式" class="headerlink" title="3.5.4 使用其他的并发实现方式"></a>3.5.4 使用其他的并发实现方式</h4><p>目前，只有在多进程模式下使用 Django ORM 会出现上述问题，Django 通过 ThreadLocal 来管理不同线程所对应的数据库连接，如果不使用多进程模式就不会出现内存数据相同的问题，也就不会出现共享文件描述符的问题，而 Celery 提供了若干种并发的模式：eventlet,<br>gevent, solo, threads，在能够满足功能性需求和非功能性需求的前提下，不妨考虑其他的并发模式。</p>
+<h2 id="4-后记"><a href="#4-后记" class="headerlink" title="4. 后记"></a>4. 后记</h2><p>这个 BUG 是两种框架的特性冲突而导致，但是 Django 官方文档在介绍 persistent connections 功能时并没有提醒开发者注意该事项，而出现错误后又很难定位问题，感觉在一定程度上对开发者有些不友好。</p>
+<p>希望本次总结能够给各位读者打预防针，使得读者在日后的使用中尽量避免遇到这样的问题，或对读者在解决其他问题时提供一定的参考。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.772Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Celery/">Celery</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Django/">Django</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2018/11/04/celery-django-drug/&title=《celery 与 django 的致命组合》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2018/11/04/celery-django-drug/&title=《celery 与 django 的致命组合》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2018/11/04/celery-django-drug/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《celery 与 django 的致命组合》 — live in passion&url=https://homholueng.github.io/2018/11/04/celery-django-drug/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2018/11/04/celery-django-drug/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/02/09/celery-introduction/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Celery 使用指南</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/11/03/redis-connection-with-py-client/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Redis 各部署场景下 python client 的使用</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2018/11/04/celery-django-drug/&title=《celery 与 django 的致命组合》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2018/11/04/celery-django-drug/&title=《celery 与 django 的致命组合》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2018/11/04/celery-django-drug/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《celery 与 django 的致命组合》 — live in passion&url=https://homholueng.github.io/2018/11/04/celery-django-drug/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2018/11/04/celery-django-drug/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACIElEQVR42u3aQU7EMAwFUO5/6SKxRQ3fdmfEJK+rChUlj4Vx8v31FT/Xz/P7ff3N/LcefjAwMD6WcS2ffLH19znv7vu7vWFgYJzDmJTC9c/vNpqvG62IgYGBERTNqCwWeRgYGBi9grtevto45m0lBgYGRnKITUrweovrdd90FsfAwPhAxiQYePX7m/INDAyMf8y4is8kepw3mre7wsDA2JqRHCnzZi5v2pLmr3oBh4GBsTcj77USUq8E52McBQwGBsYWjMl41mQsI7loS/7EGBgYJzCeGn1IhjB6TWHhYg4DA+MYRm8U7NnRsWbTiYGBsSkjb/V641z59dwEjIGBsTejfA8XxwCTjSbN6B//PTAwMLZjTELE+dG3ekmHgYFxGuOpEHESZE7OoRgYGKcxotrcGpKoFt/yWhgYGFszqmFkfoidDJklpGh1DAyM7Rh5lJgfYvOAs3n+rlZoDAyM7RiTvuvZUr6+hsPAwDiBkUSMvVKbh50PHIYxMDA2ZeQbnY9w9QY1CnMiGBgYWzOSItg7LSYbysPL2+8xMDC2ZpRDwVaZTrYyWR0DA2NvxlV8euzJiEY0KIaBgbE1o7eJ6nuPkVzGYWBgnMPIi+w8TpgMeYwaRAwMjC0YrwgXH6j0eVOIgYGBEbd9c0YelGJgYGD0gsykEayOU0RfYmBgHMDIw4B8MGJ+3dZMYjEwMLZjzAPI6qZ7reQ8RsXAwPhAxjegzLJQzbxptwAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

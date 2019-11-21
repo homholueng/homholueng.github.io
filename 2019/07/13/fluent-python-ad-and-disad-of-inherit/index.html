@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 12 - 继承的优缺点 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="12.1 子类化内置类型很麻烦使用 C 语言实现的内置类型不会调用用户顶以的类覆盖的特殊方法，如 dict 的子类覆盖的 __getitem__() 方法不会被内置类型的 get() 方法调用。 具体我们可以看看下面的例子： 1234567891011121314151617181920In [1]: class DoppelDict(dict):    ...:     def __setite">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 12 - 继承的优缺点">
+<meta property="og:url" content="https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="12.1 子类化内置类型很麻烦使用 C 语言实现的内置类型不会调用用户顶以的类覆盖的特殊方法，如 dict 的子类覆盖的 __getitem__() 方法不会被内置类型的 get() 方法调用。 具体我们可以看看下面的例子： 1234567891011121314151617181920In [1]: class DoppelDict(dict):    ...:     def __setite">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-25T05:03:52.685Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 12 - 继承的优缺点">
+<meta name="twitter:description" content="12.1 子类化内置类型很麻烦使用 C 语言实现的内置类型不会调用用户顶以的类覆盖的特殊方法，如 dict 的子类覆盖的 __getitem__() 方法不会被内置类型的 get() 方法调用。 具体我们可以看看下面的例子： 1234567891011121314151617181920In [1]: class DoppelDict(dict):    ...:     def __setite">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 12 - 继承的优缺点</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 12 - 继承的优缺点</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-07-13T10:05:21.000Z" itemprop="datePublished" class="page-time">
+  2019-07-13
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#12-1-子类化内置类型很麻烦"><span class="post-toc-number">1.</span> <span class="post-toc-text">12.1 子类化内置类型很麻烦</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#12-2-多重继承和方法的解析顺序"><span class="post-toc-number">2.</span> <span class="post-toc-text">12.2 多重继承和方法的解析顺序</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#12-4-处理多重继承"><span class="post-toc-number">3.</span> <span class="post-toc-text">12.4 处理多重继承</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-ad-and-disad-of-inherit" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 12 - 继承的优缺点</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-07-13 18:05:21" datetime="2019-07-13T10:05:21.000Z" itemprop="datePublished">2019-07-13</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="12-1-子类化内置类型很麻烦"><a href="#12-1-子类化内置类型很麻烦" class="headerlink" title="12.1 子类化内置类型很麻烦"></a>12.1 子类化内置类型很麻烦</h2><p><strong>使用 C 语言实现的内置类型不会调用用户顶以的类覆盖的特殊方法，如 <code>dict</code> 的子类覆盖的 <code>__getitem__()</code> 方法不会被内置类型的 <code>get()</code> 方法调用。</strong></p>
+<p>具体我们可以看看下面的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">In [<span class="number">1</span>]: <span class="class"><span class="keyword">class</span> <span class="title">DoppelDict</span><span class="params">(dict)</span>:</span> </span><br><span class="line">   ...:     <span class="function"><span class="keyword">def</span> <span class="title">__setitem__</span><span class="params">(self, key, value)</span>:</span> </span><br><span class="line">   ...:         super().__setitem__(key, [value] * <span class="number">2</span>) </span><br><span class="line">   ...:                                                                                   </span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: dd = DoppelDict(one=<span class="number">1</span>)                                                            </span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: dd                                                                                </span><br><span class="line">Out[<span class="number">3</span>]: &#123;<span class="string">'one'</span>: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: dd[<span class="string">'two'</span>] = <span class="number">2</span>                                                                     </span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: dd                                                                                </span><br><span class="line">Out[<span class="number">5</span>]: &#123;<span class="string">'one'</span>: <span class="number">1</span>, <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>]&#125;</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: dd.update(three=<span class="number">3</span>)                                                                </span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: dd                                                                                </span><br><span class="line">Out[<span class="number">7</span>]: &#123;<span class="string">'one'</span>: <span class="number">1</span>, <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>], <span class="string">'three'</span>: <span class="number">3</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>所以，直接实例化内置类型（如 <code>dict</code>，<code>list</code> 或 <code>str</code>）容易出错，用户自己定义的类，应该继承 <code>collections</code> 模块中的类，如 <code>UserDict</code>，<code>UserList</code> 和 <code>UserString</code>，这样就不会出现内置类型不调用子类覆盖的特殊方法的尴尬场面。</p>
+<h2 id="12-2-多重继承和方法的解析顺序"><a href="#12-2-多重继承和方法的解析顺序" class="headerlink" title="12.2 多重继承和方法的解析顺序"></a>12.2 多重继承和方法的解析顺序</h2><p>Python 会按照特定的顺序遍历继承图来决定如何解析子类调用的方法，这个顺序叫做方法解析顺序（Method Resolution Order）。每个类都有一个名为 <code>__mro__</code> 的属性，它的值是一个元组，按照方法解析顺序列出该类的各个超类，同时，MRO 还与类声明超类的顺序有关。</p>
+<h2 id="12-4-处理多重继承"><a href="#12-4-处理多重继承" class="headerlink" title="12.4 处理多重继承"></a>12.4 处理多重继承</h2><ol>
+<li>把接口继承和实现继承区分开：继承接口是为了实现“是什么”的关系，继承实现是为了重用代码</li>
+<li>使用抽象基类表示接口</li>
+<li>通过混入重用代码：如果一个类的作用是为多个不相关的子类提供方法实现，从而实现重用，但不体现“是什么”关系，应该把那个类明确地定义为混入类（mixin class）。从概念上讲，混入不定义新类型，只是打包方法，便于重用。</li>
+<li>在名称中明确指明混入：混用类的类名强烈建议使用 Mixin 作为后缀。</li>
+<li>抽象基类可以作为混入，反过来则不成立</li>
+<li>不要子类化多个具体类：具体类的超类中除了一个具体超类之外，其余的应该都是抽象基类或混入</li>
+<li>为用户提供聚合类：如果抽象基类或混入的组合对客户代码非常有用，那就提供一个类，使用易于理解的方式把它们结合起来。</li>
+<li>优先使用对象组合而不是类继承</li>
+</ol>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-25T05:03:52.685Z" itemprop="dateUpdated">2019-07-25 13:03:52</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&title=《Chapter 12 - 继承的优缺点》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&title=《Chapter 12 - 继承的优缺点》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 12 - 继承的优缺点》 — live in passion&url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/18/gopl-getting-started/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Go 语言圣经 - 1. 入门</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/05/04/fluent-python-interface/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 11 - 函数装饰器和闭包</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&title=《Chapter 12 - 继承的优缺点》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&title=《Chapter 12 - 继承的优缺点》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 12 - 继承的优缺点》 — live in passion&url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/07/13/fluent-python-ad-and-disad-of-inherit/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsUlEQVR42u3aQW4jMQwEwPz/07vXBZzY3aQUe4HyyTAyGtUchkyLX1/x58/D5/H3f395/v1x5Z/ukqxw4IOHh4e33nrC+GmFZOv5fdsH8c21eHh4eNd4yXLJQ9k8uGSdfM94eHh4n8aLli4b9OTv8fDw8P5H3vPvz1/6ye9tzIGHh4f3Ll4eobbt9QzzhqwFDw8Pr8tIoyb4c75fOd/Dw8PDW5+qn2p8kwKwD4W/uRYPDw/vAq+NaJOW92wsu18ZDw8P7+zKyRDVBj8b1cqLyothLzw8PLxf4bU3Sx5HG+m22UIxy4CHh4e35s2a3fx4bAbOr6rLGB4eHt4hXrv0/qrZg0jWGdYTPDw8vBGvbX/3xSAvEkkYER2A4eHh4a15SeucxLunhgzacvKihODh4eFd4LWbzm9z6nWfR894eHh47+JtgtpZ4DsbXxhmLXh4eHhHeXkK2p6t7UvIppXHw8PDu8HLI4BZqJrEu/kDalt8PDw8vHu8dkRg//qetcizBh0PDw/vFG8WlbakdoBgdjj3zX3x8PDwLvBORQP57fejBsPyg4eHh3eIF3XZs1GnawdaxU7w8PDwLvDaQYFTgWx+bRsE4+Hh4d3mJS1sGyIkR1b58dVmNAEPDw/vBm9zPJ8EEHkksR9WGBYJPDw8vBFvdnyVv7g3I1mzN3yRT+Ph4eEteJtNz47QZgUjb9nx8PDwbvPysCCPUzelIv+8KGB4eHh4R3mzsaqWms9/JeMFxfABHh4e3gVe+/JNkHn7mz+I2SEcHh4e3j3e/mi/DQjacKEtG3h4eHi/w5ttPT9pakvI4awFDw8P7628WUu9wc8eJR4eHt6n8Wbtb/L7Zmwrqht4eHh4h3jtkdXsdZ8Pb7WB8oGsBQ8PDy/mtf/wt0Ui32j+N1fO9/Dw8PBe7+cvmNWIvafIst4AAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Redis 使用技巧 - Pipelining | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Redis">
+    <meta name="description" content="请求/相应以及 RTTRedis 是基于 CS 模型的 TCP 服务器，所以我们每次操作都会遵循如下步骤完成：  客户端将查询请求发送给服务器，服务器中套接字中读取客户端的请求，客户端会等待服务器的相应，而这个过程通常是阻塞的。 服务器处理完成后，将响应返回给客户端。  假设客户端需要向服务器发送四条请求，那么请求和响应顺序应该是这样的：  Client: INCR X Server: 1 Cli">
+<meta name="keywords" content="Redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 使用技巧 - Pipelining">
+<meta property="og:url" content="https://homholueng.github.io/2019/08/11/redis-skill-pipelining/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="请求/相应以及 RTTRedis 是基于 CS 模型的 TCP 服务器，所以我们每次操作都会遵循如下步骤完成：  客户端将查询请求发送给服务器，服务器中套接字中读取客户端的请求，客户端会等待服务器的相应，而这个过程通常是阻塞的。 服务器处理完成后，将响应返回给客户端。  假设客户端需要向服务器发送四条请求，那么请求和响应顺序应该是这样的：  Client: INCR X Server: 1 Cli">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/08/11/redis-skill-pipelining/pipeline_iops.png">
+<meta property="og:updated_time" content="2019-08-20T13:36:55.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis 使用技巧 - Pipelining">
+<meta name="twitter:description" content="请求/相应以及 RTTRedis 是基于 CS 模型的 TCP 服务器，所以我们每次操作都会遵循如下步骤完成：  客户端将查询请求发送给服务器，服务器中套接字中读取客户端的请求，客户端会等待服务器的相应，而这个过程通常是阻塞的。 服务器处理完成后，将响应返回给客户端。  假设客户端需要向服务器发送四条请求，那么请求和响应顺序应该是这样的：  Client: INCR X Server: 1 Cli">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/08/11/redis-skill-pipelining/pipeline_iops.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Redis 使用技巧 - Pipelining</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Redis 使用技巧 - Pipelining</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-08-11T12:25:35.000Z" itemprop="datePublished" class="page-time">
+  2019-08-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Redis/">Redis</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#请求-相应以及-RTT"><span class="post-toc-number">1.</span> <span class="post-toc-text">请求/相应以及 RTT</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Redis-Pipelining"><span class="post-toc-number">2.</span> <span class="post-toc-text">Redis Pipelining</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#其实不仅仅是-RTT-的问题"><span class="post-toc-number">3.</span> <span class="post-toc-text">其实不仅仅是 RTT 的问题</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#实际测试"><span class="post-toc-number">4.</span> <span class="post-toc-text">实际测试</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-redis-skill-pipelining" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Redis 使用技巧 - Pipelining</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-08-11 20:25:35" datetime="2019-08-11T12:25:35.000Z" itemprop="datePublished">2019-08-11</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Redis/">Redis</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="请求-相应以及-RTT"><a href="#请求-相应以及-RTT" class="headerlink" title="请求/相应以及 RTT"></a>请求/相应以及 RTT</h2><p>Redis 是基于 CS 模型的 TCP 服务器，所以我们每次操作都会遵循如下步骤完成：</p>
+<ul>
+<li>客户端将查询请求发送给服务器，服务器中套接字中读取客户端的请求，客户端会等待服务器的相应，而这个过程通常是阻塞的。</li>
+<li>服务器处理完成后，将响应返回给客户端。</li>
+</ul>
+<p>假设客户端需要向服务器发送四条请求，那么请求和响应顺序应该是这样的：</p>
+<ul>
+<li>Client: INCR X</li>
+<li>Server: 1</li>
+<li>Client: INCR X</li>
+<li>Server: 2</li>
+<li>Client: INCR X</li>
+<li>Server: 3</li>
+<li>Client: INCR X</li>
+<li>Server: 4</li>
+</ul>
+<p>从客户端发起请求的那一刻开始计算，直到客户端收到来自服务器的响应，这中间消耗的时间我们称其为 RTT（Round Trip Time）。当客户端需要在一行（例如往同一个列表中添加多个元素，或是操作同一个数据库中的多个 key 值）上进行多次操作时，RTT 会对性能造成不小的影响。假设我们拥有一台性能强大的服务器，这台服务器能够在一秒内处理 100K 个请求，那么在 RTT 为 250 毫秒的情况下，这个性能强大的服务器一秒内也只能处理 4 个请求。</p>
+<h2 id="Redis-Pipelining"><a href="#Redis-Pipelining" class="headerlink" title="Redis Pipelining"></a>Redis Pipelining</h2><p>Redis 提供的 Pipelining 特性允许我们将多个请求一次性发送给服务器，然后再将所有的响应一次性读取回来。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span> (printf "PING\r\nPING\r\nPING\r\n"; sleep 1) | nc localhost 6379</span><br><span class="line">+PONG</span><br><span class="line">+PONG</span><br><span class="line">+PONG</span><br></pre></td></tr></table></figure>
+<p>以上小节的例子来看，使用的 Pipelining 之后，请求和相应的顺序应该是这样的(<strong>注意，多条命令是合并在一个请求中发送出去的，处理结果也是在一个响应中返回的</strong>)：</p>
+<ul>
+<li>Client: INCR X</li>
+<li>Client: INCR X</li>
+<li>Client: INCR X</li>
+<li>Client: INCR X</li>
+<li>Server: 1</li>
+<li>Server: 2</li>
+<li>Server: 3</li>
+<li>Server: 4</li>
+</ul>
+<p><strong>如果客户端使用了 Pipelining 这个特性，那么服务器就必须将响应的内容加入到队列中，直到所有操作都处理完成后再一次性返回。当然，这个队列是在内存中的，如果你需要使用 Pipelining 来执行大量的操作，最好是将这些操作进行分批 Pipelining，避免服务器在存储响应内容时消耗过多的内存。</strong></p>
+<h2 id="其实不仅仅是-RTT-的问题"><a href="#其实不仅仅是-RTT-的问题" class="headerlink" title="其实不仅仅是 RTT 的问题"></a>其实不仅仅是 RTT 的问题</h2><p>Pipelining 这个特性其实不仅仅是解决了 RTT 开销的问题，还防止了过多 socket I/O 带来的消耗，因为多条操作指令能够在一次 <code>read()</code> 系统调用中读取出来，多条响应内容也能够在一次 <code>write()</code> 系统调用中完成写入。</p>
+<p>从官方文档给出的资料可以看出，随着 Pipelining 指令数量的增长，服务器的 qps 也成近似指数关系的增长，最后稳定在大概十倍的位置：</p>
+<img src="/2019/08/11/redis-skill-pipelining/pipeline_iops.png" title="[pipeline_iops]">
+<h2 id="实际测试"><a href="#实际测试" class="headerlink" title="实际测试"></a>实际测试</h2><p>下面是一段使用 Python 代码进行的测试：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">TIMES = <span class="number">10000</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bench</span><span class="params">(func, desc)</span>:</span></span><br><span class="line">    start = time.time()</span><br><span class="line">    func()</span><br><span class="line">    print(<span class="string">'&#123;desc&#125; &#123;cost&#125; milliseconds'</span>.format(desc=desc, cost=time.time() - start)) </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">without_pipeling</span><span class="params">()</span>:</span></span><br><span class="line">    r = redis.Redis(host=<span class="string">'localhost'</span>, port=<span class="number">6379</span>)</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> range(TIMES):</span><br><span class="line">        r.ping()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">with_pipelining</span><span class="params">()</span>:</span></span><br><span class="line">    r = redis.Redis(host=<span class="string">'localhost'</span>, port=<span class="number">6379</span>)</span><br><span class="line">    <span class="keyword">with</span> r.pipeline(transaction=<span class="literal">False</span>) <span class="keyword">as</span> p:</span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> range(TIMES):</span><br><span class="line">            p.ping()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    bench(without_pipeling, <span class="string">'without_pipeling'</span>)</span><br><span class="line">    bench(with_pipelining, <span class="string">'with_pipelining'</span>)</span><br></pre></td></tr></table></figure>
+<p>测试结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">without_pipeling 1.24247217178 milliseconds</span><br><span class="line">with_pipelining 0.0302491188049 milliseconds</span><br></pre></td></tr></table></figure>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-08-20T13:36:55.995Z" itemprop="dateUpdated">2019-08-20 21:36:55</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&title=《Redis 使用技巧 - Pipelining》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&title=《Redis 使用技巧 - Pipelining》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis 使用技巧 - Pipelining》 — live in passion&url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/08/17/effective-way-mind-map/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">思维导图与高效学习</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/08/11/fluent-python-override-op-in-right-way/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 13 - 正确的重载运算符</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&title=《Redis 使用技巧 - Pipelining》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&title=《Redis 使用技巧 - Pipelining》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis 使用技巧 - Pipelining》 — live in passion&url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/08/11/redis-skill-pipelining/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACvElEQVR42u3a0Y4iMQwEwP3/n7573RUCuu3klpNqnhAThlSQYmPn6yu+/ny7Ht95vPt9zOt3Ht9/9sxnnz1w4eHh4S2m/vrRryf3eirJ0iTfks8ZDw8P7zYvedzrr8mDymxpkiCBh4eH95m8JGnOwTkeDw8P7//lbVLefNLJXTw8PLzf5SUTyiexf84v1Frw8PDwuhpp1EX6nNdX+nt4eHh46656fiygTaA331h8Fg8PD+8CL99w24S1TXM3LbQ3I/Hw8PCu8ZKDVvnGvd/QT5U58PDw8M7y2obTJmneFBfa5Ptr1k/Dw8PDi3PavNCwecJsEQ+k3Xh4eHgXeMnQPF1OxieLUh+umjXG8PDw8Ea8zVGn2dTz17PiSFGlxsPDw1vz2iLCJpluGcNQgYeHh3eUNyvatmXWvEk2+zcQVVnw8PDwrvHa4kJe0p21xNrl+DEeDw8P7wIvL+AmH27Lsvs2WN0qw8PDw1vz8o0436xnyDbwREk/Hh4e3gVeu93Pml5tIj474PXmN8TDw8M7yptt/W2D6sbC1cUIPDw8vDUvL922B0nzgDE7dBXNFg8PD+8ary3CtqWE9lBXnky/uYuHh4d3jXf2QFVCaq88FP0Yg4eHh3eZd+pA1SwA5Al6Uf7Aw8PDu8A729baBJjXC5SUOd6EBzw8PLwLvLZQmwPy8m7bKjvQzcPDw8Nb8PaF2rYYkaf4Seh6Oh4PDw/vGi8vSZxKuzehoiia4OHh4R3lzRpR+bGA16GiKCjM7uLh4eFd4LVb7aYR1bbK2kU5EEnw8PDwyt56u623AWDWzZ8tBB4eHt6/4bXlhnbMqWNY9Ug8PDy8D+Dlf/v3JYkkkERVajw8PLwP4LXNsIS9OfD61IKHh4d3jdceNt2UbjeBpD4WhoeHh3eB1/7hbzf0tqnWNt4OXHh4eHgp7y+xYg0BtxCn2QAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

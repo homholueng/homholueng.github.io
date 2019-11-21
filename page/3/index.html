@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="my keyword">
+    <meta name="description" content="description?">
+<meta name="keywords" content="my keyword">
+<meta property="og:type" content="website">
+<meta property="og:title" content="live in passion">
+<meta property="og:url" content="https://homholueng.github.io/page/3/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="description?">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="live in passion">
+<meta name="twitter:description" content="description?">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">live in passion</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header index-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">live in passion</h1>
+        <h5 class="subtitle">
+            
+                
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-fluent-python-sequence" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-27 12:07:46" datetime="2019-04-27T04:07:46.000Z" itemprop="datePublished">2019-04-27</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/27/fluent-python-sequence/">Chapter 10 - 序列的修改、散列和切片</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        10.2 与旧的类兼容
+序列类型的构造方法最好接受可迭代的对象为参数，因为所有内置的序列类型都是这样做的。
+
+reprlib 能够为某些对象生成长度有限的表示形式:
+12345678910111213141516171819In [1]: import reprlibIn [3]: aOut[3]:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...  999]In [4]:...
+    
+
+        <a href="/2019/04/27/fluent-python-sequence/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-pep-302-new-imoprt-hooks-md" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-21 16:36:44" datetime="2019-04-21T08:36:44.000Z" itemprop="datePublished">2019-04-21</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/21/pep-302-new-imoprt-hooks-md/">PEP 302 - New Import Hooks</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        Abstract该提议为了使得开发者能够对 Python 的模块导入机制进行更好的自定义，提出了一种新的导入钩子，这种新型的机制能够更好注入到现有的导入机制中，并且对模块的查找和导入提供了更细粒度的控制。
+Motivation在该提议出现之前，如果开发者要自定义模块的导入机制，需要重载内置的 __import__ 函数，但是重载该函数十分麻烦，需要完全实现整个 import 的机制，还需要处...
+    
+
+        <a href="/2019/04/21/pep-302-new-imoprt-hooks-md/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-linux-cl-and-shell-more-bash-shell-cmd" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-20 15:06:12" datetime="2019-04-20T07:06:12.000Z" itemprop="datePublished">2019-04-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/20/linux-cl-and-shell-more-bash-shell-cmd/">Chapter 4 - 更多的 bash shell 命令</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        管理进程4.1 检测程序4.1.1 探查进程Linux 系统中使用的 GNU ps 命令支持3种不同类型的命令行参数：
+
+Unix 风格的参数，前面加单破折线
+BSD 风格的参数，前面不加破折线
+GNU 风格的长参数，前面加双破折线
+
+Unix 风格的参数使用 ps 命令的关键不在于记住所有可用的参数，而在于记住最有用的那些参数。
+如果你想查看系统上运行的所有进程，可用 -ef 参数组合，-...
+    
+
+        <a href="/2019/04/20/linux-cl-and-shell-more-bash-shell-cmd/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-linux-cl-and-shell-basic-bash-shell-cmd" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-20 15:05:03" datetime="2019-04-20T07:05:03.000Z" itemprop="datePublished">2019-04-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/20/linux-cl-and-shell-basic-bash-shell-cmd/">Chapter 3 - 基本的 bash shell 命令</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        3.4 浏览文件系统3.4.1 Linux 文件系统Linux 虚拟目录中比较复杂的部分是它如何协调管理各个存储设备。在 Linux PC 上安装的第 一块硬盘称为根驱动器。根驱动器包含了虚拟目录的核心，其他目录都是从那里开始构建的。
+Linux 会在根驱动器上创建一些特别的目录，我们称之为挂载点（mount point）。挂载点是虚拟目录中用于分配额外存储设备的目录。虚拟目录会让文件和目录...
+    
+
+        <a href="/2019/04/20/linux-cl-and-shell-basic-bash-shell-cmd/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-linux-cl-and-shell-into-shell" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-20 15:04:15" datetime="2019-04-20T07:04:15.000Z" itemprop="datePublished">2019-04-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/20/linux-cl-and-shell-into-shell/">Chapter 2 - 走进 shell</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        2.1 进入命令行在图形化桌面出现之前，与 Unix 系统进行交互的唯一方式就是借助由 shell 所提供的文本命令行界面（command line interface，CLI）。CLI 只能接受文本输入，也只能显示出文本和基本的图形输出。
+进入 CLI 有两种方式：
+
+让 Linux 退出图形化桌面模式，进入文本模式，这种模式称作 Linux 控制台，因为其模拟了早起的硬接线控制台终端。L...
+    
+
+        <a href="/2019/04/20/linux-cl-and-shell-into-shell/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-linux-cl-and-shell-meet-linux-shell" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-20 15:02:47" datetime="2019-04-20T07:02:47.000Z" itemprop="datePublished">2019-04-20</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/20/linux-cl-and-shell-meet-linux-shell/">Chapter 1 - 初识 Linux shell</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        1.1 什么是 LinuxLinux 可以划分为四个部分：
+
+Linux 内核
+GNU 工具
+图形化桌面软件
+应用软件
+
+1.1.1 深入探究 Linux 内核内核主要负责以下四种功能：
+
+系统内存管理
+软件程序管理
+硬件设备管理
+文件系统管理
+
+Linux 系统将硬件设备划分为三种：
+
+字符型设备文件：每次只能处理一个字符的设备。
+块设备文件：每次能处理大块数据的设备，比如硬盘。
+网络设备...
+    
+
+        <a href="/2019/04/20/linux-cl-and-shell-meet-linux-shell/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-docs-app-data" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-17 22:37:44" datetime="2019-04-17T14:37:44.000Z" itemprop="datePublished">2019-04-17</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Docker/">Docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/17/docker-docs-app-data/">Docker 应用数据的管理</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        概述容器中创建的文件默认会写入可写的容器层，这意味着：
+
+这些数据会随着容器的销毁而消失
+容器的可写层与当前宿主机耦合在了一起，想要将数据转移到别的地方比较麻烦
+需要借助存驱动来对文件系统进行管理才能对容器的可写层进行写入，这与使用数据卷相比性能会差一些，因为多了一层抽象层。
+
+Docker 针对数据存储的问题提供了两种解决方案：volumn 和 bind mount，这使得我们能够放心的将...
+    
+
+        <a href="/2019/04/17/docker-docs-app-data/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Storage/">Storage</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-fluent-python-pythonic-object" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-14 15:51:43" datetime="2019-04-14T07:51:43.000Z" itemprop="datePublished">2019-04-14</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/14/fluent-python-pythonic-object/">Chapter 9 - 符合 Python 风格的对象</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。
+对象表示形式Python 提供了两种获取对象表示形式的方法:
+
+repr()：以便于开发者理解的方式返回对象的字符串表示形式。
+str()：以便于用户理解的方式返回对象的字符串表示形式。
+
+为了支持以上两种方式，我们要实现 __repr__ 和 ...
+    
+
+        <a href="/2019/04/14/fluent-python-pythonic-object/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-fluent-python-object-relate" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-07 15:52:43" datetime="2019-04-07T07:52:43.000Z" itemprop="datePublished">2019-04-07</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/07/fluent-python-object-relate/">Chapter 8 - 对象引用、可变性和垃圾回收</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        标识、相等性和别名1234567891011121314151617In [1]: charles = &#123;'name': 'Charles L. Dodgson', 'born': 1832&#125;In [2]: lewis = charlesIn [3]: lewis == charlesOut[3]: TrueIn [4]: lewis is charlesOut[4]: ...
+    
+
+        <a href="/2019/04/07/fluent-python-object-relate/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-docker-docs-network" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-04-06 18:17:19" datetime="2019-04-06T10:17:19.000Z" itemprop="datePublished">2019-04-06</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Docker/">Docker</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/04/06/docker-docs-network/">Docker 网络基础</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        Docker 容器和服务的功能之所以如此强大，得益于其能够通过网络与其他组件进行互联。与此同时，容器和服务也不需要关心自身和与其互联的组件是否是部署在 Docker 上的，也不需要关心 Docker 宿主机的操作系统类型，因为 Docker 已经帮我们处理了这些事情，我们能够使用一种平台无关的方式来管理这些组件和配置。
+网络驱动Docker 的网络系统通过驱动来实现了可插拔的特性，并且默认提...
+    
+
+        <a href="/2019/04/06/docker-docs-network/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Network/">Network</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <a class="extend prev" rel="prev" href="/page/2/">上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">下一页</a>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/page/3/&title=live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/page/3/&title=live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/page/3/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=live in passion&url=https://homholueng.github.io/page/3/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/page/3/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABzElEQVR42u3aS27DMAwFwNz/0inQveRH0lYSYLwyGlcebwj+Xq/4ev9fq/v9r8mZN1+4uLhj7nt7rY7eP7l/fv/Zq5NxcXHPc5PglQSmPSIJjhc2XFzcL+MmQa36F1xc3F/n5q9PTsbFxf1+blL8VIucfWL0eK2Gi4s74M4bpvP7o/1dXFzcwVQiaZ5Okp7y23FxcY9we0VLjp4MYJZhDhcX9wi3Og7J2xm9Aqbwv7i4uA9w8+MmT1YbJcvAiouLe5CbpDvzwWrvnHLZg4uLO+YmBU81YPUGLfnH4OLiPs2dNEyrQbAa8m4epeDi4t7UCqkOXPMXV8MfLi7ueW6v+OnhqutZzSkQLi7uTdx81JqPWJLAVA12uLi4T3PzAqYaknpB6oKOi4t7hNsLYZNQlTdHlgkWLi7uw9w8uPTSlGrBc/ErLi7uQW41QakmN5MLFxf3U9zqkPXeIUphfIKLi3uEO0lKevfVYW0zLOLi4o65+TJWntDkn9HcLcXFxT3CnaQj+dpE3oot9HdxcXE/yq2GqnxR46Ih0tzXwMXFPcetpjjVIUp5gwwXF/cxbr6CWQ1SvbXOG9oiuLi4A+6kYVpdp8gHtLi4uB/i/gHLrVeuIC39SgAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

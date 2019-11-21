@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 1 - 初识 Linux shell | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Linux,Shell">
+    <meta name="description" content="1.1 什么是 LinuxLinux 可以划分为四个部分：  Linux 内核 GNU 工具 图形化桌面软件 应用软件  1.1.1 深入探究 Linux 内核内核主要负责以下四种功能：  系统内存管理 软件程序管理 硬件设备管理 文件系统管理  Linux 系统将硬件设备划分为三种：  字符型设备文件：每次只能处理一个字符的设备。 块设备文件：每次能处理大块数据的设备，比如硬盘。 网络设备文件：">
+<meta name="keywords" content="Linux,Shell">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 1 - 初识 Linux shell">
+<meta property="og:url" content="https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="1.1 什么是 LinuxLinux 可以划分为四个部分：  Linux 内核 GNU 工具 图形化桌面软件 应用软件  1.1.1 深入探究 Linux 内核内核主要负责以下四种功能：  系统内存管理 软件程序管理 硬件设备管理 文件系统管理  Linux 系统将硬件设备划分为三种：  字符型设备文件：每次只能处理一个字符的设备。 块设备文件：每次能处理大块数据的设备，比如硬盘。 网络设备文件：">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.783Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 1 - 初识 Linux shell">
+<meta name="twitter:description" content="1.1 什么是 LinuxLinux 可以划分为四个部分：  Linux 内核 GNU 工具 图形化桌面软件 应用软件  1.1.1 深入探究 Linux 内核内核主要负责以下四种功能：  系统内存管理 软件程序管理 硬件设备管理 文件系统管理  Linux 系统将硬件设备划分为三种：  字符型设备文件：每次只能处理一个字符的设备。 块设备文件：每次能处理大块数据的设备，比如硬盘。 网络设备文件：">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 1 - 初识 Linux shell</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 1 - 初识 Linux shell</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-20T07:02:47.000Z" itemprop="datePublished" class="page-time">
+  2019-04-20
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-1-什么是-Linux"><span class="post-toc-number">1.</span> <span class="post-toc-text">1.1 什么是 Linux</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-1-深入探究-Linux-内核"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">1.1.1 深入探究 Linux 内核</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-2-GNU-工具"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">1.1.2 GNU 工具</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#1-核心-GNU-工具"><span class="post-toc-number">1.2.1.</span> <span class="post-toc-text">1. 核心 GNU 工具</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#2-shell"><span class="post-toc-number">1.2.2.</span> <span class="post-toc-text">2. shell</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-2-Linux-发行版"><span class="post-toc-number">2.</span> <span class="post-toc-text">1.2 Linux 发行版</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-linux-cl-and-shell-meet-linux-shell" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 1 - 初识 Linux shell</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-20 15:02:47" datetime="2019-04-20T07:02:47.000Z" itemprop="datePublished">2019-04-20</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Linux-CL-and-Shell-Programing/">Linux CL and Shell Programing</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="1-1-什么是-Linux"><a href="#1-1-什么是-Linux" class="headerlink" title="1.1 什么是 Linux"></a>1.1 什么是 Linux</h2><p>Linux 可以划分为四个部分：</p>
+<ol>
+<li>Linux 内核</li>
+<li>GNU 工具</li>
+<li>图形化桌面软件</li>
+<li>应用软件</li>
+</ol>
+<h3 id="1-1-1-深入探究-Linux-内核"><a href="#1-1-1-深入探究-Linux-内核" class="headerlink" title="1.1.1 深入探究 Linux 内核"></a>1.1.1 深入探究 Linux 内核</h3><p>内核主要负责以下四种功能：</p>
+<ul>
+<li>系统内存管理</li>
+<li>软件程序管理</li>
+<li>硬件设备管理</li>
+<li>文件系统管理</li>
+</ul>
+<p>Linux 系统将硬件设备划分为三种：</p>
+<ul>
+<li>字符型设备文件：每次只能处理一个字符的设备。</li>
+<li>块设备文件：每次能处理大块数据的设备，比如硬盘。</li>
+<li>网络设备文件：采用数据包发送和接受数据的设备，包括各种网卡和一个特殊的回环设 备。<strong>这个回环设备允许 Linux 系统使用常见的网络编程协议同自身通信。</strong></li>
+</ul>
+<h3 id="1-1-2-GNU-工具"><a href="#1-1-2-GNU-工具" class="headerlink" title="1.1.2 GNU 工具"></a>1.1.2 GNU 工具</h3><p>除了由内核控制硬件设备外，操作系统还需要工具来执行一些标准功能，比如控制文件和 程序。</p>
+<p>GNU 组织（GNU’s Not Unix）开发了一套完整的 Unix 工具，但没有可以运行它们的内核系统。</p>
+<p>将 Linus 的 Linux 内核和 GNU 操作系统工具整合起来，就产生了一款完整的、功能丰富的免费操作系统。</p>
+<p>尽管通常将 Linux 内核和 GNU 工具的结合体称为 Linux，但你也会在互联网上看到一些 Linux 纯粹主义者将其称为 GNU/Linux 系统，藉此向 GNU 组织所作的贡献致意。</p>
+<h4 id="1-核心-GNU-工具"><a href="#1-核心-GNU-工具" class="headerlink" title="1. 核心 GNU 工具"></a>1. 核心 GNU 工具</h4><p>GNU 项目的主旨在于为Unix系统管理员设计出一套类似于 Unix 的环境。这个目标促使该项目移植了很多常见的 Unix 系统命令行工具。供 Linux 系统使用的这组核心工具被称为 coreutils（core utilities）软件包。</p>
+<h4 id="2-shell"><a href="#2-shell" class="headerlink" title="2. shell"></a>2. shell</h4><p>GNU/Linux shell 是一种特殊的交互式工具。它为用户提供了启动程序、管理文件系统中的文 件以及运行在 Linux 系统上的进程的途径。shell 的核心是命令行提示符。命令行提示符是 shell 负责交互的部分。它允许你输入文本命令，然后解释命令，并在内核中执行。</p>
+<h2 id="1-2-Linux-发行版"><a href="#1-2-Linux-发行版" class="headerlink" title="1.2 Linux 发行版"></a>1.2 Linux 发行版</h2><p>到此为止，你已经了解了构成完整 Linux 系统所需要的4个关键部件，那你可能在考虑要怎样 才能把它们组成一个 Linux 系统。幸运的是，已经有人为你做好这些了。</p>
+<p>我们将完整的 Linux 系统包称为发行版。有很多不同的 Linux 发行版来满足可能存在的各种运算需求。</p>
+<p>不同的 Linux 发行版通常归类为 3 种：</p>
+<ul>
+<li>完整的核心 Linux 发行版：如 Slackware，Red Hat，Fedora…</li>
+<li>特定用途的发行版：如 CentOS，Ubuntu，Mint…</li>
+<li>LiveCD 测试发行版：从 CD 启动的发行版。</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.783Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shell/">Shell</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&title=《Chapter 1 - 初识 Linux shell》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&title=《Chapter 1 - 初识 Linux shell》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 1 - 初识 Linux shell》 — live in passion&url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/04/20/linux-cl-and-shell-into-shell/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 2 - 走进 shell</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/17/docker-docs-app-data/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Docker 应用数据的管理</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&title=《Chapter 1 - 初识 Linux shell》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&title=《Chapter 1 - 初识 Linux shell》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 1 - 初识 Linux shell》 — live in passion&url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/20/linux-cl-and-shell-meet-linux-shell/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3aS27jQAwFQN//0pltNorfazYzDlBaCf5IqjbQpEm+XvHx9e34/srP58l1nt59Ol4bBx4eHt7g0Z8ul/Amr/y8QMl3H5cADw8Pb433tKMm58mi5Hdpn+eNBQ8PD+9jeMlWnme57Sfx8PDw/hYv/79/Fmba8gceHh7e/+IlyXG+uScFhTZUrNda8PDw8Ba6SJ9zvtLfw8PDwxt31dtm2Fkrqw0MxdPi4eHhLfDyDXdSTm0HEdpRrTefxMPDw7vKa8sNbVKbhIGNRcHDw8Pb47WMs1vmyXebTEfDCnh4eHhXeWfF03y7PytP1L9P8l8BDw8P7yovKTTcKuMm4wXtQFjdAMPDw8Mb8NrBpvZbk+W423jDw8PD2+OdtcE2Uuo2DByS8PDw8EreZNNv21HtCFf++zwq8PDw8NZ4STqbPEoyPNqOI7SFEjw8PLxtXltazZv984ZZW4wopiTw8PDwFniTkJAEibNlmhSa8fDw8PZ4baJ81tZqC8RJaaP+DfHw8PCOeO0atIXadugqSeWLki4eHh7eL/La9tV8c2+LEVH4wcPDw1vjtSWJPIFuB7bagBENXeHh4eEt8w6T1/GAVLtYUejCw8PDW+OdlV/PGvyTcFKXKvDw8PAWeMnlzsoBZ8lxMlIwKoXg4eHhXeLlg1B52XeycHkzLJqGwMPDw1vjTS43WY6zkFMMbOHh4eGt8SbF01tJc5uUR/fFw8PDu8r7Ko88BT8rELfjX2/excPDw1vgtVttkkxPmmHtQkyCBx4eHt6Ed3abPCFuU+dJ2MDDw8P7TV7bdmrT3AuJb1DyeBwdwMPDw/sAXhJOJm2zSYvuQmDAw8PDW+Cdbf1nwwGj8QI8PDy8NV7b9Nob22qX+80T4uHh4S3w6imtuCjQbvRJ4+1uIQMPDw+v5P0DdEsDJz4Ii4oAAAAASUVORK5CYII=" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

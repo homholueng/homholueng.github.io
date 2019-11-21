@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Redis 各部署场景下 python client 的使用 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Redis,Python">
+    <meta name="description" content="1. Single Node1.1. 介绍 这是我们比较常用的一种部署方式，该模式下只包含一个 Redis 实例，该实例存储所有的数据，client 的所有读写操作都在该实例上完成。 1.2. 如何使用 client在该模式下，我们只需要连接该 Redis 实例并对其进行相应的操作即可： 123456789import redishost = &apos;&apos;port = 6379db = 0r = redi">
+<meta name="keywords" content="Redis,Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 各部署场景下 python client 的使用">
+<meta property="og:url" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="1. Single Node1.1. 介绍 这是我们比较常用的一种部署方式，该模式下只包含一个 Redis 实例，该实例存储所有的数据，client 的所有读写操作都在该实例上完成。 1.2. 如何使用 client在该模式下，我们只需要连接该 Redis 实例并对其进行相应的操作即可： 123456789import redishost = &apos;&apos;port = 6379db = 0r = redi">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/single_instance.png">
+<meta property="og:image" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/master_slave.png">
+<meta property="og:image" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/sentinel.png">
+<meta property="og:image" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/cluster.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.771Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Redis 各部署场景下 python client 的使用">
+<meta name="twitter:description" content="1. Single Node1.1. 介绍 这是我们比较常用的一种部署方式，该模式下只包含一个 Redis 实例，该实例存储所有的数据，client 的所有读写操作都在该实例上完成。 1.2. 如何使用 client在该模式下，我们只需要连接该 Redis 实例并对其进行相应的操作即可： 123456789import redishost = &apos;&apos;port = 6379db = 0r = redi">
+<meta name="twitter:image" content="https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/single_instance.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Redis 各部署场景下 python client 的使用</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Redis 各部署场景下 python client 的使用</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2018-11-03T04:05:37.000Z" itemprop="datePublished" class="page-time">
+  2018-11-03
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-Single-Node"><span class="post-toc-number">1.</span> <span class="post-toc-text">1. Single Node</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-1-介绍"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">1.1. 介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#1-2-如何使用-client"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">1.2. 如何使用 client</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-Replication"><span class="post-toc-number">2.</span> <span class="post-toc-text">2. Replication</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-1-介绍"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">2.1. 介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#2-2-如何使用-client"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">2.2. 如何使用 client</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-Replication-With-Sentinel"><span class="post-toc-number">3.</span> <span class="post-toc-text">3. Replication With Sentinel</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-介绍"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">3.1. 介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-如何使用-client"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">3.2. 如何使用 client</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-Data-Sharding"><span class="post-toc-number">4.</span> <span class="post-toc-text">4. Data Sharding</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-1-介绍"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">4.1. 介绍</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#4-2-如何使用-client"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">4.2. 如何使用 client</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">5.总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-redis-connection-with-py-client" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Redis 各部署场景下 python client 的使用</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-11-03 12:05:37" datetime="2018-11-03T04:05:37.000Z" itemprop="datePublished">2018-11-03</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Python-Daily/">Python Daily</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="1-Single-Node"><a href="#1-Single-Node" class="headerlink" title="1. Single Node"></a>1. Single Node</h2><h3 id="1-1-介绍"><a href="#1-1-介绍" class="headerlink" title="1.1. 介绍"></a>1.1. 介绍</h3><img src="/2018/11/03/redis-connection-with-py-client/single_instance.png" title="[单实例]">
+<p>这是我们比较常用的一种部署方式，该模式下只包含一个 Redis 实例，该实例存储所有的数据，client 的所有读写操作都在该实例上完成。</p>
+<h3 id="1-2-如何使用-client"><a href="#1-2-如何使用-client" class="headerlink" title="1.2. 如何使用 client"></a>1.2. 如何使用 client</h3><p>在该模式下，我们只需要连接该 Redis 实例并对其进行相应的操作即可：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"></span><br><span class="line">host = <span class="string">''</span></span><br><span class="line">port = <span class="number">6379</span></span><br><span class="line">db = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">r = redis.StrictRedis(host=host, port=port, db=db)</span><br><span class="line">r.set(<span class="string">'foo'</span>, <span class="string">'bar'</span>) <span class="comment"># return True</span></span><br><span class="line">r.get(<span class="string">'foo'</span>) <span class="comment"># return 'bar'</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-Replication"><a href="#2-Replication" class="headerlink" title="2. Replication"></a>2. Replication</h2><h3 id="2-1-介绍"><a href="#2-1-介绍" class="headerlink" title="2.1. 介绍"></a>2.1. 介绍</h3><img src="/2018/11/03/redis-connection-with-py-client/master_slave.png" title="[主从备份]">
+<p>即使我们开启了 Redis 的本地持久功能，也无法保证绝对的安全，因为数据仍有可能因为机器的物理损坏而丢失，所以，我们需要在系统中保存 Redis 数据的多个备份。Redis 的<strong>复制（Replication ）</strong>功能能够解决这个问题。</p>
+<p>在该部署模式下，Redis 其实是以集群的方式来运行的，集群中会包含多个 Redis 实例，这些实例中只有一个是主（master）节点，其余的都是从（slave）节点，从节点会作为主节点的复制（replication），定期的将主节点中的数据复制过来进行备份。</p>
+<p>在该模式下，需要注意下面这些问题：</p>
+<ul>
+<li>Redis 使用的是异步复制策略。</li>
+<li>不仅主节点能够有从节点，从节点也能拥有自己的从节点。</li>
+<li>复制功能既可以单纯的作为数据冗余用，也能够通过让多个从服务器处理只读命令来提升 Redis 服务的扩展性（如将繁重的 SORT 命令交给从节点去执行）。</li>
+<li>该模式下一般会将从节点配置为只读节点，当然你也可以将从节点配置为可写节点，但因为从节点会定期从主节点中同步数据，所以写到从节点中的数据会在数据同步完成后丢失。</li>
+</ul>
+<h3 id="2-2-如何使用-client"><a href="#2-2-如何使用-client" class="headerlink" title="2.2. 如何使用 client"></a>2.2. 如何使用 client</h3><p>由于该模式下一般只有主节点能够进行写操作，所以需要在应用中维护主节点和从节点的地址列表，按需操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"></span><br><span class="line">master_host = <span class="string">''</span></span><br><span class="line">master_port = <span class="number">6379</span></span><br><span class="line">master_db = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">slave_1_host = <span class="string">''</span></span><br><span class="line">slave_1_port = <span class="number">6379</span></span><br><span class="line">slave_1_db = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mr = redis.StrictRedis(host=master_host, port=master_port, db=master_db)</span><br><span class="line">mr.set(<span class="string">'foo'</span>, <span class="string">'bar'</span>) <span class="comment"># return True</span></span><br><span class="line">mr.get(<span class="string">'foo'</span>) <span class="comment"># return 'bar'</span></span><br><span class="line"></span><br><span class="line">sr = redis.StrictRedis(host=slave_1_host, port=slave_1_port, db=slave_1_db)</span><br><span class="line">sr.get(<span class="string">'foo'</span>) <span class="comment"># return 'bar'</span></span><br><span class="line">sr.set(<span class="string">'foo'</span>, <span class="string">'from slave 1'</span>) <span class="comment"># will raise ReadOnlyError</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-Replication-With-Sentinel"><a href="#3-Replication-With-Sentinel" class="headerlink" title="3. Replication With Sentinel"></a>3. Replication With Sentinel</h2><h3 id="3-1-介绍"><a href="#3-1-介绍" class="headerlink" title="3.1. 介绍"></a>3.1. 介绍</h3><img src="/2018/11/03/redis-connection-with-py-client/sentinel.png" title="[Redis Sentinel]">
+<p>在 Replication 的部署方式下，由于从节点对主节点的数据做了备份，那么在主节点宕机时，从节点完全有能力晋升为主节点，以保证 Redis 的可用性，但是，随之而来的问题是：<strong>一旦主节点发生了变化，那么用户端需要修改主节点的地址，同时还要告诉集群中的其他从节点去备份新的主节点的数据。</strong></p>
+<p>而 <strong>Redis Sentinel（哨兵）</strong> 为我们解决了这个问题，Redis Sentinel 支持<strong>自动故障转移（Automatic failover)</strong>：当集群中的主节点宕机时，Sentinel 会在其从节点中从新选举出一个主节点，并重新配置其他的从节点，使得这些从节点能够从新的主节点中复制数据，同时，Sentinel 还会通知后续要使用 Redis 的 client 新的主节点的地址。与此同时，为了保证 Sentinel 不会成为系统中的单点，你还可以在一个架构中运行多个 Sentinel 进程。</p>
+<p>除了自动故障转移，Sentinel 还会提供以下功能：</p>
+<ul>
+<li><strong>监控（Monitoring）</strong>：Sentinel 会定时检测主节点和从节点的运行状态。</li>
+<li><strong>通知（Notification）</strong>：Sentinel 能够在其检测的 Redis 实例出现错误时通过 API 来通知系统管理员或是其他程序。</li>
+<li><strong>配置提供（Configuration provider）</strong>：Sentinel 能够为 client 提供服务发现的功能，client 能够从 Sentinel 处获取某个服务当前所对应的主节点的地址，并且 Sentinel 会在自动故障转移发生后返回新的主节点的地址。</li>
+</ul>
+<p>需要注意的是，因为 Redis 使用的是异步复制的策略，<strong>所以 Redis 集群无法保证数据的强一致性</strong>。考虑以下场景：</p>
+<p>假设一个 Redis 集群中包含三个主节点 A，B，C，且每个主节点都拥有一个从节点 A1，B1，C1。</p>
+<ol>
+<li>你向 master B 中写入了一条数据。</li>
+<li>master B 响应了你并告诉你已经写成功了。</li>
+<li>master B 将这次写操作广播到其所有的从节点 B1 B2 B3….</li>
+</ol>
+<p>若 master B 在第二步完成后和第三步开始前宕机了，那么其从节点 B1 就会被推举为主节点，但是你对 master B 的这次写入操作就会永远丢失。</p>
+<p>至于 Redis 为什么不采用同步复制的策略，主要原因还是处于性能考虑。</p>
+<h3 id="3-2-如何使用-client"><a href="#3-2-如何使用-client" class="headerlink" title="3.2. 如何使用 client"></a>3.2. 如何使用 client</h3><p>由于 Sentinel 提供了服务发现的功能，我们能够向 Sentinel 获取当前 Redis 集群中某个服务的主节点和从节点的信息，并进行相应的操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis</span><br><span class="line"><span class="keyword">from</span> redis.sentinel <span class="keyword">import</span> Sentinel</span><br><span class="line"></span><br><span class="line">sentinel_host = <span class="string">''</span></span><br><span class="line">sentinel_port = <span class="number">16379</span></span><br><span class="line"></span><br><span class="line">rs = Sentinel([(sentinel_host, sentinel_port), ], password=<span class="string">''</span>) <span class="comment"># 在此传入 Redis 配置的密码</span></span><br><span class="line">mr = rs.master_for(service_name=<span class="string">'myservice'</span>) <span class="comment"># 获取 myservice 服务的 master 节点，服务名在 Redis 集群配置中设置；该方法默认返回 StrictRedis 实例</span></span><br><span class="line">mr.set(<span class="string">'foo'</span>, <span class="string">'bar'</span>) <span class="comment"># return True</span></span><br><span class="line">mr.get(<span class="string">'foo'</span>) <span class="comment"># return 'bar'</span></span><br><span class="line"></span><br><span class="line">sr = rs.slave_for(service_name=<span class="string">'myservice'</span>)</span><br><span class="line">mr.get(<span class="string">'foo'</span>) <span class="comment"># return 'bar'</span></span><br></pre></td></tr></table></figure>
+<h2 id="4-Data-Sharding"><a href="#4-Data-Sharding" class="headerlink" title="4. Data Sharding"></a>4. Data Sharding</h2><h3 id="4-1-介绍"><a href="#4-1-介绍" class="headerlink" title="4.1. 介绍"></a>4.1. 介绍</h3><img src="/2018/11/03/redis-connection-with-py-client/cluster.png" title="[Sharding]">
+<p>在上面介绍的几种模式中，都只有一个 Redis 主节点，而应用的写操作又都是由主节点来完成的，这就会导致<strong>主节点的写能力和存储能力受到单机性能的限制</strong>。</p>
+<p>而 Redis 的<strong>数据分片（data sharding）</strong>功能能够为我们解决这个问题，当我们开启的数据分片后，集群中会包含多个主节点，我们写入 Redis 中的数据会被分配并存储到不同的主节点中，一个 Redis 集群会包含 16384 个<strong>哈希槽（hash slot）</strong>，集群使用公式 <code>CRC16(key) % 16384</code> 来计算键 <code>key</code> 属于哪个槽。</p>
+<p>假设一个 Redis 集群中包含三个节点：A，B，C，那么：</p>
+<ul>
+<li>节点 A 会管理 0 - 5500 号哈希槽</li>
+<li>节点 B 会管理 5501 - 11000 号哈希槽</li>
+<li>节点 C 会管理 11001 - 16383 号哈希槽</li>
+</ul>
+<p>需要注意的是，<strong>Redis 集群中的节点并不能代理命令请求</strong>，若我们向集群中的某个实例请求读取或写入一个不属于该实例所管理的键，那么其会返回 <code>-MOVED</code> 或 <code>-ASK</code> 重定向错误，同时，负责管理该键的节点地址和端口的信息会一并返回。</p>
+<p>Redis 官方的建议是客户端应该记录每个节点所管理的槽的信息，当集群处于稳定状态时， 所有客户端最终都会保存有一个哈希槽至节点的映射记录， 使得集群非常高效。</p>
+<h3 id="4-2-如何使用-client"><a href="#4-2-如何使用-client" class="headerlink" title="4.2. 如何使用 client"></a>4.2. 如何使用 client</h3><p>由于 Redis 集群中的节点不能为我们代理命令请求，而 Python 中的 <code>redis</code> 包并不会处理，这就意味着我们需要在应用中自己维护节点所管理的哈希槽信息。但是好在有第三方的包能够处理这个问题： <code>redis-py-cluster</code> 会帮我们管理节点信息，我们只需要像使用普通的 client 一样使用它就好。</p>
+<p><strong>注意：在这种情况下我们不需要再通过连接 sentinel 来获取集群中的节点信息, <code>redis-py-cluster</code> 会自动帮我们发现集群中的节点。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis-py-cluster</span><br><span class="line"></span><br><span class="line">startup_nodes = [&#123;<span class="string">"host"</span>: <span class="string">"127.0.0.1"</span>, <span class="string">"port"</span>: <span class="string">"7000"</span>&#125;] <span class="comment"># 集群中的任一非 sentinel 节点</span></span><br><span class="line"></span><br><span class="line">rc = StrictRedisCluster(startup_nodes=startup_nodes, password=<span class="string">'pwd'</span>)</span><br><span class="line"></span><br><span class="line">rc.set(<span class="string">"foo"</span>, <span class="string">"bar"</span>) <span class="comment"># True</span></span><br><span class="line">rc.get(<span class="string">"foo"</span>) <span class="comment"># 'bar'</span></span><br></pre></td></tr></table></figure>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><p>总的来说，Redis 的部署方式及其特点如下：</p>
+<table>
+<thead>
+<tr>
+<th>部署方式</th>
+<th style="text-align:left">数据备份</th>
+<th>数据分片</th>
+<th>高可用</th>
+<th>py-cli module</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single Node</td>
+<td style="text-align:left">×</td>
+<td>×</td>
+<td>×</td>
+<td>redis</td>
+<td>可开启本地数据持久</td>
+</tr>
+<tr>
+<td>Replication</td>
+<td style="text-align:left">√</td>
+<td>×</td>
+<td>×</td>
+<td>redis</td>
+<td></td>
+</tr>
+<tr>
+<td>Replication with Sentinel</td>
+<td style="text-align:left">√</td>
+<td>×</td>
+<td>√</td>
+<td>redis</td>
+<td></td>
+</tr>
+<tr>
+<td>Sharding (with Replication)</td>
+<td style="text-align:left">√</td>
+<td>√</td>
+<td>×</td>
+<td>redis-py-cluster</td>
+<td>通常都会与 Replication 一起使用</td>
+</tr>
+<tr>
+<td>Sharding with Sentinel (with Replication)</td>
+<td style="text-align:left">√</td>
+<td>√</td>
+<td>√</td>
+<td>redis-py-cluster</td>
+<td>通常都会与 Replication 一起使用</td>
+</tr>
+</tbody>
+</table>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.771Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&title=《Redis 各部署场景下 python client 的使用》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&title=《Redis 各部署场景下 python client 的使用》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis 各部署场景下 python client 的使用》 — live in passion&url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/11/04/celery-django-drug/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">celery 与 django 的致命组合</h4>
+      </a>
+    </div>
+  
+
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&title=《Redis 各部署场景下 python client 的使用》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&title=《Redis 各部署场景下 python client 的使用》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis 各部署场景下 python client 的使用》 — live in passion&url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2018/11/03/redis-connection-with-py-client/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACu0lEQVR42u3aQXLjMAwEwPz/097rbm3JngHIlA+tUyqRFbYOJDzAz098vf663t/z9JvXf1dyz9Odhy88PDy8xdLfPzpHvn9CDs5f1uPa8PDw8K7xkse1jNmLe39s5GvGw8PD+07e/thICuXZ4YGHh4f3PbzZxr0JJn71YMDDw8OLeW1pm2zW+aeSA+N61oKHh4cX8/Iu0vf8fKW/h4eHh7fuqu9b+O/D3yQUXq0WDw8P7wIvX25e7OYhbPvKZoEvHh4e3g1espW3MWsexc7ijGHxjYeHh3eI17bw26Z+/qn9AdOfFXh4eHhz3rEv/6OIIQ8s8mMDDw8P7zZv1rxvF9QurhiumrXB8PDw8EreZkNvxwvyECEZz3q/zn/6e3h4eHhHeZtIYhM65K+mjSqOJS54eHh4QdMrOSTyTb8NL/Jwtsbj4eHhHeXlpLz8nRXTm0Po8T/i4eHhXeDlYWt7ALSNtPaVFcU9Hh4e3lFevqHPiux8JCsvo4vV4uHh4V3gbVpQm0/lyDYs/hBJ4OHh4R3l5YfB/p5NKV8ntHh4eHhHefmmv4lW24Cjba09PhMPDw/vMq+YzxqFAvtwNllPMTqAh4eHt+blDa0bEXDb+oqKbzw8PLwLvNm22xbcs6XnYcSQhIeHh7fmJYB8m07aV3lgMRtZwMPDw7vHyzH5MMHhwal45Gt1JODh4eGVvDZUzTfuDb4Ffxi6wsPDw7vGu1Hyzrb4WRvscaYMDw8Pb817lVcbOuSDArNnfvgrHh4e3gXebMNthwbaAv1UoIyHh4d3j7cZeEqe0IYdsw7e4wrx8PDwrvFmQwCzpc9eYhIB4+Hh4X0zbxMTbIryurzGw8PD+wJefhjMwoVNqnDgYMDDw8OLeZstezNAkFOTtX0YusLDw8M7xGu/8OdLaTf6aEbsVE8PDw8Pb8L7A2WbSt/8t/bcAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 13 - 正确的重载运算符 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="13.1 运算符重载基础Python 在重载运算符上施加了一些限制，做好了灵活性、可用性和安全性的平衡：  不能重载内置类型的运算符 不能新建运算符，只能重载现有的 某些运算符不能重载：is，and，or 和 not  13.2 一元运算符支持一元运算符很简单，只需实现相应的特殊方法。这些特殊方法只有一个参数，self。然后，使用符合所在类的逻辑实现。不过，要遵守运算符的一个基本规则：始终返回一个">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 13 - 正确的重载运算符">
+<meta property="og:url" content="https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="13.1 运算符重载基础Python 在重载运算符上施加了一些限制，做好了灵活性、可用性和安全性的平衡：  不能重载内置类型的运算符 不能新建运算符，只能重载现有的 某些运算符不能重载：is，and，or 和 not  13.2 一元运算符支持一元运算符很简单，只需实现相应的特殊方法。这些特殊方法只有一个参数，self。然后，使用符合所在类的逻辑实现。不过，要遵守运算符的一个基本规则：始终返回一个">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-08-20T13:36:55.995Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 13 - 正确的重载运算符">
+<meta name="twitter:description" content="13.1 运算符重载基础Python 在重载运算符上施加了一些限制，做好了灵活性、可用性和安全性的平衡：  不能重载内置类型的运算符 不能新建运算符，只能重载现有的 某些运算符不能重载：is，and，or 和 not  13.2 一元运算符支持一元运算符很简单，只需实现相应的特殊方法。这些特殊方法只有一个参数，self。然后，使用符合所在类的逻辑实现。不过，要遵守运算符的一个基本规则：始终返回一个">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 13 - 正确的重载运算符</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 13 - 正确的重载运算符</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-08-10T16:38:36.000Z" itemprop="datePublished" class="page-time">
+  2019-08-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#13-1-运算符重载基础"><span class="post-toc-number">1.</span> <span class="post-toc-text">13.1 运算符重载基础</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#13-2-一元运算符"><span class="post-toc-number">2.</span> <span class="post-toc-text">13.2 一元运算符</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#13-6-增量赋值运算符"><span class="post-toc-number">3.</span> <span class="post-toc-text">13.6 增量赋值运算符</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-override-op-in-right-way" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 13 - 正确的重载运算符</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-08-11 00:38:36" datetime="2019-08-10T16:38:36.000Z" itemprop="datePublished">2019-08-11</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="13-1-运算符重载基础"><a href="#13-1-运算符重载基础" class="headerlink" title="13.1 运算符重载基础"></a>13.1 运算符重载基础</h2><p>Python 在重载运算符上施加了一些限制，做好了灵活性、可用性和安全性的平衡：</p>
+<ul>
+<li>不能重载内置类型的运算符</li>
+<li>不能新建运算符，只能重载现有的</li>
+<li>某些运算符不能重载：<code>is</code>，<code>and</code>，<code>or</code> 和 <code>not</code></li>
+</ul>
+<h2 id="13-2-一元运算符"><a href="#13-2-一元运算符" class="headerlink" title="13.2 一元运算符"></a>13.2 一元运算符</h2><p>支持一元运算符很简单，只需实现相应的特殊方法。这些特殊方法只有一个参数，<code>self</code>。然后，使用符合所在类的逻辑实现。不过，要遵守运算符的一个基本规则：始终返回一个新对象。也就是说，不能修改 <code>self</code>，要创建并返回合适类型的新实例。</p>
+<p>为了支持涉及不同类型的运算，Python 为中缀运算符特殊方法提供了特殊的分派机制。对表达式 <code>a + b</code> 来说，解释器会执行以下几步操作：</p>
+<ol>
+<li>如果 a 有 <code>__add__</code> 方法，而且返回值不是 <code>NotImplemented</code>，调用 <code>a.__add__(b)</code>，然后返回结果。</li>
+<li>如果 a 没有 <code>__add__</code> 方法，或者调用 <code>__add__</code> 方法返回 NotImplemented，检查 b 有没有 <code>__radd__</code> 方法，如果有，而且没有 返回 <code>NotImplemented</code>，调用 <code>b.__radd__(a)</code>，然后返回结果。</li>
+<li>如果 b 没有 <code>__radd__</code> 方法，或者调用 <code>__radd__</code> 方法返回 <code>NotImplemented</code>，抛出 <code>TypeError</code>，并在错误消息中指明操作数类型 不支持。</li>
+</ol>
+<p>在重载运算符时，如果我们在进行处理的过程中抛出了异常，那么我们不应该直接让该异常抛出，因为这样有可能阻断 Python 继续尝试调用其他运算符的流程，所以我们应该将错误捕获，并返回 <code>Notimplemented</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__add__</span><span class="params">(self, other)</span>:</span> </span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        pairs = itertools.zip_longest(self, other, fillvalue=<span class="number">0.0</span>) </span><br><span class="line">        <span class="keyword">return</span> Vector(a + b <span class="keyword">for</span> a, b <span class="keyword">in</span> pairs) </span><br><span class="line">    <span class="keyword">except</span> TypeError:  </span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">NotImplemented</span></span><br></pre></td></tr></table></figure>
+<p>如果操作数的类型不同，我们要检测出不能处理的操作数。可以使用两种方式处理这个问题：一种是鸭子类型，直接尝试执行运算，如果有问题，捕获 <code>TypeError</code> 异常；另一种是显式使用 <code>isinstance</code> 测试，但是不能测试具体类，而要测试例如 <code>numbers.Real</code> 这样的抽象基类。</p>
+<h2 id="13-6-增量赋值运算符"><a href="#13-6-增量赋值运算符" class="headerlink" title="13.6 增量赋值运算符"></a>13.6 增量赋值运算符</h2><p>如果一个类没有实现就地运算符，增量赋值运算符只是语法糖：<code>a += b</code> 的作用与 <code>a = a + b</code> 完全一样。</p>
+<p>然而，如果实现了就地运算符方法，例如 <code>__iadd__</code>，计算 <code>a += b</code> 的结果时会调用就地运算符方法。这种运算符的名称表明，它们会就地修改左操作数，而不会创建新对象作为结果。</p>
+<p><strong>对于不可变类型，一定不能实现就地特殊方法。</strong></p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-08-20T13:36:55.995Z" itemprop="dateUpdated">2019-08-20 21:36:55</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&title=《Chapter 13 - 正确的重载运算符》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&title=《Chapter 13 - 正确的重载运算符》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 13 - 正确的重载运算符》 — live in passion&url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/08/11/redis-skill-pipelining/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Redis 使用技巧 - Pipelining</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/08/07/gopl-method/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Go 语言圣经 - 6. 方法</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&title=《Chapter 13 - 正确的重载运算符》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&title=《Chapter 13 - 正确的重载运算符》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 13 - 正确的重载运算符》 — live in passion&url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/08/11/fluent-python-override-op-in-right-way/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3awU7DMBAE0P7/T8MVVKWdWdspSC+nqiGJX5Bsd3Yfj/j4ejqezz5Gx89rn+9/9XnzgYeHh7c89KvHvD47G/rrO69fi4eHh3eOlwzu6u/bwSVDf33nZMx4eHh4f433+pt2f5tfhYeHh/cfefl2PN+gtxt3PDw8vL/Aa2+dR7rJEJOp/3jWgoeHhxfzZmWqz34+Ut/Dw8PDW66qtxvfJMbdVQaLxoCHh4d3gJdPuMng9pbNoqAhCHzx8PDwzvHaODUvgLWtVPlTokAEDw8P7zBvNq23G+gEs6vtAA8PD+8cbxYctA1SbcTQNoG96YzAw8PDW+bl5f92ms4n+va5RWEMDw8P7zBvb/yaTOt7w4iovoeHh4e3iTebsvNvkkl8VlR7s6jg4eHhHePtapmaBRzFFrkMlPHw8PDu5CUTev6X641Ww9eBh4eHd5g3/ME/imXzElo7tl/PxcPDwzvGa3/wt2fbcLbtm4qyFjw8PLytvLaZKd8Wr8S4eSHt8jXh4eHhHePlE3QeZMwGl8cN0eKEh4eHd4CXF5ZmQW2+RW6LbfVyhYeHh3eA1y4POXi92DZrFMPDw8O7h9eWo9p6fVtgyxu88PDw8O7h5RcU4Wn8UvL7DJcEPDw8vAO8XQWn2cqTl99WvsHDw8O7n5eHpPmDZ61XeXPDY7a24OHh4Y14xWXlVjh/QbteJR4eHt49vDZEKLa25Za6La1dfoOHh4e3lfdVHrPmgPYlttHw5T8ADw8P7wBvPXJtm6VmIUX+eXjg4eHhlby84akNL/Jif9teMGy9wsPDw9vKmxXGZktCHlXki1aUteDh4eF9iNcuAPnZfIE5uDDg4eHhHea1G+j8la3ExHh4eHj38JKL2zhg1rw1azjYkLXg4eHhTZ4S/eBPXkF7nxxzsL6Hh4eH9573DfTo2k8OACpuAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

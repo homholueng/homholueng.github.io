@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 16 - 协程 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="字典为动词 “to yield” 给出了两个释义：产出和让步。对于 Python 生成器中的 yield 来说，这两个含义都成立。yield item 这行代码会产出一个值，提供给 next(...) 的调用方；此外，还会作出让步，暂停执行生成器，让调用方继续工作，直到需要使用另一个值时再调用 next()。调用方会从生成器中拉取值。 yield 关键字甚至还可以不接收或传出数据。不管数据如何流动">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 16 - 协程">
+<meta property="og:url" content="https://homholueng.github.io/2019/09/05/fluent-python-coroutine/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="字典为动词 “to yield” 给出了两个释义：产出和让步。对于 Python 生成器中的 yield 来说，这两个含义都成立。yield item 这行代码会产出一个值，提供给 next(...) 的调用方；此外，还会作出让步，暂停执行生成器，让调用方继续工作，直到需要使用另一个值时再调用 next()。调用方会从生成器中拉取值。 yield 关键字甚至还可以不接收或传出数据。不管数据如何流动">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/09/05/fluent-python-coroutine/yield_from.png">
+<meta property="og:updated_time" content="2019-09-30T09:35:49.645Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 16 - 协程">
+<meta name="twitter:description" content="字典为动词 “to yield” 给出了两个释义：产出和让步。对于 Python 生成器中的 yield 来说，这两个含义都成立。yield item 这行代码会产出一个值，提供给 next(...) 的调用方；此外，还会作出让步，暂停执行生成器，让调用方继续工作，直到需要使用另一个值时再调用 next()。调用方会从生成器中拉取值。 yield 关键字甚至还可以不接收或传出数据。不管数据如何流动">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/09/05/fluent-python-coroutine/yield_from.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 16 - 协程</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 16 - 协程</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-09-05T12:14:56.000Z" itemprop="datePublished" class="page-time">
+  2019-09-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-1-生成器如何进化成协程"><span class="post-toc-number">1.</span> <span class="post-toc-text">16.1 生成器如何进化成协程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-2-用作协程的生成器的基本行为"><span class="post-toc-number">2.</span> <span class="post-toc-text">16.2　用作协程的生成器的基本行为</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-4-预激协程的装饰器"><span class="post-toc-number">3.</span> <span class="post-toc-text">16.4　预激协程的装饰器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-5-终止协程和异常处理"><span class="post-toc-number">4.</span> <span class="post-toc-text">16.5　终止协程和异常处理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-6-让协程返回值"><span class="post-toc-number">5.</span> <span class="post-toc-text">16.6　让协程返回值</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-7-使用yield-from"><span class="post-toc-number">6.</span> <span class="post-toc-text">16.7　使用yield from</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-8-yield-from-的意义"><span class="post-toc-number">7.</span> <span class="post-toc-text">16.8　yield from 的意义</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#16-9-使用协程做离散事件仿真"><span class="post-toc-number">8.</span> <span class="post-toc-text">16.9 使用协程做离散事件仿真</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">9.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-coroutine" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 16 - 协程</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-09-05 20:14:56" datetime="2019-09-05T12:14:56.000Z" itemprop="datePublished">2019-09-05</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>字典为动词 “to yield” 给出了两个释义：产出和让步。对于 Python 生成器中的 yield 来说，这两个含义都成立。<code>yield item</code> 这行代码会产出一个值，提供给 <code>next(...)</code> 的调用方；此外，还会作出让步，暂停执行生成器，让调用方继续工作，直到需要使用另一个值时再调用 <code>next()</code>。调用方会从生成器中拉取值。</p>
+<p>yield 关键字甚至还可以不接收或传出数据。不管数据如何流动，yield 都是一种流程控制工具，使用它可以实现协作式多任务：协程可以把控制器让步给中心调度程序，从而激活其他的协程。</p>
+<p>从根本上把 yield 视作控制流程的方式，这样就好理解协程了。</p>
+<h2 id="16-1-生成器如何进化成协程"><a href="#16-1-生成器如何进化成协程" class="headerlink" title="16.1 生成器如何进化成协程"></a>16.1 生成器如何进化成协程</h2><p>协程的底层架构在 “PEP 342—Coroutines via Enhanced Generators”（<a href="https://www.python.org/dev/peps/pep-0342/)中定义，并在" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep-0342/)中定义，并在</a> Python 2.5（2006年）实现了。自此之后，yield 关键字可以在表达式中使用，而且生成器 API 中增加了 <code>.send(value)</code> 方法。生成器的调用方可以使用 <code>.send(...)</code> 方法发送数据，发送的数据会成为生成器函数中 yield 表达式的值。因此，生成器可以作为协程使用。协程是指一个过程，这个过程与调用方协作，产出由调用方提供的值。</p>
+<p>除了 <code>.send(...)</code> 方法，PEP 342 还添加了 <code>.throw(...)</code> 和 <code>.close()</code> 方法：前者的作用是让调用方抛出异常，在生成器中处理；后者的作用是终止生成器。</p>
+<p>协程最近的演进来自 Python 3.3（2012 年）实现的 “PEP 380—Syntax for Delegating to a Subgenerator”（<a href="https://www.python.org/dev/peps/pep0380/)。PEP" target="_blank" rel="noopener">https://www.python.org/dev/peps/pep0380/)。PEP</a> 380 对生成器函数的句法做了两处改动，以便更好地作为协程使用。</p>
+<ul>
+<li>现在，生成器可以返回一个值；以前，如果在生成器中给 return 语句提供值，会抛出 SyntaxError 异常。</li>
+<li>新引入了 yield from 句法，使用它可以把复杂的生成器重构成小型的嵌套生成器，省去了之前把生成器的工作委托给子生成器所需的大量样板代码。</li>
+</ul>
+<h2 id="16-2-用作协程的生成器的基本行为"><a href="#16-2-用作协程的生成器的基本行为" class="headerlink" title="16.2　用作协程的生成器的基本行为"></a>16.2　用作协程的生成器的基本行为</h2><p>下面是一个最简单的协程的演示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="function"><span class="keyword">def</span> <span class="title">simple_coroutine</span><span class="params">()</span>:</span></span><br><span class="line">   ...:     print(<span class="string">'-&gt; coroutine started'</span>)</span><br><span class="line">   ...:     x = <span class="keyword">yield</span></span><br><span class="line">   ...:     print(<span class="string">'-&gt; coroutine received:'</span>, x)</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: my_coro = simple_coroutine()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: my_coro</span><br><span class="line">Out[<span class="number">3</span>]: &lt;generator object simple_coroutine at <span class="number">0x106cfeaf0</span>&gt;</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: next(my_coro)</span><br><span class="line">-&gt; coroutine started</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: my_coro.send(<span class="number">42</span>)</span><br><span class="line">-&gt; coroutine received: 42</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">StopIteration                             Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-5</span><span class="number">-7</span>c96f97a77cb&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 my_coro.send(42)</span><br><span class="line"></span><br><span class="line">StopIteration:</span><br></pre></td></tr></table></figure>
+<p>首先，协程使用生成器函数定义，即定义体中含有 yield 关键字，与创建生成器的方式一下，调用函数得到生成器对象；然后调用 next 函数，因为生成器还没启动，没有在 yield 处暂停。调用 send 发送数据后，yield 表达式会计算出发送过去的值，协程恢复执行，一直运行到下一个 yield 表达式或者终止，实例中控制权流到了协程定义体的末尾，导致生成器像往常一样抛出了 StopIteration 异常。</p>
+<p>协程会处于一下四个状态中的其中一个，使用 <code>inspect.getgeneratorstate</code> 能够获取协程的状态：</p>
+<ul>
+<li><code>GEN_CREATED</code>：等待开始执行。</li>
+<li><code>GEN_RUNNING</code>：解释器正在执行。</li>
+<li><code>GEN_SUSPENDED</code>：在 yield 表达式处暂停。</li>
+<li><code>GEN_CLOSED</code>：执行结束。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">6</span>]: <span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: inspect.getgeneratorstate(my_coro)</span><br><span class="line">Out[<span class="number">7</span>]: <span class="string">'GEN_CLOSED'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: my_coro = simple_coroutine()</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: inspect.getgeneratorstate(my_coro)</span><br><span class="line">Out[<span class="number">9</span>]: <span class="string">'GEN_CREATED'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: next(my_coro)</span><br><span class="line">-&gt; coroutine started</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: inspect.getgeneratorstate(my_coro)</span><br><span class="line">Out[<span class="number">11</span>]: <span class="string">'GEN_SUSPENDED'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: my_coro.send(<span class="number">42</span>)</span><br><span class="line">-&gt; coroutine received: 42</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">StopIteration                             Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-12</span><span class="number">-7</span>c96f97a77cb&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 my_coro.send(42)</span><br><span class="line"></span><br><span class="line">StopIteration:</span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: inspect.getgeneratorstate(my_coro)</span><br><span class="line">Out[<span class="number">13</span>]: <span class="string">'GEN_CLOSED'</span></span><br></pre></td></tr></table></figure>
+<p>因为 send 方法的参数会成为暂停的 yield 表达式的值，所以，仅当协程处于暂停状态时才能调用 send 方法。</p>
+<p>如果创建协程对象后立即把 <code>None</code> 之外的值发给它，会出现下述错误：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">14</span>]: my_coro = simple_coroutine()</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: my_coro.send(<span class="number">42</span>)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">TypeError                                 Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-15</span><span class="number">-7</span>c96f97a77cb&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 my_coro.send(42)</span><br><span class="line"></span><br><span class="line">TypeError: can<span class="string">'t send non-None value to a just-started generator</span></span><br></pre></td></tr></table></figure>
+<p>最先调用 <code>next(my_coro)</code> 函数这一步通常称为“预激”（prime）协程 （即，让协程向前执行到第一个 yield 表达式，准备好作为活跃的协程使用）。</p>
+<h2 id="16-4-预激协程的装饰器"><a href="#16-4-预激协程的装饰器" class="headerlink" title="16.4　预激协程的装饰器"></a>16.4　预激协程的装饰器</h2><p>如果不预激，那么协程没什么用，为了简化协程的用法，有时会使用一个预激装饰器。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> wraps</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">coroutine</span><span class="params">(func)</span>:</span></span><br><span class="line"><span class="meta">    @wraps(func)</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">primer</span><span class="params">(*args, **kwargs)</span>:</span></span><br><span class="line">        gen = func(*args, **kwargs)</span><br><span class="line">        next(gen)</span><br><span class="line">        <span class="keyword">return</span> gen</span><br><span class="line">    <span class="keyword">return</span> primer</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: @coroutine</span><br><span class="line">   ...: <span class="function"><span class="keyword">def</span> <span class="title">simple_coroutine</span><span class="params">()</span>:</span></span><br><span class="line">   ...:     print(<span class="string">'-&gt; coroutine started'</span>)</span><br><span class="line">   ...:     x = <span class="keyword">yield</span></span><br><span class="line">   ...:     print(<span class="string">'-&gt; coroutine received:'</span>, x)</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: gen =simple_coroutine()</span><br><span class="line">-&gt; coroutine started</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: gen.send(<span class="number">42</span>)</span><br><span class="line">-&gt; coroutine received: 42</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">StopIteration                             Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-4</span><span class="number">-72</span>d0e54668c5&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 gen.send(42)</span><br><span class="line"></span><br><span class="line">StopIteration:</span><br></pre></td></tr></table></figure>
+<h2 id="16-5-终止协程和异常处理"><a href="#16-5-终止协程和异常处理" class="headerlink" title="16.5　终止协程和异常处理"></a>16.5　终止协程和异常处理</h2><p>协程中未处理的异常会向上冒泡，传给 next 函数或 send 方法的调用方（即触发协程的对象）。</p>
+<p>这个特性允许我们发送某个哨符值，让协程退出。内置的 <code>None</code> 和 <code>Ellipsis</code> 等常量经常用作哨符值。<code>Ellipsis</code> 的优点是，数据流中不太常有这个值。</p>
+<p>从 Python 2.5 开始，客户代码可以在生成器对象上调用两个方法，显式地把异常发给协程。</p>
+<p>这两个方法是 throw 和 close：</p>
+<ul>
+<li><code>generator.throw(exc_type[, exc_value[, traceback]])</code>：致使生成器在暂停的 yield 表达式处抛出指定的异常。如果生成器处理了抛出的异常，代码会向前执行到下一个 yield 表达式，而产出的值会成为调用 <code>generator.throw</code> 方法得到的返回值。如果生成器没有处理抛出的异常，异常会向上冒泡，传到调用方的上下文中。</li>
+<li><code>generator.close()</code>：致使生成器在暂停的 yield 表达式处抛出 GeneratorExit 异常。 如果生成器没有处理这个异常，或者抛出了 StopIteration 异常（通常是指运行到结尾），调用方不会报错。如果收到 GeneratorExit 异常，生成器一定不能产出值，否则解释器会抛出 RuntimeError 异常。 生成器抛出的其他异常会向上冒泡，传给调用方。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DemoException</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">demo_exc_handling</span><span class="params">()</span>:</span></span><br><span class="line">    print(<span class="string">'-&gt; coroutine started'</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            x = <span class="keyword">yield</span></span><br><span class="line">        <span class="keyword">except</span> DemoException:</span><br><span class="line">            print(<span class="string">'*** DemoException handled. Continuing...'</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            print(<span class="string">'-&gt; coroutine received: &#123;!r&#125;'</span>.format(x))</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">raise</span> RuntimeError(<span class="string">'This line should never run.'</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: exc_coro = demo_exc_handling()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: next(exc_coro)</span><br><span class="line">-&gt; coroutine started</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: exc_coro.send(<span class="number">11</span>)</span><br><span class="line">-&gt; coroutine received: 11</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: exc_coro.send(<span class="number">22</span>)</span><br><span class="line">-&gt; coroutine received: 22</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: exc_coro.throw(DemoException())</span><br><span class="line">*** DemoException handled. Continuing...</span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: inspect.getgeneratorstate(exc_coro)</span><br><span class="line">Out[<span class="number">8</span>]: <span class="string">'GEN_SUSPENDED'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: exc_coro.throw(ZeroDivisionError())</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">ZeroDivisionError                         Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-9</span>-e03abf340dfc&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 exc_coro.throw(ZeroDivisionError())</span><br><span class="line"></span><br><span class="line">&lt;ipython-input<span class="number">-1</span>-cc1425411a81&gt; <span class="keyword">in</span> demo_exc_handling()</span><br><span class="line">      <span class="number">6</span>     <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">      <span class="number">7</span>         <span class="keyword">try</span>:</span><br><span class="line">----&gt; 8             x = yield</span><br><span class="line">      <span class="number">9</span>         <span class="keyword">except</span> DemoException:</span><br><span class="line">     <span class="number">10</span>             print(<span class="string">'*** DemoException handled. Continuing...'</span>)</span><br><span class="line"></span><br><span class="line">ZeroDivisionError:</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: inspect.getgeneratorstate(exc_coro)</span><br><span class="line">Out[<span class="number">11</span>]: <span class="string">'GEN_CLOSED'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: exc_coro = demo_exc_handling()</span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: next(exc_coro)</span><br><span class="line">-&gt; coroutine started</span><br><span class="line"></span><br><span class="line">In [<span class="number">14</span>]: exc_coro.send(<span class="number">22</span>)</span><br><span class="line">-&gt; coroutine received: 22</span><br><span class="line"></span><br><span class="line">In [<span class="number">15</span>]: exc_coro.close()</span><br><span class="line"></span><br><span class="line">In [<span class="number">16</span>]: inspect.getgeneratorstate(exc_coro)</span><br><span class="line">Out[<span class="number">16</span>]: <span class="string">'GEN_CLOSED'</span></span><br></pre></td></tr></table></figure>
+<h2 id="16-6-让协程返回值"><a href="#16-6-让协程返回值" class="headerlink" title="16.6　让协程返回值"></a>16.6　让协程返回值</h2><p>下面是 averager 协程的不同版本，这一版会返回结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line">Result = namedtuple(<span class="string">'Result'</span>, <span class="string">'count average'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">()</span>:</span></span><br><span class="line">    total = <span class="number">0.0</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    average = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        term = <span class="keyword">yield</span></span><br><span class="line">        <span class="keyword">if</span> term <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        total += term</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        average = total / count</span><br><span class="line">    <span class="keyword">return</span> Result(count, average)</span><br><span class="line"></span><br><span class="line">In [<span class="number">2</span>]: coro_avg = averager()</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: next(coro_avg)</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: coro_avg.send(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">5</span>]: coro_avg.send(<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: coro_avg.send(<span class="number">35</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: coro_avg.send(<span class="literal">None</span>)</span><br><span class="line">---------------------------------------------------------------------------</span><br><span class="line">StopIteration                             Traceback (most recent call last)</span><br><span class="line">&lt;ipython-input<span class="number">-7</span>-a9c80bbec98f&gt; <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">----&gt; 1 coro_avg.send(None)</span><br><span class="line"></span><br><span class="line">StopIteration: Result(count=<span class="number">3</span>, average=<span class="number">25.0</span>)</span><br></pre></td></tr></table></figure>
+<p>发送 <code>None</code> 会终止循环，导致协程结束，返回结果。一如既往，生成器对象会抛出 StopIteration 异常。异常对象的 value 属性保存着返回的值。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">8</span>]: coro_avg = averager()</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: next(coro_avg)</span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: coro_avg.send(<span class="number">30</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: coro_avg.send(<span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">12</span>]: <span class="keyword">try</span>:</span><br><span class="line">    ...:     coro_avg.send(<span class="literal">None</span>)</span><br><span class="line">    ...: <span class="keyword">except</span> StopIteration <span class="keyword">as</span> exc:</span><br><span class="line">    ...:     result = exc.value</span><br><span class="line">    ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: result</span><br><span class="line">Out[<span class="number">13</span>]: Result(count=<span class="number">2</span>, average=<span class="number">20.0</span>)</span><br></pre></td></tr></table></figure>
+<p>获取协程的返回值虽然要绕个圈子，但这是 PEP 380 定义的方式，当我们意识到这一点之后就说得通了：yield from 结构会在内部自动捕获 StopIteration 异常。这种处理方式与 for 循环处理 StopIteration 异常的方式一样：循环机制使用用户易于理解的方式处理异常。对 <code>yield from</code> 结构来说，解释器不仅会捕获 StopIteration 异常，还会把 value 属性的值变成 <code>yield from</code> 表达式的值。可惜，我们无法在控制台中使用交互的方式测试这种行为，因为在函数外部使用 <code>yield from</code>（以及 yield）会导致句法出错。</p>
+<h2 id="16-7-使用yield-from"><a href="#16-7-使用yield-from" class="headerlink" title="16.7　使用yield from"></a>16.7　使用yield from</h2><p>首先要知道，<code>yield from</code> 是全新的语言结构。它的作用比 yield 多很 多，因此人们认为继续使用那个关键字多少会引起误解。在其他语言中，类似的结构使用 await 关键字，这个名称好多了，因为它传达了至关重要的一点：在生成器 gen 中使用 <code>yield from subgen()</code> 时，subgen 会获得控制权，把产出的值传给 gen 的调用方，即调用方可以直接控制 subgen。与此同时，gen 会阻塞，等待 subgen 终止。</p>
+<p><code>yield from</code> 的主要功能是打开双向通道，把最外层的调用方与最内层的子生成器连接起来，这样二者可以直接发送和产出值，还可以直接传入异常，而不用在位于中间的协程中添加大量处理异常的样板代码。有了这个结构，协程可以通过以前不可能的方式委托职责。</p>
+<p>若想使用 <code>yield from</code> 结构，就要大幅改动代码。为了说明需要改动的部分，PEP 380 使用了一些专门的术语：</p>
+<ul>
+<li>委派生成器：包含 <code>yield from &lt;iterable&gt;</code> 表达式的生成器函数。</li>
+<li>子生成器：从 <code>yield from</code> 表达式中 <code>&lt;iterable&gt;</code> 部分获取的生成器。</li>
+<li>调用方：指代调用<strong>委派生成器</strong>的客户端代码。</li>
+</ul>
+<p>下面的代码使用 <code>yield from</code> 计算平均值并输出统计报告：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> namedtuple</span><br><span class="line"></span><br><span class="line">Result = namedtuple(<span class="string">'Result'</span>, <span class="string">'count average'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 子生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">averager</span><span class="params">()</span>:</span></span><br><span class="line">    total = <span class="number">0.0</span></span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    average = <span class="literal">None</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        term = <span class="keyword">yield</span></span><br><span class="line">        <span class="keyword">if</span> term <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        total += term</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        average = total / count</span><br><span class="line">    <span class="keyword">return</span> Result(count, average)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 委派生成器</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">grouper</span><span class="params">(results, key)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        results[key] = <span class="keyword">yield</span> <span class="keyword">from</span> averager()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 客户端代码，即调用方</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(data)</span>:</span></span><br><span class="line">    results = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> key, values <span class="keyword">in</span> data.items():</span><br><span class="line">        group = grouper(results, key)</span><br><span class="line">        next(group)</span><br><span class="line">        <span class="keyword">for</span> value <span class="keyword">in</span> values:</span><br><span class="line">            group.send(value)</span><br><span class="line">        group.send(<span class="literal">None</span>)</span><br><span class="line">    </span><br><span class="line">    print(results)</span><br><span class="line"></span><br><span class="line">data = &#123;</span><br><span class="line">  <span class="string">'girls;kg'</span>: [<span class="number">40.9</span>, <span class="number">38.5</span>, <span class="number">44.3</span>, <span class="number">42.2</span>, <span class="number">45.2</span>, <span class="number">41.7</span>, <span class="number">44.5</span>, <span class="number">38.0</span>, <span class="number">40.6</span>, <span class="number">44.5</span>], </span><br><span class="line">  <span class="string">'girls;m'</span>: [<span class="number">1.6</span>, <span class="number">1.51</span>, <span class="number">1.4</span>, <span class="number">1.3</span>, <span class="number">1.41</span>, <span class="number">1.39</span>, <span class="number">1.33</span>, <span class="number">1.46</span>, <span class="number">1.45</span>, <span class="number">1.43</span>], </span><br><span class="line">  <span class="string">'boys;kg'</span>: [<span class="number">39.0</span>, <span class="number">40.8</span>, <span class="number">43.2</span>, <span class="number">40.8</span>, <span class="number">43.1</span>, <span class="number">38.6</span>, <span class="number">41.4</span>, <span class="number">40.6</span>, <span class="number">36.3</span>], </span><br><span class="line">  <span class="string">'boys;m'</span>: [<span class="number">1.38</span>, <span class="number">1.5</span>, <span class="number">1.32</span>, <span class="number">1.25</span>, <span class="number">1.37</span>, <span class="number">1.48</span>, <span class="number">1.25</span>, <span class="number">1.49</span>, <span class="number">1.46</span>],</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main(data)</span><br></pre></td></tr></table></figure>
+<p>在上述的例子中，grouper 发送的每个值都会经由 <code>yield from</code> 处理，通过管道传给 averager 实例。grouper 会在 <code>yield from</code> 表达式处暂停，等待 averager 实例处理客户端发来的值。averager 实例运行完毕后，返回的值绑定到 <code>results[key]</code> 上。while 循环会不断创建 averager 实例，处理更多的值。</p>
+<p>而在 main 中，我们把各个 value 传给 grouper。传入的值最终到达 averager 函数中 <code>term = yield</code> 那一行；grouper 永远不知道传入的值是什么。</p>
+<p>最后，把 None 传入 grouper，导致当前的 averager 实例终止，也让 grouper 继续运行，再创建一个 averager 实例，处理下一组值。</p>
+<p>整个过程如下：</p>
+<ul>
+<li>外层 for 循环每次迭代会新建一个 grouper 实例，赋值给 group 变量；group 是委派生成器。</li>
+<li>调用 <code>next(group)</code>，预激委派生成器 grouper，此时进入 <code>while True</code> 循环，调用子生成器 averager 后，在 <code>yield from</code> 表达式处暂停。</li>
+<li>内层 for 循环调用 <code>group.send(value)</code>，直接把值传给子生成器 averager。同时，当前的 grouper 实例（group）在 <code>yield from</code> 表达式处暂停。</li>
+<li>内层循环结束后，group 实例依旧在 <code>yield from</code> 表达式处暂停， 因此，grouper 函数定义体中为 <code>results[key]</code> 赋值的语句还没有执行。</li>
+<li>如果外层 for 循环的末尾没有 <code>group.send(None)</code>，那么 averager 子生成器永远不会终止，委派生成器 group 永远不会再次激活，因此永远不会为 <code>results[key]</code> 赋值。</li>
+<li>外层 for 循环重新迭代时会新建一个 grouper 实例，然后绑定到 group 变量上。前一个 grouper 实例（以及它创建的尚未终止的 averager 子生成器实例）被垃圾回收程序回收。</li>
+</ul>
+<p>main，grouper，averager 的关系就如下图所示：</p>
+<img src="/2019/09/05/fluent-python-coroutine/yield_from.png" title="[yield from]">
+<h2 id="16-8-yield-from-的意义"><a href="#16-8-yield-from-的意义" class="headerlink" title="16.8　yield from 的意义"></a>16.8　yield from 的意义</h2><p>PEP 380 中对 <code>yield from</code> 行为的说明如下：</p>
+<ul>
+<li>子生成器产出的值都直接传给委派生成器的调用方（即客户端代码）。</li>
+<li>使用 <code>send()</code> 方法发给委派生成器的值都直接传给子生成器。如果 发送的值是 <code>None</code>，那么会调用子生成器的 <code>__next__()</code> 方法。如果发送的值不是 <code>None</code>，那么会调用子生成器的 <code>send()</code> 方法。如 果调用的方法抛出 StopIteration 异常，那么委派生成器恢复运行。任何其他异常都会向上冒泡，传给委派生成器。</li>
+<li>生成器退出时，生成器（或子生成器）中的 <code>return expr</code> 表达式会触发 <code>StopIteration(expr)</code> 异常抛出。</li>
+<li><code>yield from</code> 表达式的值是子生成器终止时传给 StopIteration 异常的第一个参数。</li>
+<li>传入委派生成器的异常，除了 GeneratorExit 之外都传给子生成器的 <code>throw()</code> 方法。如果调用 <code>throw()</code> 方法时抛出 StopIteration 异常，委派生成器恢复运行。StopIteration 之外的异常会向上冒泡，传给委派生成器。</li>
+<li>如果把 GeneratorExit 异常传入委派生成器，或者在委派生成器 上调用 <code>close()</code> 方法，那么在子生成器上调用 <code>close()</code> 方法，如果它有的话。如果调用 <code>close()</code> 方法导致异常抛出，那么异常会向上冒泡，传给委派生成器；否则，委派生成器抛出 GeneratorExit 异常。</li>
+</ul>
+<p>在不考虑在委派生成器上调用 throw 和 close 及子生成器不抛出异常的情况下，<code>RESULT = yield from EXPR</code> 等价于下列代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">_i = iter(EXPR) <span class="comment"># 子生成器，因为需要处理可迭代对象，所以调用了 iter 方法，对生成器对象调用 iter 会返回生成器自身</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    _y = next(_i)  <span class="comment"># 子生成器产出的值</span></span><br><span class="line"><span class="keyword">except</span> StopIteration <span class="keyword">as</span> _e:</span><br><span class="line">    _r = _e.value  <span class="comment"># 结果</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        _s = <span class="keyword">yield</span> _y  <span class="comment"># 客户端发送过来的值</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            _y = _i.send(_s)</span><br><span class="line">        <span class="keyword">except</span> StopIteration <span class="keyword">as</span> _e:</span><br><span class="line">            _r = _e.value</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">RESULT = _r</span><br></pre></td></tr></table></figure>
+<p>但是，现实情况要复杂一些，因为要处理客户对 <code>.throw(...)</code> 和 <code>.close()</code> 方法的调用，而这两个方法执行的操作必须传入子生成器。 此外，子生成器可能只是纯粹的迭代器，不支持 <code>.throw(...)</code> 和 <code>.close()</code> 方法，因此 <code>yield from</code> 结构的逻辑必须处理这种情况。。如果子生成器实现了这两个方法，而在子生成器内部，这两个方法都会触发异常抛出，这种情况也必须由 <code>yield from</code> 机制处理。调用方可能会无缘无故地让子生成器自己抛出异常，实现 <code>yield from</code> 结构时也必须处理这种情况。最后，为了优化，如果调用方调用 <code>next(...)</code> 函数或 <code>.send(None)</code> 方法，都要转交职责，在子生成器上调用 <code>next(...)</code> 函数；仅当调用方发送的值不是 <code>None</code> 时，才使用子生成器的 <code>.send(...)</code> 方法。</p>
+<p>为了方便对比，下面列出 PEP 380 中扩充 <code>yield from</code> 表达式的完整伪代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">_i = iter(EXPR)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    _y = next(_i)</span><br><span class="line"><span class="keyword">except</span> StopIteration <span class="keyword">as</span> _e:</span><br><span class="line">    _r = _e.value</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            _s = <span class="keyword">yield</span> _y</span><br><span class="line">        <span class="keyword">except</span> GeneratorExit <span class="keyword">as</span> _e:  <span class="comment"># 这一部分用于关闭委派生成器和子生成器。因为子生成器可以是任 何可迭代的对象，所以可能没有 close 方法。</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                _m = _i.close</span><br><span class="line">            <span class="keyword">except</span> AttributeError:</span><br><span class="line">                <span class="keyword">pass</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                _m()</span><br><span class="line">            <span class="keyword">raise</span> _e</span><br><span class="line">        <span class="keyword">except</span> BaseException <span class="keyword">as</span> _e:  <span class="comment"># 这一部分处理调用方通过 .throw(...) 方法传入的异常。同样，子生成器可以是迭代器，从而没有 throw 方法可调用——这种情况会导 致委派生成器抛出异常。</span></span><br><span class="line">            _x = sys.exc_info()</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                _m = _i.throw</span><br><span class="line">            <span class="keyword">except</span> AttributeError:</span><br><span class="line">                <span class="keyword">raise</span> _e</span><br><span class="line">            <span class="keyword">else</span>: <span class="comment"># 如果子生成器有 throw 方法，调用它并传入调用方发来的异常。子生成器可能会处理传入的异常（然后继续循环）；可能抛出 StopIteration 异常（从中获取结果，赋值给 _r，循环结束）；还可能不处理，而是抛出相同的或不同的异常，向上冒泡，传给委派生成器。</span></span><br><span class="line">                <span class="keyword">try</span>:</span><br><span class="line">                   _y = m(*_x)</span><br><span class="line">                <span class="keyword">except</span> StopIteration <span class="keyword">as</span> _e:</span><br><span class="line">                    _r = _e.value</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:  <span class="comment"># 如果产出值时没有异常……</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> _s <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                    _y = next(_i)  <span class="comment"># 如果调用方最后发送的值是 None，在子生成器上调用 next 函数， 否则调用 send 方法。</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    _y = _i.send(_s)</span><br><span class="line">            <span class="keyword">except</span> StopIteration <span class="keyword">as</span> _e:</span><br><span class="line">                _r = _e.value</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">RESULT = _r</span><br></pre></td></tr></table></figure>
+<p>在伪代码的顶部，有行代码（<code>_y = next(_i)</code>）揭示了一个重要的细节：要预激子生成器。这表明，用于自动预激的装饰器与 <code>yield from</code> 结构不兼容。</p>
+<h2 id="16-9-使用协程做离散事件仿真"><a href="#16-9-使用协程做离散事件仿真" class="headerlink" title="16.9 使用协程做离散事件仿真"></a>16.9 使用协程做离散事件仿真</h2><p>离散事件仿真（Discrete Event Simulation，DES）是一种把系统建模成一系列事件的仿真类型。在离散事件仿真中，仿真“钟”向前推进的量不是固定的，而是直接推进到下一个事件模型的模拟时间。假如我们抽象模拟出租车的运营过程，其中一个事件是乘客上车，下一个事件则是乘客下车。</p>
+<p>离散事件仿真能够使用多线程或在单个线程中使用面向事件的编程技 术（例如事件循环驱动的回调或协程）实现。可以说，为了实现连续仿真，在多个线程中处理实时并行的操作更自然。而协程恰好为实现离散事件仿真提供了合理的抽象。</p>
+<blockquote>
+<p>在仿真领域，进程这个术语指代模型中某个实体的活动，与操作系统中的进程无关。仿真系统中的一个进程可以使用操作系统中的一个进程实现，但是通常会使用一个线程或一个协程实现。</p>
+</blockquote>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
+<p>生成器有三种不同的代码编写风格：有传统的拉取式（迭代器）、推送式（计算平均值的示例）、还有任务时。</p>
+</blockquote>
+<p>使用协程做面向事件编程时，协程会不断把控制权让步给主循环，激活并向前运行其他协程，从而执行各个并发活动。这是一种协作式多任务：协程显式自主地把控制权让步给中央调度程序。而多线程实现的是抢占式多任务。调度程序可以在任何时刻暂停线程（即使在执行一个语句的过程中），把控制权让给其他线程。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-09-30T09:35:49.645Z" itemprop="dateUpdated">2019-09-30 17:35:49</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&title=《Chapter 16 - 协程》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&title=《Chapter 16 - 协程》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 16 - 协程》 — live in passion&url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/09/30/dark-web/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">通识 - 暗网</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/08/25/fluent-python-context-and-else/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 15 - 上下文管理器和 else 块</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&title=《Chapter 16 - 协程》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&title=《Chapter 16 - 协程》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 16 - 协程》 — live in passion&url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/09/05/fluent-python-coroutine/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACuElEQVR42u3awW7rMAwEwPz/T7fAO9f2LiXl+TA+BW4sa1RAVEh+PvH18++6un9/XY0w+/7nxIWHh4c3mnrysqvX3+Pzz1ezunrqfs54eHh4p3nJ5O7v3N9PnkoY+Zzx8PDw3sBLjrb50TlfrFkowsPDw3sbr92+22N6Ph88PDy8/8VbT6rm39+V/tica8HDw8OLeW0B7A2fD9b38PDw8Baq6iuJgxMhp54tHh4e3gHerMiUp26T8evpBlHgITzg4eHhLfDuh0j+mm/ls+XIx/xjNDw8PLwv8lZKUyutVLM8w+WYeHh4eAd4bYtAcU6PlyBJOiSwy3fh4eHhbeXlKdqVbTpZjlka4mGeeHh4eAd4bdkpP0DvSmq04zzkqvHw8PAO8PYmXtvgcT/OkSofHh4e3kKFfZZsTYLB+uaezwEPDw/vm7wW0zZR5cnfvalhPDw8vL28nNQehZNDedtGUCc18PDw8A7wkuPvSnjYFQyW3oKHh4e3ldc+kB+g25apWULk4R+Ah4eH90XerClqFlry/qg6YODh4eEd4+0tO+VTn70xX3o8PDy8E7zk9Q9J0gNtVe1TRfEMDw8P7wCvReYTnR3E14MNHh4e3l5eUYBfbtWaJYhnAeaTrxweHh7e5BRal7iSZESeyJgd2YulxMPDw9vKmx12V7b4Nu3bNnLh4eHhfZN3IjWQXElASu5fNl3h4eHhbeXtbXtqQ0J+NG8Xq/4SHh4eXjzzn/JKlqCdbpKunaV98fDw8E7wZhtuC56lemdNDLNwgoeHh9fykhfnW3xbysrbEWaLgoeHh3eOl2/KbY9TXkiblcfw8PDw3sxr0wo5pm0aKH4r4OHh4b2G127oeZEsL8hF9/Hw8PCO8fJEwGwhVlqmksLYtlwLHh4eXtdDVRfA1jf6lVaAWaoCDw8Pb4H3C+9PSt8jGLAVAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

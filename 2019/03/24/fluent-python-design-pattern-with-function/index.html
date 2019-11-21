@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 6 - 使用一等函数实现设计模式 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="1996 年，Peter Norvig 在题为“Design Patterns in Dynamic Languages”（http://norvig.com/design-patterns/) 的演讲中指出，在 Gamma 等人合著的《设计模式：可复用面向对象软件基础》一书中包含了 23 个模式，其中有 16 个在动态语言中 “不见了，或者简化了”。 Norvig 建议在有一等函数的语言中重新审">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 6 - 使用一等函数实现设计模式">
+<meta property="og:url" content="https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="1996 年，Peter Norvig 在题为“Design Patterns in Dynamic Languages”（http://norvig.com/design-patterns/) 的演讲中指出，在 Gamma 等人合著的《设计模式：可复用面向对象软件基础》一书中包含了 23 个模式，其中有 16 个在动态语言中 “不见了，或者简化了”。 Norvig 建议在有一等函数的语言中重新审">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/strategy-pattern.png">
+<meta property="og:image" content="https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/command-pattern.png">
+<meta property="og:updated_time" content="2019-04-20T07:30:41.777Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 6 - 使用一等函数实现设计模式">
+<meta name="twitter:description" content="1996 年，Peter Norvig 在题为“Design Patterns in Dynamic Languages”（http://norvig.com/design-patterns/) 的演讲中指出，在 Gamma 等人合著的《设计模式：可复用面向对象软件基础》一书中包含了 23 个模式，其中有 16 个在动态语言中 “不见了，或者简化了”。 Norvig 建议在有一等函数的语言中重新审">
+<meta name="twitter:image" content="https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/strategy-pattern.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 6 - 使用一等函数实现设计模式</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 6 - 使用一等函数实现设计模式</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-03-24T11:52:18.000Z" itemprop="datePublished" class="page-time">
+  2019-03-24
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#策略模式"><span class="post-toc-number">1.</span> <span class="post-toc-text">策略模式</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#命令模式"><span class="post-toc-number">2.</span> <span class="post-toc-text">命令模式</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#小结"><span class="post-toc-number">3.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-design-pattern-with-function" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 6 - 使用一等函数实现设计模式</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-24 19:52:18" datetime="2019-03-24T11:52:18.000Z" itemprop="datePublished">2019-03-24</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>1996 年，Peter Norvig 在题为“Design Patterns in Dynamic Languages”（<a href="http://norvig.com/design-patterns/" target="_blank" rel="noopener">http://norvig.com/design-patterns/</a>) 的演讲中指出，在 Gamma 等人合著的《设计模式：可复用面向对象软件基础》一书中包含了 23 个模式，其中有 16 个在动态语言中 “不见了，或者简化了”。</p>
+<p>Norvig 建议在有一等函数的语言中重新审视 “策略”，“命令”，“模板方法” 和 “访问者” 模式。通常，我们可以把这些模式中涉及的某些类的实例替换成简单的函数，从而减少样板代码。</p>
+<h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>策略模式的目的在于将一系列的算法封装起来，并且使他们可以相互替换。如下所示：</p>
+<img src="/2019/03/24/fluent-python-design-pattern-with-function/strategy-pattern.png" title="[策略模式]">
+<p>这个模式使得算法可以独立于使用他们的调用者而变化。</p>
+<p>我们使用类来描述一个策略，并在计算订单总额时根据顾客类型来确定并初始化相应的策略类。</p>
+<p>但是在有了一等函数后，我们可以不再使用策略类，而是只使用函数类代表不同的策略，并在计算总额的时候将策略函数作为参数进行传递。Python 中的 <code>sort()</code> 的 <code>key</code> 参数就是策略函数的一个例子。</p>
+<p>使用一等函数实现策略模式时，不同策略的管理可能是个问题，此时可以使用统一的模块来管理所有的策略函数，并通过 <code>inspect</code> 模块来获取所有的策略：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> promotions <span class="comment"># 策略模块</span></span><br><span class="line"></span><br><span class="line">promos = [func <span class="keyword">for</span> name, func <span class="keyword">in</span> inspect.getmembers(promotions, inspect.isfunction)]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">best_promo</span><span class="params">(order)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    选择最佳折扣</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="keyword">return</span> max(promo(order) <span class="keyword">for</span> promo <span class="keyword">in</span> promos)</span><br></pre></td></tr></table></figure>
+<p>上述方案没有检查所有策略函数的参数，如果想更进一步，可以根据函数接收的参数再次过滤，避免在使用时抛出异常。</p>
+<h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><p>命令模式通过把函数作为参数传递而简化，如下所示：</p>
+<img src="/2019/03/24/fluent-python-design-pattern-with-function/command-pattern.png" title="[命令模式]">
+<p>调用者只需要执行相应的命令，而不同的命令后有不同的接受者负责处理。该模式的目的是解耦调用操作的对象和提供实现的对象。</p>
+<p>同样的，我们可以不为调用者提供一个 Command 实例，而是给它一个函数，此时调用者可以不用调用 <code>command.execute()</code>，而是直接调用 <code>command()</code> 即可。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>可以看到，上面两种模式都是将设计模式中的类替换成了函数，这样做的好处在于减少运行时的开销，因为使用类时需要每次都进行类对象的实例化，而使用函数时则不会有这个问题。</p>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-04-20T07:30:41.777Z" itemprop="dateUpdated">2019-04-20 15:30:41</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&title=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&title=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/29/fluent-python-decorator-and-closure/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 7 - 函数装饰器和闭包</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/18/fluent-python-first-class-function/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Chapter 5 - 一等函数</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&title=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&title=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 6 - 使用一等函数实现设计模式》 — live in passion&url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/03/24/fluent-python-design-pattern-with-function/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpklEQVR42u3aQXLbQAwEQP//084lN5foGYDLMFWtE0uWqG0eduEBvr7i1/eP18/37/p8cp+bX3h4eHjrpX9a1qfvXi+xheXX12vGw8PDO81Lln69oOQw+MRL3mkfNx4eHt57eMlNi58vkXh4eHj/F68NBfKCOD9g8PDw8N7D25fF+R3aqOKhrAUPDw8v5u23+Oevj/T38PDw8NZd9Vnhm8Sv7W8NV4uHh4d3gDcbHdiU1Mm38pA3+jweHh7eAd5mICBf+r49lpPw8PDwnuFtBgLy7X4W8rYHSZ2v4OHh4d3KmwUNs+0+x7dFNh4eHt5dvHZjzZ/ZrOBuj40owMXDw8O7lTdrU82o+0GBtj2Gh4eHd4LXxqltbLoPcDe/hYeHh3eC1wavebiwj3TbQ+WGXBkPDw8v4CWlc7JBtwtt213DQQE8PDy8Y7y8HZWPUs3a/Mn9iyADDw8P7zBvNkbQFsR59BAl0NeRBB4eHt5hXtu2n41nbYry+vjBw8PDO8DLt919/NoGCvlff3nQeHh4eI/wZgNS7aEyW3T9WPHw8PAO8NrgdRMutA8xH64ajhHg4eHhjXhtWysptWfleB5q4OHh4f1b3v5GmzbYbOCgHRfDw8PDe4bXDkK14cKsmE4Oqui/Bzw8PLwFL9lMrzf6WdQ7CyDqYSw8PDy8Y7z2n/xkcQkp/8xwzXh4eHjHeHXdvYgz2uihPbTq7AQPDw8v5n2Xr9nBcG/ZnRwef6/x8PDwDvBmG/0sum23+M1DWZ1jeHh4eAHvrlCg3bg3owZ4eHh4b+C1Ta9ZY+zEofLLffDw8PBew5u9kxfHbWut0OPh4eG9gNeOT+UPoh1EwMPDw3uSNwsUNq399jqPKvDw8PBO8/ZzW220er2UfOu/a2wLDw8PL+b9AYJV3zwwkZy/AAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

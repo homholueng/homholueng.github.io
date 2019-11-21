@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>Chapter 10 - 序列的修改、散列和切片 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="Python">
+    <meta name="description" content="10.2 与旧的类兼容 序列类型的构造方法最好接受可迭代的对象为参数，因为所有内置的序列类型都是这样做的。  reprlib 能够为某些对象生成长度有限的表示形式: 12345678910111213141516171819In [1]: import reprlibIn [3]: aOut[3]:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...  999]In [4]: re">
+<meta name="keywords" content="Python">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chapter 10 - 序列的修改、散列和切片">
+<meta property="og:url" content="https://homholueng.github.io/2019/04/27/fluent-python-sequence/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="10.2 与旧的类兼容 序列类型的构造方法最好接受可迭代的对象为参数，因为所有内置的序列类型都是这样做的。  reprlib 能够为某些对象生成长度有限的表示形式: 12345678910111213141516171819In [1]: import reprlibIn [3]: aOut[3]:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...  999]In [4]: re">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-18T11:43:48.703Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 10 - 序列的修改、散列和切片">
+<meta name="twitter:description" content="10.2 与旧的类兼容 序列类型的构造方法最好接受可迭代的对象为参数，因为所有内置的序列类型都是这样做的。  reprlib 能够为某些对象生成长度有限的表示形式: 12345678910111213141516171819In [1]: import reprlibIn [3]: aOut[3]:[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ...  999]In [4]: re">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Chapter 10 - 序列的修改、散列和切片</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">Chapter 10 - 序列的修改、散列和切片</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2019-04-27T04:07:46.000Z" itemprop="datePublished" class="page-time">
+  2019-04-27
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-2-与旧的类兼容"><span class="post-toc-number">1.</span> <span class="post-toc-text">10.2 与旧的类兼容</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-3-协议和鸭子类型"><span class="post-toc-number">2.</span> <span class="post-toc-text">10.3 协议和鸭子类型</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-4-可切片的序列"><span class="post-toc-number">3.</span> <span class="post-toc-text">10.4 可切片的序列</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#10-4-1-切片原理"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">10.4.1 切片原理</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#10-4-2-能处理切片的-getitem-方法"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">10.4.2 能处理切片的 __getitem__ 方法</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-5-动态存取属性"><span class="post-toc-number">4.</span> <span class="post-toc-text">10.5 动态存取属性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#10-6-散列和快速等值"><span class="post-toc-number">5.</span> <span class="post-toc-text">10.6 散列和快速等值</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-fluent-python-sequence" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Chapter 10 - 序列的修改、散列和切片</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-04-27 12:07:46" datetime="2019-04-27T04:07:46.000Z" itemprop="datePublished">2019-04-27</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="10-2-与旧的类兼容"><a href="#10-2-与旧的类兼容" class="headerlink" title="10.2 与旧的类兼容"></a>10.2 与旧的类兼容</h2><blockquote>
+<p>序列类型的构造方法最好接受可迭代的对象为参数，因为所有内置的序列类型都是这样做的。</p>
+</blockquote>
+<p><code>reprlib</code> 能够为某些对象生成长度有限的表示形式:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">1</span>]: <span class="keyword">import</span> reprlib</span><br><span class="line"></span><br><span class="line">In [<span class="number">3</span>]: a</span><br><span class="line">Out[<span class="number">3</span>]:</span><br><span class="line">[<span class="number">0</span>,</span><br><span class="line"> <span class="number">1</span>,</span><br><span class="line"> <span class="number">2</span>,</span><br><span class="line"> <span class="number">3</span>,</span><br><span class="line"> <span class="number">4</span>,</span><br><span class="line"> <span class="number">5</span>,</span><br><span class="line"> <span class="number">6</span>,</span><br><span class="line"> <span class="number">7</span>,</span><br><span class="line"> <span class="number">8</span>,</span><br><span class="line"> <span class="number">9</span>,</span><br><span class="line"> ...</span><br><span class="line">  <span class="number">999</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">4</span>]: reprlib.repr(a)</span><br><span class="line">Out[<span class="number">4</span>]: <span class="string">'[0, 1, 2, 3, 4, 5, ...]'</span></span><br></pre></td></tr></table></figure>
+<p>注意，在 Python2 中，<code>reprlib</code> 模块的名字是 <code>repr</code>。</p>
+<blockquote>
+<p>调用 <code>repr()</code> 函数的目的是调试，因此绝对不能抛出异常。如果 <code>__repr__</code> 方法的实现有问题，那么必须处理，尽量输出有用的内容，让用户能够识别目标对象。</p>
+</blockquote>
+<h2 id="10-3-协议和鸭子类型"><a href="#10-3-协议和鸭子类型" class="headerlink" title="10.3 协议和鸭子类型"></a>10.3 协议和鸭子类型</h2><p>在面向对象编程中，协议是非正式的接口，只在文档中定义，在代码中不定义。例如，Python 的序列协议只需要 <code>__len__</code> 和 <code>__getitem__</code> 两 方法。任何类（如 <code>Spam</code>），只要使用标准的签名和语义实现了这两个方法，就能用在任何期待序列的地方。<code>Spam</code> 是不是哪个类的子类无关紧要，只要提供了所需的方法即可。</p>
+<p>因此，Spam 的行为就像是一个序列，人们称其为鸭子类型（duck typing）。</p>
+<p>协议是非正式的，没有强制力，因此如果你知道类的具体使用场景，通常只需要实现一个协议的部分。例如，为了支持迭代，只需实现 <code>__getitem__</code> 方法，没必要提供 <code>__len__</code> 方法。</p>
+<blockquote>
+<p>协议可以视为鸭子类型语言使用的非正式接口。</p>
+</blockquote>
+<h2 id="10-4-可切片的序列"><a href="#10-4-可切片的序列" class="headerlink" title="10.4 可切片的序列"></a>10.4 可切片的序列</h2><h3 id="10-4-1-切片原理"><a href="#10-4-1-切片原理" class="headerlink" title="10.4.1 切片原理"></a>10.4.1 切片原理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">5</span>]: <span class="class"><span class="keyword">class</span> <span class="title">MySeq</span>:</span></span><br><span class="line">   ...:     <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, index)</span>:</span></span><br><span class="line">   ...:         <span class="keyword">return</span> index</span><br><span class="line">   ...:</span><br><span class="line"></span><br><span class="line">In [<span class="number">6</span>]: s = MySeq()</span><br><span class="line"></span><br><span class="line">In [<span class="number">7</span>]: s[<span class="number">1</span>]</span><br><span class="line">Out[<span class="number">7</span>]: <span class="number">1</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">8</span>]: s[<span class="number">1</span>:<span class="number">4</span>]</span><br><span class="line">Out[<span class="number">8</span>]: slice(<span class="number">1</span>, <span class="number">4</span>, <span class="literal">None</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">9</span>]: s[<span class="number">1</span>:<span class="number">4</span>:<span class="number">2</span>]</span><br><span class="line">Out[<span class="number">9</span>]: slice(<span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">10</span>]: s[<span class="number">1</span>:<span class="number">4</span>:<span class="number">2</span>, <span class="number">9</span>]</span><br><span class="line">Out[<span class="number">10</span>]: (slice(<span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>), <span class="number">9</span>) </span><br><span class="line"></span><br><span class="line">In [<span class="number">11</span>]: s[<span class="number">1</span>:<span class="number">4</span>:<span class="number">2</span>, <span class="number">7</span>:<span class="number">9</span>]</span><br><span class="line">Out[<span class="number">11</span>]: (slice(<span class="number">1</span>, <span class="number">4</span>, <span class="number">2</span>), slice(<span class="number">7</span>, <span class="number">9</span>, <span class="literal">None</span>))</span><br></pre></td></tr></table></figure>
+<p>这些步骤需要重点说明：</p>
+<ul>
+<li>9：从 1 开始，到 4 结束，步幅为 2。</li>
+<li>10：如果 [] 中有逗号，那么 <code>__getitem__</code> 收到的是元组。</li>
+<li>11：元组中可以包含多个切片对象。</li>
+</ul>
+<p>这里值得一提的是，<code>slice</code> 内置了 <code>indices</code> 方法，该方法开放了内置序列实现的棘手逻辑，用于优雅地处理缺失索引和负数索引，以及长度超过目标序列的切片：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">S.indices(len) -&gt; (start, stop, stride)</span><br></pre></td></tr></table></figure>
+<p>给定长度为 <code>len</code> 的序列，计算 <code>S</code> 表示的扩展切片的起始（start）和结尾（stop），以及步幅（stride）。超出边界的索引会被截掉，这与常规切片的处理方式相同。我们来看看这个方法的实际效果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">12</span>]: slice(<span class="literal">None</span>, <span class="number">10</span>, <span class="number">2</span>).indices(<span class="number">5</span>)</span><br><span class="line">Out[<span class="number">12</span>]: (<span class="number">0</span>, <span class="number">5</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">In [<span class="number">13</span>]: slice(<span class="number">-3</span>, <span class="literal">None</span>, <span class="literal">None</span>).indices(<span class="number">5</span>)</span><br><span class="line">Out[<span class="number">13</span>]: (<span class="number">2</span>, <span class="number">5</span>, <span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="10-4-2-能处理切片的-getitem-方法"><a href="#10-4-2-能处理切片的-getitem-方法" class="headerlink" title="10.4.2 能处理切片的 __getitem__ 方法"></a>10.4.2 能处理切片的 <code>__getitem__</code> 方法</h3><p>下面展示了一个将 <code>__getitem__</code> 委托给内部序列的实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, index)</span>:</span></span><br><span class="line">    cls = type(self)</span><br><span class="line">    <span class="keyword">if</span> isinstance(index, slice):</span><br><span class="line">        <span class="comment"># 1</span></span><br><span class="line">        <span class="keyword">return</span> cls(self._components[index])</span><br><span class="line">    <span class="comment"># 2</span></span><br><span class="line">    <span class="keyword">elif</span> isinstance(index, numbers.Integral):</span><br><span class="line">        <span class="keyword">return</span> self._components[index]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        msg = <span class="string">'&#123;cls.__name__&#125; indices must be integers'</span></span><br><span class="line">        <span class="keyword">raise</span> TypeError(msg.format(cls=cls))</span><br></pre></td></tr></table></figure>
+<p>这里需要说明这些细节：</p>
+<ul>
+<li>1：对于切片操作，返回自身类型的实例而不是内部序列的切片。</li>
+<li>2：测试 <code>index</code> 是否是整数时用的是 <code>numbers.Integral</code>，这是一个抽象基类。在 <code>isinstance</code> 中使用抽象基类做测试能让 API 更灵活且更容易更新。</li>
+</ul>
+<h2 id="10-5-动态存取属性"><a href="#10-5-动态存取属性" class="headerlink" title="10.5 动态存取属性"></a>10.5 动态存取属性</h2><p>属性查找失败后，解释器会调用 <code>__getattr__</code> 方法。简单来说，对 <code>my_obj.x</code> 表达式，Python 会检查 <code>my_obj</code> 实例有没有名为 <code>x</code> 的属性；如果没有，到类（<code>my_obj.__class__</code>）中查找；如果还没有，顺着继承树继续查找。如果依旧找不到，调用 <code>my_obj</code> 所属类中定义的 <code>__getattr__</code> 方法，传入 <code>self</code> 和属性名称的字符串形式（如 <code>&#39;x&#39;</code>）。</p>
+<h2 id="10-6-散列和快速等值"><a href="#10-6-散列和快速等值" class="headerlink" title="10.6 散列和快速等值"></a>10.6 散列和快速等值</h2><p>如果要快速比较两个序列是否相同，可以使用 <code>zip</code> 函数来实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">__eq__</span><span class="params">(self, other)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> len(self) == len(other) <span class="keyword">and</span> \</span><br><span class="line">    all(a == b <span class="keyword">for</span> a, b <span class="keyword">in</span> zip(self, other))</span><br></pre></td></tr></table></figure>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2019-07-18T11:43:48.703Z" itemprop="dateUpdated">2019-07-18 19:43:48</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&title=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&title=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/27/fluent-python-sequence/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/05/04/fluent-python-interface/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Chapter 11 - 函数装饰器和闭包</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/04/21/pep-302-new-imoprt-hooks-md/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">PEP 302 - New Import Hooks</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&title=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&title=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2019/04/27/fluent-python-sequence/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Chapter 10 - 序列的修改、散列和切片》 — live in passion&url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2019/04/27/fluent-python-sequence/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACmElEQVR42u3aMXLDMAwEQP//006bmUyUO1BQXKwqjyzRXBYEDPD1iq/3t+v7neSt6zs/779/XPkvDi88PDy8g6lfD/3bt9dTTADXI7cj4OHh4T3DS4bLGdd3ZiGnfQYPDw/v03jXk55luecJPR4eHt5n8hJkHiryxB0PDw/v03izoRN2m5r/W60FDw8Pr6uRRknw53xe6e/h4eHhHXfVk8T3rnZXHhiKEfDw8PAWeO3xqSRRnpV6730GDw8Pb493ftwqL63uhZ9fi8h4eHh4C7y2mZQ0upIW16y4MCza4uHh4T3Ca9v8bSl2tijD5hkeHh7erbx8uD/qGfEzSQnjpCH3SioieHh4eAe85E9+y54l33kIqY9e4eHh4S3zzgsESWo+CzNt6QQPDw9vg9cWatuG1kmq3RaX8fDw8J7htcnrSXiYtcRm6TseHh7eHq99OTrkFCzcybGD4oACHh4e3hovDwPJJp7cL841lE276aN4eHh4Ha8l5T/QTjpP36OghYeHh7fMuysMRD23g6MGRRKPh4eHt8C7q2SQJ9B5ueH8Wzw8PLwnefnme56Un7S+oiCEh4eHt8DLt+9Zy/89uk5CER4eHt4zvFmQGDb1y+3+GhDB8PDw8BZ4N5cAgvHzkU/u4OHh4W3w8mCQb/35VF7lVS8uHh4e3hqvDRKz41DJCMnzxcLh4eHhPcI7mXoebDZCBR4eHt42766mVDv1drHyb/Hw8PC2ee3mmyfE93ag8s/DCw8PD6/ktcEgPzQwy/HPwwYeHh7eM7xZAWLWb8oXbrHWgoeHh/evvL2SRAS4TrLx8PDwPoY328TPE/H6WAMeHh7eGq99efbWjJ0vDR4eHt4zvPYPf11IjTH5Myv9PTw8PLy/eV+tmHOo7d6MZQAAAABJRU5ErkJggg==" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
