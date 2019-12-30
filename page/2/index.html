@@ -152,6 +152,53 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-fluent-python-iter" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-08-25 16:21:37" datetime="2019-08-25T08:21:37.000Z" itemprop="datePublished">2019-08-25</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/08/25/fluent-python-iter/">Chapter 14 - 可迭代的对象、迭代器和生成器</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        14.1　Sentence 类第1版：单词序列我们要实现一个 Sentence 类，以此打开探索可迭代对象的旅程。我们向这个类的构造方法传入包含一些文本的字符串，然后可以逐个单词迭代。
+12345678910111213141516171819import reimport reprlibRE_WORD = re.compile('\w+')class Sentence:    def __...
+    
+
+        <a href="/2019/08/25/fluent-python-iter/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-effective-way-mind-map" class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -589,54 +636,6 @@ Server: 1
     <div class="post-footer">
         
 	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-fluent-python-ad-and-disad-of-inherit" class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-07-13 18:05:21" datetime="2019-07-13T10:05:21.000Z" itemprop="datePublished">2019-07-13</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/07/13/fluent-python-ad-and-disad-of-inherit/">Chapter 12 - 继承的优缺点</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        12.1 子类化内置类型很麻烦使用 C 语言实现的内置类型不会调用用户顶以的类覆盖的特殊方法，如 dict 的子类覆盖的 __getitem__() 方法不会被内置类型的 get() 方法调用。
-具体我们可以看看下面的例子：
-1234567891011121314151617181920In [1]: class DoppelDict(dict):    ...:     def __set...
-    
-
-        <a href="/2019/07/13/fluent-python-ad-and-disad-of-inherit/" class="post-more waves-effect waves-button">
-            Continue reading...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
 
     </div>
     
