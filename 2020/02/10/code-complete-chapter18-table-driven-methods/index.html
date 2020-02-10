@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+    
+
+    
+
+    
+
+
+
+    <meta charset="utf-8">
+    
+    
+    
+    
+    <title>代码大全 - Chapter18 - 表驱动法 | live in passion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="代码大全,软件构建">
+    <meta name="description" content="表驱动法是一种编程模式（scheme），从表里面查找信息而不使用逻辑语句（if 和 case）。事实上，凡是能够通过逻辑语句来选择的事务，都可以通过查表来选择。对简单的情况而言，使用逻辑语句更为容易和直白。但随着逻辑链的越来越复杂，查表法也就愈发显得更具有吸引力。 18.1 General Considerations in Using Table-Driven Methods在适当的环境下，采用">
+<meta name="keywords" content="代码大全,软件构建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码大全 - Chapter18 - 表驱动法">
+<meta property="og:url" content="https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/index.html">
+<meta property="og:site_name" content="live in passion">
+<meta property="og:description" content="表驱动法是一种编程模式（scheme），从表里面查找信息而不使用逻辑语句（if 和 case）。事实上，凡是能够通过逻辑语句来选择的事务，都可以通过查表来选择。对简单的情况而言，使用逻辑语句更为容易和直白。但随着逻辑链的越来越复杂，查表法也就愈发显得更具有吸引力。 18.1 General Considerations in Using Table-Driven Methods在适当的环境下，采用">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2020-02-10T13:09:03.689Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="代码大全 - Chapter18 - 表驱动法">
+<meta name="twitter:description" content="表驱动法是一种编程模式（scheme），从表里面查找信息而不使用逻辑语句（if 和 case）。事实上，凡是能够通过逻辑语句来选择的事务，都可以通过查表来选择。对简单的情况而言，使用逻辑语句更为容易和直白。但随着逻辑链的越来越复杂，查表法也就愈发显得更具有吸引力。 18.1 General Considerations in Using Table-Driven Methods在适当的环境下，采用">
+    
+        <link rel="alternate" type="application/atom+xml" title="live in passion" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/css/style.css?v=1.7.2">
+    <script>window.lazyScripts=[]</script>
+
+    <!-- custom head -->
+    
+
+</head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide">
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">Homho Lueng</h5>
+          <a href="mailto:homholueng@gmail.com" title="homholueng@gmail.com" class="mail">homholueng@gmail.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/">
+                <i class="icon icon-lg icon-home"></i>
+                Home
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives">
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags">
+                <i class="icon icon-lg icon-tags"></i>
+                Tags
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories">
+                <i class="icon icon-lg icon-th-list"></i>
+                Categories
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://github.com/homholueng" target="_blank">
+                <i class="icon icon-lg icon-github"></i>
+                Github
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">代码大全 - Chapter18 - 表驱动法</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
+</header>
+<header class="content-header post-header">
+
+    <div class="container fade-scale">
+        <h1 class="title">代码大全 - Chapter18 - 表驱动法</h1>
+        <h5 class="subtitle">
+            
+                <time datetime="2020-02-10T13:09:03.000Z" itemprop="datePublished" class="page-time">
+  2020-02-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/代码大全/">代码大全</a></li></ul>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#18-1-General-Considerations-in-Using-Table-Driven-Methods"><span class="post-toc-number">1.</span> <span class="post-toc-text">18.1 General Considerations in Using Table-Driven Methods</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Two-Issues-in-Using-Table-Driven-Methods"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">Two Issues in Using Table-Driven Methods</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#18-2-Direct-Access-Tables"><span class="post-toc-number">2.</span> <span class="post-toc-text">18.2 Direct Access Tables</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#18-3-Indexed-Access-Tables"><span class="post-toc-number">3.</span> <span class="post-toc-text">18.3 Indexed Access Tables</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#18-4-Stair-Step-Access-Tables"><span class="post-toc-number">4.</span> <span class="post-toc-text">18.4 Stair-Step Access Tables</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CHECKLIST"><span class="post-toc-number">5.</span> <span class="post-toc-text">CHECKLIST</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Key-Point"><span class="post-toc-number">6.</span> <span class="post-toc-text">Key Point</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-code-complete-chapter18-table-driven-methods" class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">代码大全 - Chapter18 - 表驱动法</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-02-10 21:09:03" datetime="2020-02-10T13:09:03.000Z" itemprop="datePublished">2020-02-10</time>
+
+            
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/代码大全/">代码大全</a></li></ul>
+
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style="display:none">
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <p>表驱动法是一种编程模式（scheme），从表里面查找信息而不使用逻辑语句（if 和 case）。事实上，凡是能够通过逻辑语句来选择的事务，都可以通过查表来选择。对简单的情况而言，使用逻辑语句更为容易和直白。但随着逻辑链的越来越复杂，查表法也就愈发显得更具有吸引力。</p>
+<h2 id="18-1-General-Considerations-in-Using-Table-Driven-Methods"><a href="#18-1-General-Considerations-in-Using-Table-Driven-Methods" class="headerlink" title="18.1 General Considerations in Using Table-Driven Methods"></a>18.1 General Considerations in Using Table-Driven Methods</h2><p>在适当的环境下，采用表驱动法，所生成的代码会比复杂的逻辑代码更简单、更容易修改，而且效率更高。假设你希望把字符划分成字母、标点符号和数字三类，那么你也许会用到下面这种复杂的逻辑链：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (((<span class="string">'a'</span> &lt;= inputChar) &amp;&amp; ( inputChar &lt;= <span class="string">'z'</span> )) || (( <span class="string">'A'</span> &lt;= inputChar ) &amp;&amp; ( inputChar &lt;= <span class="string">'Z'</span>&gt;))) &#123;</span><br><span class="line">  charType = CharacterType.Letter;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (( <span class="string">'0'</span> &lt; inputChar ) &amp;&amp; ( inputChar &lt;= <span class="string">'9'</span>)) &#123;</span><br><span class="line">  charType = CharacterType.Digit;</span><br><span class="line">&#125; ...</span><br></pre></td></tr></table></figure>
+<p>但是如果使用查询表的话，就可以把每个字符的类型保存在一个用字符编码访问的数组里：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">charType = charTypeTable[inputChar];</span><br></pre></td></tr></table></figure>
+<p>表驱动法使得我们能够把程序中的信息存放在数据里而不是逻辑里。</p>
+<h3 id="Two-Issues-in-Using-Table-Driven-Methods"><a href="#Two-Issues-in-Using-Table-Driven-Methods" class="headerlink" title="Two Issues in Using Table-Driven Methods"></a>Two Issues in Using Table-Driven Methods</h3><p>在使用表驱动法的时候，必须要解决两个问题。首先，你必须要回答怎样从表中查询条目的问题。另一个问题是，某些数据可能很难直接用于查表，例如长达 9 位的社保号，可能会导致表中存放过多的数据。表驱动法中包含三种查询记录的方法：</p>
+<ul>
+<li>直接访问（Direct access）</li>
+<li>索引访问（Indexed access）</li>
+<li>阶梯访问（Stair-step access）</li>
+</ul>
+<h2 id="18-2-Direct-Access-Tables"><a href="#18-2-Direct-Access-Tables" class="headerlink" title="18.2 Direct Access Tables"></a>18.2 Direct Access Tables</h2><p>和所有的查询表一样，直接访问表代替了更为复杂的逻辑控制结构。之所以说它们是“直接访问”的，是因为你无需绕很多复杂的圈子就能够在表里面找到你想要的信息。下面存储每个月份天数的表就是一种直接访问表：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">days_per_month = [<span class="number">31</span>, <span class="number">28</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="18-3-Indexed-Access-Tables"><a href="#18-3-Indexed-Access-Tables" class="headerlink" title="18.3 Indexed Access Tables"></a>18.3 Indexed Access Tables</h2><p>有的时候，只用一个简单的数学运算把输入数据转换成为表达键值。这类情况中的一部分可以通过使用索引访问的办法加以解决。当你使用索引的时候，先用一个基本类型的数据从一张索引表中查出一个键值，然后再用这一键值查出你感兴趣的主数据。</p>
+<p>假设你经营着一家商店，有大约 100 种商品。再假设每种商品都有一个四位数字的武平编号，其范围是 0000 到 9999。在这种情况下，如果你想用这个编号作为兼职直接查询一张描述商品信息的表，那么就要生成一个具有 10000 条记录的索引素组。该数组中除了与你商店中货物的标志相对应的 100 条记录以外，其余记录都是空的。索引访问技术有两个主要优点：首先，如果主查询表找的每一条记录都很大，那么创建一个浪费了很多空间的索引数组所用的空间，就要比创建一个浪费了很多空间的主查询表所用的空间小得多。其次，即使你用了索引后没有节省内存空间，操作位于索引中的记录有时也比操作位于主表中的记录更方便更廉价。</p>
+<h2 id="18-4-Stair-Step-Access-Tables"><a href="#18-4-Stair-Step-Access-Tables" class="headerlink" title="18.4 Stair-Step Access Tables"></a>18.4 Stair-Step Access Tables</h2><p>还有另外一种访问表的方法，那就是阶梯访问。这种访问方法不像索引结构那样直接，但是它比索引访问方法节省空间。阶梯结构的基本思想是，表中的记录对于不同的数据范围有效，而不是对不同的数据点有效。下面是一个通过阶梯访问表获取学生成绩等级的例子：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">range_limit = [<span class="number">50.0</span>, <span class="number">65.0</span>, <span class="number">75.0</span>, <span class="number">90.0</span>, <span class="number">100.0</span>]</span><br><span class="line">grade = [<span class="string">"F"</span>, <span class="string">"D"</span>, <span class="string">"C"</span>, <span class="string">"B"</span>, <span class="string">"A"</span>]</span><br><span class="line">max_grade_level = len(grade) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">grade_level = <span class="number">0</span></span><br><span class="line">student_Grade = <span class="string">"A"</span></span><br><span class="line"><span class="keyword">while</span> student_grade == <span class="string">"A"</span> <span class="keyword">and</span> grade_level &lt; max_grade_level:</span><br><span class="line">    <span class="keyword">if</span> student_score &lt; range_limit(grade_level):</span><br><span class="line">        student_grade = grade(grade_level)</span><br></pre></td></tr></table></figure>
+<h2 id="CHECKLIST"><a href="#CHECKLIST" class="headerlink" title="CHECKLIST"></a>CHECKLIST</h2><ul>
+<li>你考虑过把表驱动法作为复杂逻辑的替换方案吗？</li>
+<li>你考虑过把表驱动法作为复杂继承结构的替换方案吗？</li>
+<li>你考虑过把表数据存储在外部并在运行期间读入，以便在不修改代码的情况下就可以改变这些数据吗？</li>
+<li>如果无法用一种简单的数组索引去访问表，那么你把计算访问键值的功能提取成单独的子程序，而不是在代码中重复的计算键值吗？</li>
+</ul>
+<h2 id="Key-Point"><a href="#Key-Point" class="headerlink" title="Key Point"></a>Key Point</h2><ul>
+<li>表提供了一种复杂的逻辑和继承结构的替换方案。如果你发现自己对某个应用程序的逻辑或者继承树关系感到困惑，那么问问自己它是否可以通过一个查询表来加以简化。</li>
+<li>使用表的一项关键决策是决定如何去访问表。你可以采取直接访问、索引访问或者阶梯访问。</li>
+<li>使用表的另一项关键决策是决定应该把什么内容放入表中。</li>
+</ul>
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    Last updated: <time datetime="2020-02-10T13:09:03.689Z" itemprop="dateUpdated">2020-02-10 21:09:03</time>
+</span><br>
+
+
+        
+        能否，用你今天的微笑，補影一次合照
+        
+    </div>
+    
+    <footer>
+        <a href="https://homholueng.github.io">
+            <img src="/img/avatar.jpg" alt="Homho Lueng">
+            Homho Lueng
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/代码大全/">代码大全</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/软件构建/">软件构建</a></li></ul>
+
+
+            
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&title=《代码大全 - Chapter18 - 表驱动法》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&title=《代码大全 - Chapter18 - 表驱动法》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《代码大全 - Chapter18 - 表驱动法》 — live in passion&url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+
+        </div>
+    </div>
+
+    
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/02/09/code-complete-chapter4-key-construction-decision/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">代码大全 - Chapter4 - 关键的“构建”决策</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style="display:none">
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style="display:none">
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>Homho Lueng &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
+</footer>
+
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+
+
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&title=《代码大全 - Chapter18 - 表驱动法》 — live in passion&pic=https://homholueng.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&title=《代码大全 - Chapter18 - 表驱动法》 — live in passion&source=description?" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《代码大全 - Chapter18 - 表驱动法》 — live in passion&url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/&via=https://homholueng.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://homholueng.github.io/2020/02/10/code-complete-chapter18-table-driven-methods/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADIUlEQVR42u3awW6sQAwEwPz/T2+uT3qBtO0hgqE4RVEClPfgdXu+vuLr88/1/+/P/yu589HP1d8svrCxsbEfwv6cXtWXOAKfFy4pX/KsxIKNjY29K7vaWvJHVltaAjj/eKJWio2Njf1idl6IvP3M74CNjY2NvYqdjxnJPat/g42Njf1m9uQr/nnkVA2t8o+h+lxsbGzsXdl5xHP/ny/Zb2NjY2PfmN2L4JPoJ29Ovej/M7iwsbGxd2JXj0j2DvckEVL1sE51zMDGxsbemz35op+E9fkdli1x8xEFGxsb++HsanTeOzrTGxWq5c6fi42Njf0G9qSZTdaueVlHR4uwsbGxN2Ln38+r4f5k5MinqAWrX2xsbOyHs3uxfs7oDSTVtlROirCxsbG3Y/dCpfxYT+/oz7zQh1JsbGzsF7Dni95qgY7ukJMuXA9gY2Nj35i96pv5qvhpcuYoGYQWDyTY2NjYN2BXY/3JCmHtsmHyPtjY2Ni7squr096KN18GXDGuHE5g2NjY2I9lVxe0+ShSHVpWjSjJU7CxsbH3Zk/SqaQ5rT3uMxljsLGxsfdgV7/05+2t+pRVMVa05MDGxsbemt0LmCalnIw3zdJjY2Njb8SuDhK9uCdpSNUxo7pmxsbGxn4PO3n1chDfCp6qRaw2OWxsbOw92HkQP4nve5FQstlIIqRfejU2Njb2RuzeoZm85fRK01s5//JhYGNjY2/EzptKHgzlg8SyYGgwUGFjY2PvxK4uSqvrhF6bnFMLWRo2Njb2Y9lJ20haTm/kKGwwiiuBaFrCxsbG3o59RSvqLRiqSX5eMmxsbOxd2XNSb2X7N+U+HEWwsbGxt2PnIXvecnrL2mUjx3mohI2Njf1w9qd45Udk8hVvtTTVAo2SMGxsbOzbs3sNILldvmxYGxVVRxdsbGzsPdiTBW3+EpPmNylcs3tjY2NjP5BdBeSM6mtN3qfw99jY2NivZ09aUb4SqK6B81U0NjY2NvYVg8SqgjaP7GBjY2M/nF09iJMvDKoLgLyx5WX9oUzY2NjYG7HzRe9khzx5oWS0qLZYbGxs7C3Y3xr1Al2NNV/AAAAAAElFTkSuQmCC" alt="微信分享二维码">
+</div>
+
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="/js/main.min.js?v=1.7.2"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="/js/search.min.js?v=1.7.2" async></script>
+
+
+
+
+
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -152,6 +152,101 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-gopl-program-structure" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-07-24 19:29:06" datetime="2019-07-24T11:29:06.000Z" itemprop="datePublished">2019-07-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/07/24/gopl-program-structure/">Go 语言圣经 - 2. 程序结构</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        2.3. 变量var 声明语句可以创建一个特定类型的变量，然后给变量附加一个名字，并且设置变量的初始值。变量声明的一般语法如下：
+1var 变量名字 类型 = 表达式
+其中 类型 或 = 表达式 两个部分可以省略其中的一个。如果省略的是类型信息，那么将根据初始化表达式来推导变量的类型信息。如果初始化表达式被省略，那么将用零值初始化该变量。 数值类型变量对应的零值是 0，布尔类型变量对应的零值...
+    
+
+        <a href="/2019/07/24/gopl-program-structure/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-gopl-getting-started" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-07-18 21:59:05" datetime="2019-07-18T13:59:05.000Z" itemprop="datePublished">2019-07-18</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/07/18/gopl-getting-started/">Go 语言圣经 - 1. 入门</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        1.2. 命令行参数通过 os.Args 切片能够拿到程序启动时得到的命令行参数：
+123456789101112131415package mainimport 	"fmt"	"os")func main() &#123;	var s, sep string	for _, arg := range os.Args &#123;		s += sep + arg		sep = " "	&#12...
+    
+
+        <a href="/2019/07/18/gopl-getting-started/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-fluent-python-ad-and-disad-of-inherit" class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -556,110 +651,6 @@ Linux 系统将硬件设备划分为三种：
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-docker-docs-app-data" class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-04-17 22:37:44" datetime="2019-04-17T14:37:44.000Z" itemprop="datePublished">2019-04-17</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Docker/">Docker</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/04/17/docker-docs-app-data/">Docker 应用数据的管理</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        概述容器中创建的文件默认会写入可写的容器层，这意味着：
-
-这些数据会随着容器的销毁而消失
-容器的可写层与当前宿主机耦合在了一起，想要将数据转移到别的地方比较麻烦
-需要借助存驱动来对文件系统进行管理才能对容器的可写层进行写入，这与使用数据卷相比性能会差一些，因为多了一层抽象层。
-
-Docker 针对数据存储的问题提供了两种解决方案：volumn 和 bind mount，这使得我们能够放心的将...
-    
-
-        <a href="/2019/04/17/docker-docs-app-data/" class="post-more waves-effect waves-button">
-            Continue reading...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Storage/">Storage</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-fluent-python-pythonic-object" class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-04-14 15:51:43" datetime="2019-04-14T07:51:43.000Z" itemprop="datePublished">2019-04-14</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/04/14/fluent-python-pythonic-object/">Chapter 9 - 符合 Python 风格的对象</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        得益于 Python 数据模型，自定义类型的行为可以像内置类型那样自然。实现如此自然的行为，靠的不是集成，而是鸭子类型（duck typing）。
-对象表示形式Python 提供了两种获取对象表示形式的方法:
-
-repr()：以便于开发者理解的方式返回对象的字符串表示形式。
-str()：以便于用户理解的方式返回对象的字符串表示形式。
-
-为了支持以上两种方式，我们要实现 __repr__ 和 ...
-    
-
-        <a href="/2019/04/14/fluent-python-pythonic-object/" class="post-more waves-effect waves-button">
-            Continue reading...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
@@ -693,7 +684,7 @@ str()：以便于用户理解的方式返回对象的字符串表示形式。
         </p>
     </div>
     <div class="bottom">
-        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+        <p><span>Homho Lueng &copy; 2015 - 2020</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>

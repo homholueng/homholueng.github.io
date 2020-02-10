@@ -152,6 +152,102 @@
     <ul class="post-list">
     
         <li class="post-list-item fade">
+            <article id="post-fluent-python-coroutine" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-09-05 20:14:56" datetime="2019-09-05T12:14:56.000Z" itemprop="datePublished">2019-09-05</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/09/05/fluent-python-coroutine/">Chapter 16 - 协程</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        字典为动词 “to yield” 给出了两个释义：产出和让步。对于 Python 生成器中的 yield 来说，这两个含义都成立。yield item 这行代码会产出一个值，提供给 next(...) 的调用方；此外，还会作出让步，暂停执行生成器，让调用方继续工作，直到需要使用另一个值时再调用 next()。调用方会从生成器中拉取值。
+yield 关键字甚至还可以不接收或传出数据。不管数据如...
+    
+
+        <a href="/2019/09/05/fluent-python-coroutine/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-fluent-python-context-and-else" class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2019-08-25 17:32:39" datetime="2019-08-25T09:32:39.000Z" itemprop="datePublished">2019-08-25</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Fluent-Python/">Fluent Python</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/2019/08/25/fluent-python-context-and-else/">Chapter 15 - 上下文管理器和 else 块</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        15.1　先做这个，再做那个：if 语句之外的 else 块for/else、while/else 和 try/else 的语义关系紧密，不过与 if/else 差别很大：
+
+for：　仅当 for 循环运行完毕时（即 for 循环没有被 break 语句中止）才运行 else 块。
+while：仅当 while 循环因为条件为假值而退出时（即 while 循环没有被 break 语句中止）...
+    
+
+        <a href="/2019/08/25/fluent-python-context-and-else/" class="post-more waves-effect waves-button">
+            Continue reading...
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/">Python</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
             <article id="post-fluent-python-iter" class="article-card article-type-post" itemprop="blogPost">
 
     <div class="post-meta">
@@ -548,101 +644,6 @@ Server: 1
 
         </li>
     
-        <li class="post-list-item fade">
-            <article id="post-gopl-program-structure" class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-07-24 19:29:06" datetime="2019-07-24T11:29:06.000Z" itemprop="datePublished">2019-07-24</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/07/24/gopl-program-structure/">Go 语言圣经 - 2. 程序结构</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        2.3. 变量var 声明语句可以创建一个特定类型的变量，然后给变量附加一个名字，并且设置变量的初始值。变量声明的一般语法如下：
-1var 变量名字 类型 = 表达式
-其中 类型 或 = 表达式 两个部分可以省略其中的一个。如果省略的是类型信息，那么将根据初始化表达式来推导变量的类型信息。如果初始化表达式被省略，那么将用零值初始化该变量。 数值类型变量对应的零值是 0，布尔类型变量对应的零值...
-    
-
-        <a href="/2019/07/24/gopl-program-structure/" class="post-more waves-effect waves-button">
-            Continue reading...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
-        <li class="post-list-item fade">
-            <article id="post-gopl-getting-started" class="article-card article-type-post" itemprop="blogPost">
-
-    <div class="post-meta">
-        <time class="post-time" title="2019-07-18 21:59:05" datetime="2019-07-18T13:59:05.000Z" itemprop="datePublished">2019-07-18</time>
-
-        
-	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Go-语言圣经/">Go 语言圣经</a></li></ul>
-
-
-
-    </div>
-
-    
-
-
-  
-    <h3 class="post-title" itemprop="name">
-      <a class="post-title-link" href="/2019/07/18/gopl-getting-started/">Go 语言圣经 - 1. 入门</a>
-    </h3>
-  
-
-
-
-
-    <div class="post-content" id="post-content" itemprop="postContent">
-
-    
-        1.2. 命令行参数通过 os.Args 切片能够拿到程序启动时得到的命令行参数：
-123456789101112131415package mainimport 	"fmt"	"os")func main() &#123;	var s, sep string	for _, arg := range os.Args &#123;		s += sep + arg		sep = " "	&#12...
-    
-
-        <a href="/2019/07/18/gopl-getting-started/" class="post-more waves-effect waves-button">
-            Continue reading...
-        </a>
-    </div>
-    
-    <div class="post-footer">
-        
-	<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Go/">Go</a></li></ul>
-
-    </div>
-    
-</article>
-
-        </li>
-    
     </ul>
 
     
@@ -676,7 +677,7 @@ Server: 1
         </p>
     </div>
     <div class="bottom">
-        <p><span>Homho Lueng &copy; 2015 - 2019</span>
+        <p><span>Homho Lueng &copy; 2015 - 2020</span>
             <span>
                 
                 Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
